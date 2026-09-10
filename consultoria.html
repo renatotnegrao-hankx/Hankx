@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultoria de Custos e Controladoria — HANKX</title>
+<meta name="description" content="Diagnóstico de custos, gestão de estoques, análise de rentabilidade e controle financeiro para empresas.">
+<link rel="icon" type="image/png" href="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-white">
+<div class="bg-[#FAFAFA] min-h-screen">
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A] transition-all duration-300 shadow-md">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10">
+      <div class="flex items-center justify-between h-24">
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png" alt="HANKX" class="h-[4.8rem] lg:h-24 w-auto">
+        </a>
+        <div class="hidden lg:flex items-center gap-1 ml-6 mr-6">
+              <a href="index.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
+                INÍCIO
+                
+              </a>
+              <a href="sobre.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
+                SOBRE
+                
+              </a>
+              <a href="consultoria.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white bg-white/5">
+                CONSULTORIA
+                <span class="absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-[2px] w-6 bg-[#FF3D33]"></span>
+              </a>
+              <a href="academy.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
+                ACADEMY
+                
+              </a>
+              <a href="contato.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
+                CONTATO
+                
+              </a>
+        </div>
+        <div class="hidden lg:flex items-center gap-3">
+          <a href="contato.html" class="group inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[11px] font-bold tracking-[0.14em] px-5 py-3 rounded transition-colors">
+            FALE CONOSCO
+            <i data-lucide="arrow-right" class="transition-transform group-hover:translate-x-0.5" style="width:14px;height:14px"></i>
+          </a>
+        </div>
+        <button id="mobile-menu-btn" class="lg:hidden text-white p-2 -mr-2">
+          <span id="icon-menu-open"><i data-lucide="menu" class="" style="width:24px;height:24px"></i></span>
+          <span id="icon-menu-close" class="hidden"><i data-lucide="x" class="" style="width:24px;height:24px"></i></span>
+        </button>
+      </div>
+    </div>
+    <div class="h-[2px] bg-gradient-to-r from-transparent via-[#FF3D33]/60 to-transparent"></div>
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#0A0A0A] border-t border-white/10 px-6 pb-8 pt-2">
+      <div class="flex items-center gap-3 pb-4 mb-2 border-b border-white/5">
+        <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png" alt="HANKX" class="h-12 w-auto opacity-90">
+        <span class="text-white/40 text-[9px] tracking-[0.16em] leading-tight">CONSULTORIA EM<br>GESTÃO FINANCEIRA</span>
+      </div>
+            <a href="index.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
+              INÍCIO
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+            <a href="sobre.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
+              SOBRE
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+            <a href="consultoria.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white">
+              CONSULTORIA
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+            <a href="academy.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
+              ACADEMY
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+            <a href="contato.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
+              CONTATO
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+      <a href="contato.html" class="mt-4 inline-flex items-center justify-center gap-2 bg-[#FF3D33] text-white text-[12px] font-bold tracking-[0.14em] px-5 py-3.5 rounded w-full">
+        FALE CONOSCO <i data-lucide="arrow-right" class="" style="width:14px;height:14px"></i>
+      </a>
+    </div>
+  </nav>
+
+  <section class="relative overflow-hidden bg-[#FAFAFA] pt-32 pb-20 px-6 lg:px-10 border-b border-slate-200">
+    <div class="watermark-wrap"><img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/013c41068_generated_image.png" alt=""></div>
+    <div class="relative max-w-7xl mx-auto">
+      <p class="fade-in-up text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-6">FINANÇAS EMPRESARIAL</p>
+      <h1 class="fade-in-up delay-1 text-[#0A0A0A] text-[2.5rem] md:text-5xl lg:text-6xl font-extrabold leading-[1.12] tracking-tight mb-6 max-w-2xl">
+        CONSULTORIA DE CUSTOS E <span class="text-[#FF3D33]">CONTROLADORIA.</span>
+      </h1>
+      <div class="w-16 h-1 bg-[#FF3D33] mb-6"></div>
+      <p class="fade-in-up delay-2 text-slate-600 text-base md:text-lg max-w-xl leading-relaxed">Diagnóstico de custos, gestão de estoques e controle financeiro para empresas que querem enxergar cada real investido e decidir com segurança.</p>
+    </div>
+  </section>
+
+  <section class="bg-white py-24 px-6 lg:px-10 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto">
+      <div class="fade-up mb-12">
+        <p class="text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-3">NOSSOS SERVIÇOS</p>
+        <h2 class="text-[#0A0A0A] text-3xl md:text-4xl font-extrabold leading-tight mb-4">
+          SOLUÇÕES QUE GERAM <span class="text-[#FF3D33]">VALOR.</span>
+        </h2>
+        <p class="text-slate-600 text-base max-w-xl">Cada serviço é desenhado para resolver problemas específicos de gestão, com foco em resultados mensuráveis e sustentáveis.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="settings" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">MAPEAMENTO DE CUSTEIO</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Mapeamos o processo de custeio da sua operação para entender como os custos são formados, alocados e distribuídos em cada etapa do negócio.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Levantamento da estrutura de custos</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Classificação fixo vs. variável</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Identificação de diretos e indiretos</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Mapeamento de centros de custo</span>
+                  </div>
+              </div>
+            </div>
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="dollar-sign" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">IMPLEMENTAÇÃO DE CUSTEIO E GESTÃO DE CUSTOS</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Implementamos o método de custeio mais adequado ao seu negócio e estruturamos a gestão de custos com visibilidade total sobre cada real investido.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Escolha do método de custeio</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Implantação de centros de custo</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Critérios de rateio e alocação</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Relatórios gerenciais de custos</span>
+                  </div>
+              </div>
+            </div>
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="clipboard-list" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">ORGANIZAÇÃO PARA INVENTÁRIOS DE ESTOQUE</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Organizamos processos e procedimentos para que os inventários de estoque sejam confiáveis, rápidos e sem divergências.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Procedimentos de contagem</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Conferência e reconciliação</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Padronização de cadastros</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Controles documentais</span>
+                  </div>
+              </div>
+            </div>
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="package" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">GESTÃO DE ESTOQUES</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Reduz excessos, evita rupturas e otimiza o capital investido em estoque com processos sólidos e indicadores de performance.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Classificação ABC</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Estoque mínimo e máximo</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Giro e cobertura de estoque</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Indicadores de performance</span>
+                  </div>
+              </div>
+            </div>
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="bar-chart-3" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">ANÁLISE DE PRODUTOS POR MARGENS</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Identificamos a real margem de cada produto, revelando quais geram valor e quais corroem a rentabilidade do seu negócio.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Margem de contribuição por produto</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Rentabilidade por item e linha</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Curva ABC de margens</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Decisões de portfolio</span>
+                  </div>
+              </div>
+            </div>
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="target" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">IMPLEMENTAÇÃO DE BUDGET E CULTURA DE BUDGET</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Estruturamos o processo orçamentário e implantamos a cultura de budget na organização, transformando o planejamento em hábito de gestão.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Estruturação do orçamento anual</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Metas por área e responsável</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Cultura e disciplina orçamentária</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Acompanhamento e controle</span>
+                  </div>
+              </div>
+            </div>
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="bar-chart-3" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">DESENVOLVIMENTO DE INDICADORES COM BI E IA</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Construímos indicadores de performance com ferramentas de Business Intelligence e Inteligência Artificial, dando clareza e agilidade às decisões de gestão.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Definição de KPIs por área</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Dashboards em Power BI</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Análises preditivas com IA</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Automação de relatórios</span>
+                  </div>
+              </div>
+            </div>
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="piggy-bank" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">REDUÇÃO DE CUSTOS E EFICIÊNCIA OPERACIONAL</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Identificamos desperdícios e oportunidades de ganho de eficiência, reduzindo custos da operação sem comprometer a qualidade ou a entrega.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Mapeamento de desperdícios</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Eliminação de custos desnecessários</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Otimização de centros de custo</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Ganhos de eficiência sustentáveis</span>
+                  </div>
+              </div>
+            </div>
+            <div class="fade-up bg-[#FAFAFA] border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="w-12 h-12 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center mb-5">
+                <i data-lucide="activity" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
+              </div>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">ACOMPANHAMENTO DE PERFORMANCE DO NEGÓCIO</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-5">Monitoramos a performance do negócio em tempo real, conectando metas, indicadores e execuções para garantir que o plano vire resultado.</p>
+              <div class="space-y-2.5">
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Acompanhamento de metas e KPIs</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Análise de desvios e planos de ação</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Reuniões de performance e follow-up</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <i data-lucide="check" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                    <span class="text-slate-600 text-[13px]">Cockpit Gerencial de resultados</span>
+                  </div>
+              </div>
+            </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-[#FAFAFA] py-24 px-6 lg:px-10">
+    <div class="max-w-7xl mx-auto">
+      <div class="fade-up text-center mb-12">
+        <p class="text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-3">METODOLOGIA</p>
+        <h2 class="text-[#0A0A0A] text-3xl md:text-4xl font-extrabold leading-tight">
+          DO DIAGNÓSTICO AO <span class="text-[#FF3D33]">RESULTADO.</span>
+        </h2>
+        <p class="text-slate-600 text-base mt-6 max-w-xl mx-auto">Transformamos diagnóstico em ação e ação em resultado — trabalhando com você, não apenas para você.</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <span class="text-[#FF3D33] text-4xl font-black mb-4 block">01</span>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">DIAGNÓSTICO E PLANEJAMENTO</h3>
+              <p class="text-slate-600 text-sm leading-relaxed">Identificamos o que trava seu negócio, onde estão as oportunidades e quais riscos merecem atenção. Depois criamos um plano focado em performance real.</p>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <span class="text-[#FF3D33] text-4xl font-black mb-4 block">02</span>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">METAS E INDICADORES</h3>
+              <p class="text-slate-600 text-sm leading-relaxed">Definimos KPIs e objetivos que você consegue acompanhar — métricas que ajudam a medir progresso e tomar decisões melhores.</p>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <span class="text-[#FF3D33] text-4xl font-black mb-4 block">03</span>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">SESSÕES ESTRATÉGICAS</h3>
+              <p class="text-slate-600 text-sm leading-relaxed">Acesso direto a consultores que conhecem seu contexto. Encontros práticos, focados em decisões baseadas em dados que movem o ponteiro.</p>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-7 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <span class="text-[#FF3D33] text-4xl font-black mb-4 block">04</span>
+              <h3 class="text-[#0A0A0A] text-sm font-bold tracking-[0.05em] mb-3">EXECUÇÃO ACOMPANHADA</h3>
+              <p class="text-slate-600 text-sm leading-relaxed">O plano só funciona se sair do papel. Acompanhamos a execução continuamente e ajustamos o que for preciso. Resultado é processo.</p>
+            </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-[#0A0A0A] py-20 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-white text-2xl md:text-3xl font-extrabold tracking-tight mb-8">VAMOS CONSTRUIR RESULTADOS JUNTOS?</h2>
+      <a href="https://wa.me/5511996119090" target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[12px] font-bold tracking-[0.1em] px-8 py-4 rounded transition-colors">
+        SOLICITAR PROPOSTA <i data-lucide="arrow-right" class="" style="width:16px;height:16px"></i>
+      </a>
+    </div>
+  </section>
+
+  <footer class="bg-[#0A0A0A] text-white/70 pt-8 pb-6 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-3 gap-6 items-center">
+        <div class="flex items-center gap-3">
+          <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/6a2e68ec6_HANKX_2.jpeg" alt="HANKX" class="h-12 w-auto rounded-lg">
+          <span class="text-white/45 text-[10px] tracking-[0.12em] leading-tight">CONSULTORIA EM<br>GESTÃO FINANCEIRA</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-[10px] tracking-[0.15em]">
+          <a href="index.html" class="hover:text-white transition-colors">INÍCIO</a><a href="sobre.html" class="hover:text-white transition-colors">SOBRE</a><a href="resultados.html" class="hover:text-white transition-colors">RESULTADOS</a><a href="consultoria.html" class="hover:text-white transition-colors">CONSULTORIA</a><a href="academy.html" class="hover:text-white transition-colors">ACADEMY</a><a href="contato.html" class="hover:text-white transition-colors">CONTATO</a>
+        </div>
+        <div class="flex md:justify-end items-center gap-3">
+          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+            class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:border-white transition-colors">
+            <i data-lucide="linkedin" class="" style="width:14px;height:14px"></i>
+          </a>
+          <a href="https://instagram.com/hankx.br" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+            class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:border-white transition-colors">
+            <i data-lucide="instagram" class="" style="width:14px;height:14px"></i>
+          </a>
+        </div>
+      </div>
+      <div class="mt-6 pt-4 border-t border-white/10 text-center text-[10px] tracking-wider text-white/40">
+        © 2025 HANKX. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+</div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

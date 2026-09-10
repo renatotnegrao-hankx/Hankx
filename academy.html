@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HANKX Academy — Treinamentos em Excel, Power BI e Custos</title>
+<meta name="description" content="Treinamentos práticos em Excel, Power BI e Gestão de Custos, do básico ao avançado, para profissionais e equipes.">
+<link rel="icon" type="image/png" href="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-white">
+<div class="bg-[#FAFAFA] min-h-screen">
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A] transition-all duration-300 shadow-md">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10">
+      <div class="flex items-center justify-between h-24">
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png" alt="HANKX" class="h-[4.8rem] lg:h-24 w-auto">
+        </a>
+        <div class="hidden lg:flex items-center gap-1 ml-6 mr-6">
+              <a href="index.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
+                INÍCIO
+                
+              </a>
+              <a href="sobre.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
+                SOBRE
+                
+              </a>
+              <a href="consultoria.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
+                CONSULTORIA
+                
+              </a>
+              <a href="academy.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white bg-white/5">
+                ACADEMY
+                <span class="absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-[2px] w-6 bg-[#FF3D33]"></span>
+              </a>
+              <a href="contato.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
+                CONTATO
+                
+              </a>
+        </div>
+        <div class="hidden lg:flex items-center gap-3">
+          <a href="contato.html" class="group inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[11px] font-bold tracking-[0.14em] px-5 py-3 rounded transition-colors">
+            FALE CONOSCO
+            <i data-lucide="arrow-right" class="transition-transform group-hover:translate-x-0.5" style="width:14px;height:14px"></i>
+          </a>
+        </div>
+        <button id="mobile-menu-btn" class="lg:hidden text-white p-2 -mr-2">
+          <span id="icon-menu-open"><i data-lucide="menu" class="" style="width:24px;height:24px"></i></span>
+          <span id="icon-menu-close" class="hidden"><i data-lucide="x" class="" style="width:24px;height:24px"></i></span>
+        </button>
+      </div>
+    </div>
+    <div class="h-[2px] bg-gradient-to-r from-transparent via-[#FF3D33]/60 to-transparent"></div>
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#0A0A0A] border-t border-white/10 px-6 pb-8 pt-2">
+      <div class="flex items-center gap-3 pb-4 mb-2 border-b border-white/5">
+        <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png" alt="HANKX" class="h-12 w-auto opacity-90">
+        <span class="text-white/40 text-[9px] tracking-[0.16em] leading-tight">CONSULTORIA EM<br>GESTÃO FINANCEIRA</span>
+      </div>
+            <a href="index.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
+              INÍCIO
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+            <a href="sobre.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
+              SOBRE
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+            <a href="consultoria.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
+              CONSULTORIA
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+            <a href="academy.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white">
+              ACADEMY
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+            <a href="contato.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
+              CONTATO
+              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
+            </a>
+      <a href="contato.html" class="mt-4 inline-flex items-center justify-center gap-2 bg-[#FF3D33] text-white text-[12px] font-bold tracking-[0.14em] px-5 py-3.5 rounded w-full">
+        FALE CONOSCO <i data-lucide="arrow-right" class="" style="width:14px;height:14px"></i>
+      </a>
+    </div>
+  </nav>
+
+  <section class="relative overflow-hidden bg-[#FAFAFA] pt-32 pb-20 px-6 lg:px-10 border-b border-slate-200">
+    <div class="watermark-wrap"><img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/f0b3b48a9_generated_image.png" alt=""></div>
+    <div class="relative max-w-7xl mx-auto">
+      <p class="fade-in-up text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-6">ACADEMY</p>
+      <h1 class="fade-in-up delay-1 text-[#0A0A0A] text-[2.5rem] md:text-5xl lg:text-6xl font-extrabold leading-[1.12] tracking-tight mb-6 max-w-2xl">
+        TRANSFORME DADOS EM <span class="text-[#FF3D33]">PODER DE DECISÃO.</span>
+      </h1>
+      <div class="w-16 h-1 bg-[#FF3D33] mb-6"></div>
+      <p class="fade-in-up delay-2 text-slate-600 text-base md:text-lg max-w-xl leading-relaxed">Treinamentos práticos em Excel, Power BI e Gestão de Custos — ministrados por quem usa essas ferramentas todos os dias em projetos reais.</p>
+    </div>
+  </section>
+
+  <section class="bg-white py-8 px-6 lg:px-10 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto flex flex-wrap gap-6"><div class="flex items-center gap-2 text-slate-600 text-[12px] tracking-wider"><i data-lucide="clock" class="text-[#FF3D33]" style="width:14px;height:14px"></i> Cargas de 8h a 24h</div><div class="flex items-center gap-2 text-slate-600 text-[12px] tracking-wider"><i data-lucide="book-open" class="text-[#FF3D33]" style="width:14px;height:14px"></i> Material completo</div><div class="flex items-center gap-2 text-slate-600 text-[12px] tracking-wider"><i data-lucide="layers" class="text-[#FF3D33]" style="width:14px;height:14px"></i> Certificado incluso</div>
+    </div>
+  </section>
+
+  <section class="bg-white py-24 px-6 lg:px-10 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto">
+      <div class="fade-up">
+        <p class="text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-2">TREINAMENTO</p>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center">
+            <i data-lucide="table" class="text-[#FF3D33]" style="width:22px;height:22px"></i>
+          </div>
+          <h2 class="text-[#0A0A0A] text-2xl md:text-3xl font-extrabold">EXCEL DO BÁSICO AO AVANÇADO</h2>
+        </div>
+        <div class="w-16 h-1 bg-[#FF3D33] mb-6"></div>
+        <p class="text-slate-600 text-base max-w-2xl leading-relaxed mb-4">Um curso completo que leva você do primeiro contato com o Excel até o nível avançado: planilhas inteligentes, análise de dados e dashboards gerenciais. Tudo em uma única jornada de 24 horas — sem VBA.</p>
+        
+      </div>
+      <div class="fade-up flex flex-wrap gap-8 mb-12">
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">24h</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">CARGA HORÁRIA</p>
+        </div>
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">4</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">MÓDULOS</p>
+        </div>
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">100%</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">PRÁTICO</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M1</span>
+                <i data-lucide="zap" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">FUNDAMENTOS E NAVEGAÇÃO</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Atalhos essenciais e navegação</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Formatação de células</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Validação de dados</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Referências relativas, absolutas e mistas</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M2</span>
+                <i data-lucide="filter" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">FÓRMULAS E FUNÇÕES AVANÇADAS</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">PROCV, ÍNDICE e CORRESP</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">SOMASES, CONT.SES</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Funções de texto e data</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Funções financeiras</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M3</span>
+                <i data-lucide="layers" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">TABELAS DINÂMICAS</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Criação e configuração</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Campos calculados</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Segmentação de dados</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Múltiplas fontes</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M4</span>
+                <i data-lucide="gauge" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">DASHBOARDS GERENCIAIS</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Gráficos avançados</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Painéis gerenciais</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Templates profissionais</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Painéis interativos</span>
+                </div>
+              </div>
+            </div>
+      </div>
+      <a href="https://wa.me/5511996119090?text=Ol%C3%A1!%20Tenho%20interesse%20no%20treinamento%20de%20Excel%20do%20B%C3%A1sico%20ao%20Avan%C3%A7ado." target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[12px] font-bold tracking-[0.1em] px-8 py-4 rounded transition-colors">
+        GARANTIR MINHA VAGA <i data-lucide="arrow-right" class="" style="width:16px;height:16px"></i>
+      </a>
+    </div>
+  </section>
+
+  <section class="bg-white py-24 px-6 lg:px-10 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto">
+      <div class="fade-up">
+        <p class="text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-2">TREINAMENTO</p>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center">
+            <i data-lucide="table" class="text-[#FF3D33]" style="width:22px;height:22px"></i>
+          </div>
+          <h2 class="text-[#0A0A0A] text-2xl md:text-3xl font-extrabold">EXCEL INTERMEDIÁRIO</h2>
+        </div>
+        <div class="w-16 h-1 bg-[#FF3D33] mb-6"></div>
+        <p class="text-slate-600 text-base max-w-2xl leading-relaxed mb-4">Para quem já domina o básico e quer evoluir para análises mais robustas: consolidação de dados, fórmulas poderosas e introdução a tabelas dinâmicas.</p>
+        
+          <div class="mb-8">
+            <span class="inline-flex items-center gap-2 bg-[#FF3D33]/8 border border-[#FF3D33]/30 rounded px-3 py-2">
+              <span class="text-[#FF3D33] text-[11px] font-bold tracking-[0.12em]">PRÉ-REQUISITO:</span>
+              <span class="text-slate-700 text-[12px]">Ao menos Excel básico</span>
+            </span>
+          </div>
+      </div>
+      <div class="fade-up flex flex-wrap gap-8 mb-12">
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">8h</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">CARGA HORÁRIA</p>
+        </div>
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">4</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">MÓDULOS</p>
+        </div>
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">100%</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">PRÁTICO</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M1</span>
+                <i data-lucide="layers" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">ORGANIZAÇÃO E ESTRUTURAÇÃO</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Múltiplas planilhas e pastas</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Agrupamento e estruturas de tópicos</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Nomeação de intervalos</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Gerenciador de nomes</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M2</span>
+                <i data-lucide="filter" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">FÓRMULAS E FUNÇÕES</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">PROCV e PROCH</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">ÍNDICE e CORRESP</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">SOMASES e CONT.SES</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">SE e SEERRO</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M3</span>
+                <i data-lucide="bar-chart" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">ANÁLISE DE DADOS</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Tabelas dinâmicas</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Filtros e segmentação</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Gráficos dinâmicos</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Formatação condicional</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M4</span>
+                <i data-lucide="zap" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">PRODUTIVIDADE</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Proteção de planilhas</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Validação de dados</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Atalhos e automação de tarefas</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Templates reutilizáveis</span>
+                </div>
+              </div>
+            </div>
+      </div>
+      <a href="https://wa.me/5511996119090?text=Ol%C3%A1!%20Tenho%20interesse%20no%20treinamento%20de%20Excel%20Intermedi%C3%A1rio." target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[12px] font-bold tracking-[0.1em] px-8 py-4 rounded transition-colors">
+        GARANTIR MINHA VAGA <i data-lucide="arrow-right" class="" style="width:16px;height:16px"></i>
+      </a>
+    </div>
+  </section>
+
+  <section class="bg-[#FAFAFA] py-24 px-6 lg:px-10 ">
+    <div class="max-w-7xl mx-auto">
+      <div class="fade-up">
+        <p class="text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-2">TREINAMENTO</p>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center">
+            <i data-lucide="table" class="text-[#FF3D33]" style="width:22px;height:22px"></i>
+          </div>
+          <h2 class="text-[#0A0A0A] text-2xl md:text-3xl font-extrabold">POWER BI</h2>
+        </div>
+        <div class="w-16 h-1 bg-[#FF3D33] mb-6"></div>
+        <p class="text-slate-600 text-base max-w-2xl leading-relaxed mb-4">Crie dashboards executivos profissionais que transformam dados complexos em narrativas visuais claras. Domine a ferramenta líder em Business Intelligence.</p>
+        
+      </div>
+      <div class="fade-up flex flex-wrap gap-8 mb-12">
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">16h</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">CARGA HORÁRIA</p>
+        </div>
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">4</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">MÓDULOS</p>
+        </div>
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">100%</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">PRÁTICO</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M1</span>
+                <i data-lucide="table" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">INTRODUÇÃO E MODELAGEM</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Interface e fluxo de trabalho</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Conexão com fontes de dados</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Power Query</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Modelagem e relacionamentos</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M2</span>
+                <i data-lucide="bar-chart" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">MÉTRICAS E INDICADORES</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Criação de medidas</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Funções de agregação</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Inteligência temporal</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">KPIs e metas</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M3</span>
+                <i data-lucide="pie-chart" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">VISUALIZAÇÕES EXECUTIVAS</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Escolha estratégica de visuais</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Design de dashboard</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Interatividade e drill</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Storytelling com dados</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M4</span>
+                <i data-lucide="share-2" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">PUBLICAÇÃO E GESTÃO</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Power BI Service</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Workspaces e governança</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Atualização automática</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Row Level Security</span>
+                </div>
+              </div>
+            </div>
+      </div>
+      <a href="https://wa.me/5511996119090?text=Ol%C3%A1!%20Tenho%20interesse%20no%20treinamento%20de%20Power%20BI." target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[12px] font-bold tracking-[0.1em] px-8 py-4 rounded transition-colors">
+        GARANTIR MINHA VAGA <i data-lucide="arrow-right" class="" style="width:16px;height:16px"></i>
+      </a>
+    </div>
+  </section>
+
+  <section class="bg-white py-24 px-6 lg:px-10 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto">
+      <div class="fade-up">
+        <p class="text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-2">FORMAÇÃO BÁSICA EM ANALISTA DE CUSTOS INDUSTRIAIS</p>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center">
+            <i data-lucide="table" class="text-[#FF3D33]" style="width:22px;height:22px"></i>
+          </div>
+          <h2 class="text-[#0A0A0A] text-2xl md:text-3xl font-extrabold">GESTÃO DE CUSTOS INDUSTRIAIS</h2>
+        </div>
+        <div class="w-16 h-1 bg-[#FF3D33] mb-6"></div>
+        <p class="text-slate-600 text-base max-w-2xl leading-relaxed mb-4">Entenda a estrutura de custos de uma operação industrial — matéria-prima, mão de obra e custos indiretos — com métodos de custeio e formação de preço voltada para o chão de fábrica.</p>
+        
+      </div>
+      <div class="fade-up flex flex-wrap gap-8 mb-12">
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">8h</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">CARGA HORÁRIA</p>
+        </div>
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">4</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">MÓDULOS</p>
+        </div>
+        <div>
+          <p class="text-[#FF3D33] text-3xl font-extrabold">100%</p>
+          <p class="text-slate-500 text-[11px] tracking-wider">PRÁTICO</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M1</span>
+                <i data-lucide="layers" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">FUNDAMENTOS DE CUSTOS</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Conceitos e classificação fixo/variável</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Direto vs. indireto</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Terminologia industrial</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M2</span>
+                <i data-lucide="table" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">FORMAÇÃO DO CUSTO INDUSTRIAL</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Matéria-prima (MP)</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Mão de obra (MOD)</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Custos indiretos (CIF) e rateio</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M3</span>
+                <i data-lucide="gauge" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">MÉTODOS DE CUSTEIO</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Custeio por absorção</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Custeio variável</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Custeio ABC e critérios de rateio</span>
+                </div>
+              </div>
+            </div>
+            <div class="fade-up bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-[#FF3D33]/30 transition-all">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-[#FF3D33] text-sm font-bold">M4</span>
+                <i data-lucide="bar-chart" class="text-[#FF3D33]" style="width:16px;height:16px"></i>
+              </div>
+              <h4 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.05em] mb-4">PREÇO, MARGEM E CONTROLE</h4>
+              <div class="space-y-2">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Formação de preço e margem</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">Ponto de equilíbrio</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:12px;height:12px"></i>
+                  <span class="text-slate-600 text-[12px]">KPIs industriais</span>
+                </div>
+              </div>
+            </div>
+      </div>
+      <a href="https://wa.me/5511996119090?text=Ol%C3%A1!%20Tenho%20interesse%20na%20Forma%C3%A7%C3%A3o%20B%C3%A1sica%20em%20Analista%20de%20Custos%20Industriais%20-%20Gest%C3%A3o%20de%20Custos%20Industriais." target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[12px] font-bold tracking-[0.1em] px-8 py-4 rounded transition-colors">
+        GARANTIR MINHA VAGA <i data-lucide="arrow-right" class="" style="width:16px;height:16px"></i>
+      </a>
+    </div>
+  </section>
+
+  <section class="bg-white py-24 px-6 lg:px-10 border-y border-slate-200">
+    <div class="max-w-7xl mx-auto">
+      <div class="fade-up mb-12">
+        <p class="text-[#FF3D33] text-[11px] font-bold tracking-[0.2em] mb-2">FORMAÇÃO PROFISSIONAL</p>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-[#FF3D33]/10 flex items-center justify-center">
+            <i data-lucide="layers" class="text-[#FF3D33]" style="width:22px;height:22px"></i>
+          </div>
+          <h2 class="text-[#0A0A0A] text-2xl md:text-3xl font-extrabold">ANALISTAS DE CUSTOS E CONTROLADORIA</h2>
+        </div>
+        <div class="w-16 h-1 bg-[#FF3D33] mb-5"></div>
+        <p class="text-slate-600 text-base max-w-2xl leading-relaxed mb-2">Programa completo para formar e qualificar profissionais de custos e controladoria, dos fundamentos à gestão estratégica. Escolha a carga horária ideal para o seu momento.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+          <div class="fade-up relative bg-[#FAFAFA] border rounded-2xl p-7 transition-all flex flex-col border-slate-200 hover:border-slate-300 hover:shadow-md">
+            
+            <div class="flex items-baseline gap-2 mb-1">
+              <h3 class="text-[#0A0A0A] text-lg font-extrabold">BÁSICO</h3>
+            </div>
+            <p class="text-[#FF3D33] text-3xl font-extrabold mb-5">8h</p>
+            <div class="space-y-2.5 mb-7 flex-1">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Fundamentos de custos</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Contas a pagar e receber</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Conciliação bancária</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">DRE básico</span>
+                </div>
+            </div>
+            <a href="https://wa.me/5511996119090?text=Ol%C3%A1!%20Tenho%20interesse%20na%20Forma%C3%A7%C3%A3o%20de%20Analistas%20de%20Custos%20e%20Controladoria%20-%20BÁSICO%20(8h)."
+              target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.1em] px-6 py-3 rounded transition-colors w-full justify-center border border-slate-300 hover:border-[#FF3D33] hover:text-[#FF3D33] text-[#0A0A0A]">
+              INSCREVER-SE <i data-lucide="arrow-right" class="" style="width:14px;height:14px"></i>
+            </a>
+          </div>
+          <div class="fade-up relative bg-[#FAFAFA] border rounded-2xl p-7 transition-all flex flex-col border-slate-200 hover:border-slate-300 hover:shadow-md">
+            
+            <div class="flex items-baseline gap-2 mb-1">
+              <h3 class="text-[#0A0A0A] text-lg font-extrabold">INTERMEDIÁRIO</h3>
+            </div>
+            <p class="text-[#FF3D33] text-3xl font-extrabold mb-5">16h</p>
+            <div class="space-y-2.5 mb-7 flex-1">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Tudo do Básico +</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Fluxo de caixa</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Formação de preços</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Análise de margem</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Indicadores de gestão</span>
+                </div>
+            </div>
+            <a href="https://wa.me/5511996119090?text=Ol%C3%A1!%20Tenho%20interesse%20na%20Forma%C3%A7%C3%A3o%20de%20Analistas%20de%20Custos%20e%20Controladoria%20-%20INTERMEDIÁRIO%20(16h)."
+              target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.1em] px-6 py-3 rounded transition-colors w-full justify-center border border-slate-300 hover:border-[#FF3D33] hover:text-[#FF3D33] text-[#0A0A0A]">
+              INSCREVER-SE <i data-lucide="arrow-right" class="" style="width:14px;height:14px"></i>
+            </a>
+          </div>
+          <div class="fade-up relative bg-[#FAFAFA] border rounded-2xl p-7 transition-all flex flex-col border-[#FF3D33] shadow-lg ring-1 ring-[#FF3D33]/20">
+            <span class="absolute -top-3 left-7 bg-[#FF3D33] text-white text-[10px] font-bold tracking-[0.15em] px-3 py-1 rounded">MAIS COMPLETO</span>
+            <div class="flex items-baseline gap-2 mb-1">
+              <h3 class="text-[#0A0A0A] text-lg font-extrabold">AVANÇADO</h3>
+            </div>
+            <p class="text-[#FF3D33] text-3xl font-extrabold mb-5">24h</p>
+            <div class="space-y-2.5 mb-7 flex-1">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Tudo do Intermediário +</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Custeio ABC</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Controladoria</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Dashboards executivos</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <i data-lucide="check-circle" class="text-[#FF3D33] mt-0.5 shrink-0" style="width:14px;height:14px"></i>
+                  <span class="text-slate-600 text-[13px]">Planejamento orçamentário</span>
+                </div>
+            </div>
+            <a href="https://wa.me/5511996119090?text=Ol%C3%A1!%20Tenho%20interesse%20na%20Forma%C3%A7%C3%A3o%20de%20Analistas%20de%20Custos%20e%20Controladoria%20-%20AVANÇADO%20(24h)."
+              target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.1em] px-6 py-3 rounded transition-colors w-full justify-center bg-[#FF3D33] hover:bg-[#ff2417] text-white">
+              INSCREVER-SE <i data-lucide="arrow-right" class="" style="width:14px;height:14px"></i>
+            </a>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-[#0A0A0A] py-20 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-white text-2xl md:text-3xl font-extrabold tracking-tight mb-8">INVISTA NO CONHECIMENTO CERTO.</h2>
+      <a href="https://wa.me/5511996119090?text=Ol%C3%A1!%20Gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20treinamentos." target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[12px] font-bold tracking-[0.1em] px-8 py-4 rounded transition-colors">
+        FALAR SOBRE TREINAMENTOS <i data-lucide="arrow-right" class="" style="width:16px;height:16px"></i>
+      </a>
+    </div>
+  </section>
+
+  <footer class="bg-[#0A0A0A] text-white/70 pt-8 pb-6 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-3 gap-6 items-center">
+        <div class="flex items-center gap-3">
+          <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/6a2e68ec6_HANKX_2.jpeg" alt="HANKX" class="h-12 w-auto rounded-lg">
+          <span class="text-white/45 text-[10px] tracking-[0.12em] leading-tight">CONSULTORIA EM<br>GESTÃO FINANCEIRA</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-[10px] tracking-[0.15em]">
+          <a href="index.html" class="hover:text-white transition-colors">INÍCIO</a><a href="sobre.html" class="hover:text-white transition-colors">SOBRE</a><a href="resultados.html" class="hover:text-white transition-colors">RESULTADOS</a><a href="consultoria.html" class="hover:text-white transition-colors">CONSULTORIA</a><a href="academy.html" class="hover:text-white transition-colors">ACADEMY</a><a href="contato.html" class="hover:text-white transition-colors">CONTATO</a>
+        </div>
+        <div class="flex md:justify-end items-center gap-3">
+          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+            class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:border-white transition-colors">
+            <i data-lucide="linkedin" class="" style="width:14px;height:14px"></i>
+          </a>
+          <a href="https://instagram.com/hankx.br" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+            class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:border-white transition-colors">
+            <i data-lucide="instagram" class="" style="width:14px;height:14px"></i>
+          </a>
+        </div>
+      </div>
+      <div class="mt-6 pt-4 border-t border-white/10 text-center text-[10px] tracking-wider text-white/40">
+        © 2025 HANKX. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+</div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
