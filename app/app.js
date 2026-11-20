@@ -632,7 +632,8 @@ let SY = {};
 try { SY = JSON.parse(localStorage.getItem(SYNC_KEY) || '{}'); } catch (e) { SY = {}; }
 SY.repo ||= 'renatotnegrao-hankx/hankx-dados'; SY.path ||= 'financas.json';
 const SYS = { busy: false, ready: false, err: '', timer: null };
-const saveSY = () => { try { localStorage.setItem(SYNC_KEY, JSON.stringify({ repo: SY.repo, path: SY.path, token: SY.token, sha: SY.sha, lastSync: SY.lastSync })); } catch (e) {} };
+const SYNC_EVERY = 2 * 60 * 60 * 1000; // envia ao GitHub no máximo a cada 2 horas
+const saveSY = () => { try { localStorage.setItem(SYNC_KEY, JSON.stringify({ repo: SY.repo, path: SY.path, token: SY.token, sha: SY.sha, lastSync: SY.lastSync, dirty: SY.dirty })); } catch (e) {} };
 const syncOn = () => !!SY.token;
 function b64e(str) { const by = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < by.length; i += 0x8000) bin += String.fromCharCode(...by.subarray(i, i + 0x8000)); return btoa(bin); }
 const b64d = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, '')), c => c.charCodeAt(0)));
@@ -674,13 +675,13 @@ async function ghPush(retry = true) {
     return ghPush(false);
   }
   if (!r.ok) throw new Error(ghError(r));
-  const j = await r.json(); SY.sha = j.content.sha; SY.lastSync = Date.now(); saveSY();
+  const j = await r.json(); SY.sha = j.content.sha; SY.lastSync = Date.now(); SY.dirty = false; saveSY();
 }
 function adoptRemote(data) {
   const keep = { ...S.settings };
   S = data; for (const k of Object.keys(defaults())) if (S[k] === undefined) S[k] = defaults()[k];
   if (!S.settings) S.settings = keep;
-  save(true); applyTheme(); SY.lastSync = Date.now(); saveSY();
+  save(true); applyTheme(); V.acc = 'all'; SY.lastSync = Date.now(); SY.dirty = false; saveSY();
 }
 async function syncNow(opts = {}) {
   if (!syncOn() || SYS.busy) return;
@@ -698,28 +699,33 @@ async function syncNow(opts = {}) {
         SYS.busy = true;
         if (ch === 'remote') adoptRemote(p.data); else if (ch === 'local') await ghPush(false); else { SYS.busy = false; refreshSyncUI(); return; }
       } else if (rt > lt) adoptRemote(p.data);
-      else if (lt > rt) await ghPush();
+      else if (lt > rt) { SY.dirty = true; saveSY(); }
       else { SY.lastSync = Date.now(); saveSY(); }
     }
     SYS.ready = true;
   } catch (e) { SYS.err = e.message || 'Sem conexão com o GitHub'; }
   SYS.busy = false; refreshSyncUI(); if (isLogged()) render();
+  maybePush();
 }
 function schedulePush() {
-  if (!syncOn() || !SYS.ready) return;
-  clearTimeout(SYS.timer);
-  SYS.timer = setTimeout(async () => {
-    if (SYS.busy) return schedulePush();
-    SYS.busy = true; SYS.err = ''; refreshSyncUI();
-    try { await ghPush(); } catch (e) { SYS.err = e.message || 'Sem conexão — tentaremos de novo'; setTimeout(schedulePush, 30000); }
-    SYS.busy = false; refreshSyncUI();
-  }, 2000);
+  if (!syncOn()) return;
+  SY.dirty = true; saveSY(); refreshSyncUI(); maybePush();
 }
+async function maybePush(force = false) {
+  if (!syncOn() || !SYS.ready || SYS.busy || !SY.dirty) return;
+  if (!force && Date.now() - (SY.lastSync || 0) < SYNC_EVERY) return;
+  SYS.busy = true; SYS.err = ''; refreshSyncUI();
+  try { await ghPush(); } catch (e) { SYS.err = e.message || 'Sem conexão — tentaremos de novo'; }
+  SYS.busy = false; refreshSyncUI();
+}
+setInterval(() => maybePush(), 60 * 1000);
 function syncLabel() {
   if (!syncOn()) return 'Desligado — dados só neste aparelho';
   if (SYS.busy) return 'Sincronizando…';
   if (SYS.err) return '⚠️ ' + SYS.err;
-  return SY.lastSync ? 'Salvo no GitHub · ' + new Date(SY.lastSync).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'Conectado';
+  const f = d => new Date(d).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  if (SY.dirty && SY.lastSync) return 'Último envio ' + f(SY.lastSync) + ' · próximo ' + f(Math.max(Date.now(), SY.lastSync + SYNC_EVERY));
+  return SY.lastSync ? 'Salvo no GitHub · ' + f(SY.lastSync) : 'Conectado';
 }
 function refreshSyncUI() { $$('[data-synclabel]').forEach(el => el.textContent = syncLabel()); }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && isLogged()) syncNow(); });
@@ -727,7 +733,8 @@ window.addEventListener('online', () => isLogged() && syncNow());
 function scrSync() {
   return `${backHead('Salvar no GitHub')}
   <div class="card"><div class="between"><b>Situação</b><span class="small ${SYS.err ? 'red' : syncOn() ? 'green' : 'muted'}" data-synclabel>${esc(syncLabel())}</span></div></div>
-  <p class="muted small">Com isso ligado, cada alteração é enviada para um repositório <b>privado</b> seu no GitHub. Se você apagar o app ou trocar de celular, é só entrar de novo e informar a mesma chave que tudo volta. O GitHub também guarda o histórico de todas as versões.</p>
+  ${syncOn() ? `<button class="btn primary" data-act="sync-now" style="margin-bottom:12px">${I('ul')} Enviar para o GitHub agora</button>` : ''}
+  <p class="muted small">Com isso ligado, suas alterações são enviadas automaticamente <b>a cada 2 horas</b> (enquanto o app estiver aberto ou quando você abri-lo de novo) para um repositório <b>privado</b> seu no GitHub. Se você apagar o app ou trocar de celular, é só entrar de novo e informar a mesma chave que tudo volta. O GitHub também guarda o histórico de todas as versões.</p>
   <form id="syf" class="card" autocomplete="on">
   <input type="text" name="username" value="github-hankx-financas" autocomplete="username" hidden>
   <label class="f"><span>Repositório privado (usuário/nome)</span><input class="in" name="repo" value="${esc(SY.repo)}" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
@@ -1205,6 +1212,7 @@ document.addEventListener('click', async e => {
       const t = S.transactions.find(x => x.id === i.txId); if (t) t.paid = i.paid; save(); render(); break;
     }
     case 'loan-go': loanGo(); break;
+    case 'sync-now': SY.dirty = true; await maybePush(true); toast(SYS.err || 'Enviado para o GitHub'); render(); break;
     case 'sync-off': { const r = await ask('Desconectar o GitHub deste aparelho?', 'Seus dados continuam guardados no GitHub. Este aparelho só para de enviar alterações.', [['y', 'Desconectar', 'danger']]); if (r) { SY.token = ''; SY.sha = undefined; SY.lastSync = undefined; SYS.ready = false; saveSY(); render(); } break; }
     case 'logout': { const r = await ask('Sair do app?', 'Seus lançamentos continuam salvos neste aparelho.', [['y', 'Sair', 'danger']]); if (r) logout(); break; }
     case 'rep-caixa': repCaixa(); break;
