@@ -443,6 +443,8 @@ function scrAjustes() {
   ${li('rep-csv', 'chart', 'Exportar Fluxo de Caixa Diário', 'Lista diária de entradas, saídas e saldo acumulado (.csv)', 'c-blue')}</div>
   <div class="sect">DADOS</div>
   <div class="list">${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
+  <div class="sect">CONTA</div>
+  <div class="list">${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}</div>
   <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · os dados ficam somente neste aparelho.<br>Faça backup com frequência.</p>`;
 }
 function backHead(title, right = '') {
@@ -586,6 +588,37 @@ function scrOrientacao() {
   <p class="muted small">Critérios: contas atrasadas primeiro, depois contas essenciais (água, luz, internet…), depois dívidas com juros altos e, por fim, pela data de vencimento.</p>`;
 }
 
+
+/* ======================= Login ======================= */
+const AUTH_HASH = 'ee0b71d412bd5fc24c7b60efc3a5263de132b2857783cc7efe8a12857c688252';
+const AUTH_KEY = 'hankx-fin-auth';
+async function sha256(t) {
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+const isLogged = () => { try { return localStorage.getItem(AUTH_KEY) === AUTH_HASH || sessionStorage.getItem(AUTH_KEY) === AUTH_HASH; } catch (e) { return false; } };
+function showLogin(msg = '') {
+  $('#tabbar').innerHTML = ''; $('#fab').classList.add('hide');
+  $('#main').innerHTML = `<div style="min-height:80vh;display:flex;flex-direction:column;justify-content:center">
+  <div style="text-align:center;margin-bottom:28px"><img src="icons/icon-192.png" alt="HANKX" style="width:96px;height:96px;border-radius:24px"><h1 style="margin:16px 0 4px">HANKX Finanças</h1><p class="muted" style="margin:0">Entre para acessar</p></div>
+  <form id="loginf" class="card" autocomplete="on">
+  <label class="f"><span>Login</span><input class="in" name="user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
+  <label class="f"><span>Senha</span><input class="in" name="pass" type="password" inputmode="numeric" autocomplete="current-password" required></label>
+  <div class="between" style="margin-bottom:16px"><span>Manter conectado neste aparelho</span><label class="switch"><input type="checkbox" name="keep" checked><i></i></label></div>
+  ${msg ? `<p class="red" style="margin:0 0 12px;text-align:center">${msg}</p>` : ''}
+  <button class="btn primary">Entrar</button></form>
+  <p style="text-align:center;margin-top:18px"><a href="../" class="muted small">← Voltar para hankx.com.br</a></p></div>`;
+  $('#loginf').addEventListener('submit', async e => {
+    e.preventDefault(); const f = e.target;
+    let h = '';
+    try { h = await sha256('hankx-fin|' + f.user.value.trim().toLowerCase() + '|' + f.pass.value.trim()); } catch (err) { return showLogin('Abra pelo endereço https://www.hankx.com.br/app/'); }
+    if (h !== AUTH_HASH) return showLogin('Login ou senha incorretos');
+    try { (f.keep.checked ? localStorage : sessionStorage).setItem(AUTH_KEY, AUTH_HASH); } catch (err) {}
+    render(false);
+  });
+}
+function logout() { try { localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); } catch (e) {} V.tab = 'inicio'; V.sub = null; showLogin(); }
+
 /* ======================= Render ======================= */
 function applyTheme() {
   const st = S.settings, b = document.body;
@@ -595,6 +628,7 @@ function applyTheme() {
 }
 const TABS = [['inicio', 'home', 'Início'], ['calendario', 'cal', 'Calendário'], ['transacoes', 'list', 'Transações'], ['graficos', 'pie', 'Gráficos'], ['ajustes', 'gear', 'Ajustes']];
 function render(keepScroll = true) {
+  if (!isLogged()) return showLogin();
   const y = window.scrollY;
   let h;
   if (V.tab === 'ajustes' && V.sub) h = ({ perfil: scrPerfil, contas: scrContas, categorias: scrCategorias, dividas: scrDividas, emprestimos: scrEmprestimos, orientacao: scrOrientacao })[V.sub]();
@@ -602,7 +636,7 @@ function render(keepScroll = true) {
   $('#main').innerHTML = h;
   $('#tabbar').innerHTML = TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
   $('#fab').innerHTML = I('plus');
-  $('#fab').classList.toggle('hide', V.tab === 'ajustes' || V.tab === 'graficos');
+  $('#fab').classList.toggle('hide', !isLogged() || V.tab === 'ajustes' || V.tab === 'graficos');
   if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
   if (V.searching) { const q = $('#q'); if (q && document.activeElement !== q && V.focusQ) { q.focus(); V.focusQ = false; } }
 }
@@ -1032,6 +1066,7 @@ document.addEventListener('click', async e => {
       const t = S.transactions.find(x => x.id === i.txId); if (t) t.paid = i.paid; save(); render(); break;
     }
     case 'loan-go': loanGo(); break;
+    case 'logout': { const r = await ask('Sair do app?', 'Seus lançamentos continuam salvos neste aparelho.', [['y', 'Sair', 'danger']]); if (r) logout(); break; }
     case 'rep-caixa': repCaixa(); break;
     case 'rep-pdf': repPdf(); break;
     case 'rep-excel': repExcel(); break;
