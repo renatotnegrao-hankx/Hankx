@@ -644,7 +644,7 @@ function render(keepScroll = true) {
 /* ======================= Modal / toast ======================= */
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2400); }
 function openModal(html) {
-  $('#modal').innerHTML = `<div class="bk" data-act="close-bk"><div class="sheet"><div class="grab"></div>${html}</div></div>`;
+  $('#modal').innerHTML = `<div class="bk" data-act="close-bk"><div class="sheet"><div class="grab"></div><button type="button" class="xclose" data-act="close-modal" aria-label="Fechar">${I('x')}</button>${html}</div></div>`;
   document.body.style.overflow = 'hidden';
 }
 function closeModal() { $('#modal').innerHTML = ''; document.body.style.overflow = ''; }
@@ -1019,6 +1019,7 @@ document.addEventListener('click', async e => {
   const act = el.dataset.act, id = el.dataset.id;
   if (act === 'close-bk') { if (e.target === el) { if (ask._res) { const r = ask._res; ask._res = null; r(null); } else closeModal(); } return; }
   switch (act) {
+    case 'close-modal': if (ask._res) { const r = ask._res; ask._res = null; r(null); } else closeModal(); break;
     case 'tab': V.tab = el.dataset.v; V.sub = null; V.calDay = null; V.projSel = null; render(false); break;
     case 'go': V.tab = 'ajustes'; V.sub = el.dataset.sub; render(false); break;
     case 'back': V.sub = null; render(false); break;

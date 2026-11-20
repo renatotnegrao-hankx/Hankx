@@ -275,3 +275,7 @@ textarea.in{min-height:90px;resize:vertical}
   #print .h td{background:#e5e7eb;font-weight:bold}
   @page{size:landscape;margin:10mm}
 }
+#modal .sheet{position:relative}
+.xclose{position:sticky;top:0;float:right;margin:-6px -6px 0 8px;width:34px;height:34px;border-radius:50%;background:var(--card2);color:var(--muted);display:flex;align-items:center;justify-content:center;z-index:2}
+.xclose .ico{width:18px;height:18px}
+#modal .sheet h3{padding-right:44px}
