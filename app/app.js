@@ -229,7 +229,7 @@ function scrInicio() {
   const shown = list.filter(t => V.homeType === 'todos' || t.type === V.homeType);
   return `
   <div class="hello"><svg class="deco" viewBox="0 0 400 100" preserveAspectRatio="none"><path d="M0 80 Q120 70 200 45 T400 5" stroke="var(--green)" fill="none" stroke-width="1.5"/>${[150, 170, 190, 210, 230, 250, 270].map((x, i) => `<rect x="${x}" y="${30 + (i * 13) % 25}" width="7" height="${20 + (i * 17) % 22}" fill="var(--green)" opacity=".5"/>`).join('')}</svg>
-    <span class="muted" style="font-size:20px">Olá, <b style="color:var(--text)">${esc(nm)}</b></span>
+    <span class="muted" style="font-size:17px">Olá, <b style="color:var(--text)">${esc(nm)}</b></span>
     <button class="avatar" data-act="go" data-sub="perfil" style="${p.photo ? `background-image:url(${p.photo})` : ''}">${p.photo ? '' : esc((p.name || '?')[0].toUpperCase())}</button></div>
   ${accChips()}
   ${seg('mode', [['mensal', 'Mensal'], ['anual', 'Anual'], ['periodo', 'Período']], V.mode)}
@@ -244,8 +244,8 @@ function scrInicio() {
       </div>
     </div>
     <div class="hr" style="margin:14px 0 10px"></div>
-    <div class="between"><div><div class="lbl">Saldo do período</div><b class="${per >= 0 ? 'green' : 'red'}" style="font-size:18px">${brl(per)}</b></div>
-    <div style="text-align:right"><div class="lbl">Saldo do dia</div><b class="${dia >= 0 ? 'green' : 'red'}" style="font-size:18px">${brl(dia)}</b></div></div>
+    <div class="between"><div><div class="lbl">Saldo do período</div><b class="${per >= 0 ? 'green' : 'red'}" style="font-size:15px">${brl(per)}</b></div>
+    <div style="text-align:right"><div class="lbl">Saldo do dia</div><b class="${dia >= 0 ? 'green' : 'red'}" style="font-size:15px">${brl(dia)}</b></div></div>
     <div class="rd2"><div class="rdbox r"><span class="green">Receitas</span><b class="green">${brl(rec)}</b></div><div class="rdbox d"><span class="red">Despesas</span><b class="red">${brl(desp)}</b></div></div>
   </div>
   ${soon.length ? `<div class="alert"><div class="h">${I('bell')} Vencimentos próximos</div>${soon.slice(0, 6).map(t => `<div class="it" data-act="edit-tx" data-id="${t.id}"><span>${esc(t.desc || cat(t.categoryId)?.name || '')} <small class="${t.date < T0 ? 'red' : 'muted'}">&nbsp;${t.date < T0 ? 'atrasada ' : ''}${fmtD(t.date).slice(0, 5)}</small></span><b class="red">${brl(t.amount)}</b></div>`).join('')}${soon.length > 6 ? `<small class="muted">+ ${soon.length - 6} outros</small>` : ''}</div>` : ''}
@@ -393,7 +393,7 @@ function scrGraficos() {
   if (V.chart === 'projecao') {
     const D = monthsData(T0.slice(0, 7), V.projN);
     body = `${pills('projN', [[6, '6 Meses'], [12, '12 Meses'], [24, '24 Meses']], V.projN)}
-    <div class="card"><div style="text-align:center;font-weight:700;font-size:18px;margin-bottom:6px">Fluxo de Caixa - ${V.projN} Meses</div>${projChart(D)}</div>
+    <div class="card"><div style="text-align:center;font-weight:700;font-size:15px;margin-bottom:6px">Fluxo de Caixa - ${V.projN} Meses</div>${projChart(D)}</div>
     ${pills('tblMode', [['mes', 'Mês'], ['ano', 'Ano'], ['periodo', 'Período']], V.tblMode)}
     ${periodNav(V.tblMode === 'mes' ? 'mensal' : V.tblMode === 'ano' ? 'anual' : 'periodo')}
     ${flowTable()}`;
@@ -402,7 +402,7 @@ function scrGraficos() {
     body = `${seg('catType', [['receita', 'Receita', 'rec'], ['despesa', 'Despesa', 'desp']], V.catType, 'rd')}
     ${pills('catMode', [['mensal', 'Mensal'], ['anual', 'Anual'], ['periodo', 'Período']], V.catMode)}
     ${periodNav(V.catMode)}
-    <div class="card">${donut(arr, tot)}<div class="between" style="padding:12px 4px;border-top:1px solid var(--line)"><span class="muted">Total do período</span><b style="font-size:20px">${brl(tot)}</b></div>
+    <div class="card">${donut(arr, tot)}<div class="between" style="padding:12px 4px;border-top:1px solid var(--line)"><span class="muted">Total do período</span><b style="font-size:17px">${brl(tot)}</b></div>
     <div class="catlist">${arr.map((x, i) => { const c = cat(x.id); const op = V.open['c' + x.id]; return `<div class="it" data-act="toggle-open" data-k="c${x.id}"><span class="dot" style="background:${PALETTE[i % PALETTE.length]}"></span><span class="nm">${esc(c?.name || 'Sem categoria')}</span><small class="muted">${x.n}x</small><b>${brl(x.total)}</b><small class="muted" style="width:38px;text-align:right">${Math.round(x.total / tot * 100)}%</small>${I(op ? 'up' : 'right')}</div>${op ? x.list.map(t => `<div class="between small" style="padding:4px 26px"><span class="muted">${fmtD(t.date)} · ${esc(t.desc || '')}</span><span>${brl(t.amount)}</span></div>`).join('') : ''}`; }).join('')}</div></div>`;
   } else {
     const mode = V.rankMode === 'mes' ? 'mensal' : V.rankMode === 'ano' ? 'anual' : 'periodo';
@@ -410,8 +410,8 @@ function scrGraficos() {
     const rank = (o, col) => { const mx = Math.max(1, ...o.arr.map(x => x.total)); return o.arr.length ? `<div class="rank">${o.arr.slice(0, 10).map(x => `<div class="it"><span>${esc(cat(x.id)?.name || 'Sem categoria')}</span><div class="bar" style="width:${Math.max(2, x.total / mx * 78)}%;background:${col}"><em>${kfmt(x.total)}</em></div></div>`).join('')}</div>` : '<div class="empty">Sem dados</div>'; };
     body = `${pills('rankMode', [['mes', 'Mês Atual'], ['ano', 'Ano'], ['periodo', 'Período']], V.rankMode)}
     ${periodNav(mode)}
-    <div class="card"><div class="between"><b style="font-size:18px">Maiores Receitas por Categoria</b><b class="green">${brl(R.tot)}</b></div>${rank(R, '#34d399')}</div>
-    <div class="card"><div class="between"><b style="font-size:18px">Maiores Despesas por Categoria</b><b class="red">${brl(D.tot)}</b></div>${rank(D, '#f87171')}</div>`;
+    <div class="card"><div class="between"><b style="font-size:15px">Maiores Receitas por Categoria</b><b class="green">${brl(R.tot)}</b></div>${rank(R, '#34d399')}</div>
+    <div class="card"><div class="between"><b style="font-size:15px">Maiores Despesas por Categoria</b><b class="red">${brl(D.tot)}</b></div>${rank(D, '#f87171')}</div>`;
   }
   return `<h1>Gráficos</h1>${accChips()}${seg('chart', [['projecao', 'Projeção'], ['categoria', 'Categoria'], ['ranking', 'Ranking']], V.chart)}${body}`;
 }
@@ -423,8 +423,8 @@ function li(act, icon, title, sub, cls = '', extra = '') {
 }
 function scrAjustes() {
   const st = S.settings;
-  return `<div class="titlebar"><div><h1 style="margin-bottom:4px">Ajustes</h1><div class="muted" style="font-size:18px">${esc(S.profile.email || 'Seus dados ficam salvos neste aparelho')}</div></div>
-  <img src="icons/icon-192.png" alt="HANKX" style="width:62px;height:62px;border-radius:16px"></div>
+  return `<div class="titlebar"><div><h1 style="margin-bottom:4px">Ajustes</h1><div class="muted" style="font-size:14px">${esc(S.profile.email || 'Seus dados ficam salvos neste aparelho')}</div></div>
+  <img src="icons/icon-192.png" alt="HANKX" style="width:50px;height:50px;border-radius:13px"></div>
   <div class="sect">APARÊNCIA</div>
   <div class="card"><div class="muted" style="margin-bottom:10px">Tema</div>
     <div class="opts">${[['light', 'sun', 'Claro'], ['dark', 'moon', 'Escuro'], ['auto', 'phone', 'Auto']].map(([v, ic, l]) => `<button class="opt ${st.theme === v ? 'on' : ''}" data-act="theme" data-v="${v}"><span class="e accent" style="color:${st.theme === v ? 'var(--accent)' : 'var(--muted)'}">${I(ic)}</span><b>${l}</b></button>`).join('')}</div>
@@ -473,12 +473,12 @@ function scrContas() {
   const total = r2(S.accounts.filter(a => a.kind !== 'cartao').reduce((s, a) => s + accBalance(a), 0));
   return `${backHead('Contas')}
   <div class="seg"><button class="${V.accTab === 'conta' ? 'on' : ''}" data-act="set" data-k="accTab" data-v="conta">${I('bank')} Contas</button><button class="${V.accTab === 'cartao' ? 'on' : ''}" data-act="set" data-k="accTab" data-v="cartao">${I('card')} Cartões</button></div>
-  ${V.accTab === 'conta' ? `<div class="card between"><span class="muted" style="font-size:18px">Saldo total em caixa</span><b style="font-size:22px">${brl(total)}</b></div>` : ''}
+  ${V.accTab === 'conta' ? `<div class="card between"><span class="muted" style="font-size:15px">Saldo total em caixa</span><b style="font-size:18px">${brl(total)}</b></div>` : ''}
   ${contas.map(a => `<div class="card" style="${a.isDefault ? 'border-color:var(--accent)' : ''}"><div class="row" style="align-items:flex-start">
     <div class="banklogo" style="background:${a.color}">${esc(a.name.split(' ')[0].slice(0, 6))}</div>
-    <div style="flex:1;min-width:0"><div class="between"><b style="font-size:19px">${esc(a.name)}</b>${a.isDefault ? '<span class="badge done" style="padding:2px 10px;font-size:12px">Padrão</span>' : ''}</div>
+    <div style="flex:1;min-width:0"><div class="between"><b style="font-size:16px">${esc(a.name)}</b>${a.isDefault ? '<span class="badge done" style="padding:2px 10px;font-size:12px">Padrão</span>' : ''}</div>
     <div class="muted small">${esc(a.kind === 'cartao' ? `Cartão${a.dueDay ? ' · vence dia ' + a.dueDay : ''}${a.limit ? ' · limite ' + brl(+a.limit) : ''}` : a.type || 'Conta corrente')}</div>
-    <div class="between"><b style="font-size:19px;margin-top:6px">${brl(a.kind === 'cartao' ? -S.transactions.filter(t => t.accountId === a.id && !t.paid && t.type === 'despesa').reduce((s, t) => s + +t.amount, 0) : accBalance(a))}</b>
+    <div class="between"><b style="font-size:16px;margin-top:4px">${brl(a.kind === 'cartao' ? -S.transactions.filter(t => t.accountId === a.id && !t.paid && t.type === 'despesa').reduce((s, t) => s + +t.amount, 0) : accBalance(a))}</b>
     <span><button class="ib" data-act="acc-default" data-id="${a.id}" style="color:${a.isDefault ? 'var(--accent)' : 'var(--muted)'}">${I('star')}</button><button class="ib" data-act="acc-edit" data-id="${a.id}">${I('pen')}</button><button class="ib" data-act="acc-del" data-id="${a.id}">${I('trash')}</button></span></div></div></div></div>`).join('')}
   <button class="ad" data-act="acc-edit">+ Adicionar ${V.accTab === 'conta' ? 'conta' : 'cartão'}</button>
   ${V.accTab === 'cartao' ? '<p class="muted small" style="margin-top:12px">No cartão, o valor exibido é o total de despesas ainda não pagas lançadas nele.</p>' : ''}`;
@@ -499,15 +499,15 @@ function debtStats(d) {
 function scrDividas() {
   const total = r2(S.debts.reduce((s, d) => s + debtStats(d).rem, 0));
   return `${backHead('Dívidas', `<button class="ib" data-act="debt-edit">${I('plus')}</button>`)}
-  <div class="card between"><span class="muted" style="font-size:18px">Total em aberto</span><b class="red" style="font-size:22px">${brl(total)}</b></div>
+  <div class="card between"><span class="muted" style="font-size:15px">Total em aberto</span><b class="red" style="font-size:18px">${brl(total)}</b></div>
   ${S.debts.length ? '' : '<div class="empty">Nenhuma dívida cadastrada.<br><small>Toque em + para adicionar.</small></div>'}
   ${S.debts.map(d => {
     const s = debtStats(d), op = V.open['d' + d.id];
-    return `<div class="card"><div class="between" style="align-items:flex-start"><div><b style="font-size:20px">${esc(d.name)}</b>${d.desc ? `<div class="muted">${esc(d.desc)}</div>` : ''}</div>
+    return `<div class="card"><div class="between" style="align-items:flex-start"><div><b style="font-size:17px">${esc(d.name)}</b>${d.desc ? `<div class="muted">${esc(d.desc)}</div>` : ''}</div>
     <span style="white-space:nowrap;flex:none"><button class="ib" data-act="debt-edit" data-id="${d.id}">${I('pen')}</button><button class="ib" data-act="debt-del" data-id="${d.id}">${I('trash')}</button></span></div>
     <div class="stats3"><div><small>Total</small><b>${brl(s.tot)}</b></div><div><small>Pagas</small><b class="green">${s.paid}/${s.n}</b></div><div><small>Remanescente</small><b class="red">${brl(s.rem)}</b></div></div>
     <div class="between">${s.rem <= 0 ? '<span class="badge done">Quitada</span>' : s.late ? '<span class="badge late">Atrasada</span>' : '<span class="badge ok">Em dia</span>'}
-    <button class="muted" data-act="toggle-open" data-k="d${d.id}" style="font-size:17px">Parcelas ${I(op ? 'up' : 'down')}</button></div>
+    <button class="muted" data-act="toggle-open" data-k="d${d.id}" style="font-size:14px">Parcelas ${I(op ? 'up' : 'down')}</button></div>
     ${op ? `<div class="hr" style="margin:14px -18px"></div>${d.installments.map((i, k) => `<button class="inst ${i.paid ? 'paid' : ''}" data-act="inst" data-id="${d.id}" data-k="${k}">${I(i.paid ? 'check' : 'circle')}<span class="nm">Parcela ${i.n}/${s.n}</span><span class="dt ${!i.paid && i.date < T0 ? 'red' : ''}">${fmtD(i.date)}</span><span class="v">${brl(+i.amount)}</span></button>`).join('')}` : ''}</div>`;
   }).join('')}`;
 }
@@ -524,7 +524,7 @@ function loanCalc() {
 }
 function loanResult() {
   const r = loanCalc();
-  if (!r) return `<div class="card empty" style="font-size:19px;padding:40px 20px">Preencha os campos para ver a simulação da parcela.</div>`;
+  if (!r) return `<div class="card empty" style="font-size:15px;padding:28px 16px">Preencha os campos para ver a simulação da parcela.</div>`;
   return `<div class="card result">
   <div class="between"><span class="muted">Valor ${V.loanTab === 'prazo' ? 'do empréstimo' : 'presente (quanto vale hoje)'}</span><b>${brl(r.pv)}</b></div>
   <div class="between"><span class="muted">Parcela mensal</span><b class="accent" style="font-size:20px">${brl(r.pmt)}</b></div>
@@ -539,8 +539,8 @@ function loanResult() {
 function scrEmprestimos() {
   const L = V.loan;
   return `<button class="back" data-act="back">${I('left')} Ajustes</button>
-  <div class="row" style="margin:10px 0 6px">${I('calc', 'accent')}<h1 style="margin:0;font-size:30px">Empréstimos</h1></div>
-  <p class="muted" style="font-size:17px;margin-top:4px">Simule as parcelas e, ao concretizar, divida cada parcela em 40% no dia 15 e 60% no dia 30.</p>
+  <div class="row" style="margin:10px 0 6px">${I('calc', 'accent')}<h1 style="margin:0;font-size:26px">Empréstimos</h1></div>
+  <p class="muted" style="font-size:14px;margin-top:4px">Simule as parcelas e, ao concretizar, divida cada parcela em 40% no dia 15 e 60% no dia 30.</p>
   <div class="card">
   ${seg('loanTab', [['prazo', 'Prazo e juros'], ['parcela', 'Valor da parcela']], V.loanTab)}
   ${V.loanTab === 'prazo' ? `<label class="f"><span>Valor do empréstimo</span><div class="insuf"><input class="in" inputmode="decimal" data-loan="pv" value="${esc(L.pv)}" placeholder="10.000,00"><em>R$</em></div></label>`
@@ -700,7 +700,7 @@ function txForm(t) {
   <label class="f"><span>Categoria</span><select class="in" name="categoryId" id="fcat"></select></label>
   <label class="f"><span>Conta</span><select class="in" name="accountId">${accOpts}</select></label>
   <div class="box between"><b>${type === 'receita' ? 'Recebido' : 'Pago'}</b><label class="switch"><input type="checkbox" name="paid" ${t.paid ? 'checked' : ''}><i></i></label></div>
-  <div class="box"><div class="between"><b style="font-size:19px">Repetir</b><label class="switch"><input type="checkbox" name="rep" id="frep" ${rep ? 'checked' : ''}><i></i></label></div>
+  <div class="box"><div class="between"><b style="font-size:16px">Repetir</b><label class="switch"><input type="checkbox" name="rep" id="frep" ${rep ? 'checked' : ''}><i></i></label></div>
    <div id="repbox" style="${rep ? '' : 'display:none'}"><div class="muted" style="margin:14px 0 8px">Frequência</div>
    <div class="chips" data-grp="freq">${[['diaria', 'Diária'], ['semanal', 'Semanal'], ['quinzenal', 'Quinzenal'], ['mensal', 'Mensal'], ['anual', 'Anual']].map(([v, l]) => `<button type="button" data-v="${v}" class="${r.freq === v ? 'on' : ''}">${l}</button>`).join('')}</div>
    <div class="muted" style="margin:6px 0 8px">Término</div>
