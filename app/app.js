@@ -424,7 +424,7 @@ function li(act, icon, title, sub, cls = '', extra = '') {
 function scrAjustes() {
   const st = S.settings;
   return `<div class="titlebar"><div><h1 style="margin-bottom:4px">Ajustes</h1><div class="muted" style="font-size:14px">${esc(S.profile.email || 'Seus dados ficam salvos neste aparelho')}</div></div>
-  <img src="icons/icon-192.png" alt="HANKX" style="width:50px;height:50px;border-radius:13px"></div>
+  <img src="icons/logo.png" alt="HANKX" style="width:50px;height:50px;border-radius:13px"></div>
   <div class="sect">APARÊNCIA</div>
   <div class="card"><div class="muted" style="margin-bottom:10px">Tema</div>
     <div class="opts">${[['light', 'sun', 'Claro'], ['dark', 'moon', 'Escuro'], ['auto', 'phone', 'Auto']].map(([v, ic, l]) => `<button class="opt ${st.theme === v ? 'on' : ''}" data-act="theme" data-v="${v}"><span class="e accent" style="color:${st.theme === v ? 'var(--accent)' : 'var(--muted)'}">${I(ic)}</span><b>${l}</b></button>`).join('')}</div>
@@ -600,7 +600,7 @@ const isLogged = () => { try { return localStorage.getItem(AUTH_KEY) === AUTH_HA
 function showLogin(msg = '') {
   $('#tabbar').innerHTML = ''; $('#fab').classList.add('hide');
   $('#main').innerHTML = `<div style="min-height:80vh;display:flex;flex-direction:column;justify-content:center">
-  <div style="text-align:center;margin-bottom:28px"><img src="icons/icon-192.png" alt="HANKX" style="width:96px;height:96px;border-radius:24px"><h1 style="margin:16px 0 4px">HANKX Finanças</h1><p class="muted" style="margin:0">Entre para acessar</p></div>
+  <div style="text-align:center;margin-bottom:28px"><img src="icons/logo.png" alt="HANKX" style="width:96px;height:96px;border-radius:24px"><h1 style="margin:16px 0 4px">HANKX Finanças</h1><p class="muted" style="margin:0">Entre para acessar</p></div>
   <form id="loginf" class="card" autocomplete="on">
   <label class="f"><span>Login</span><input class="in" name="user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
   <label class="f"><span>Senha</span><input class="in" name="pass" type="password" inputmode="numeric" autocomplete="current-password" required></label>
