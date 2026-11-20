@@ -14,10 +14,17 @@ Funciona no navegador do celular e pode ser instalado na tela inicial como se fo
 No Android: abra no Chrome, toque nos três pontinhos e escolha **Instalar app** / **Adicionar à tela inicial**.
 
 ## Onde ficam os dados
-- Tudo fica salvo **somente no seu aparelho** (não vai para nenhum servidor).
-- Se apagar os dados do Safari ou trocar de celular, os lançamentos somem. Por isso use
-  **Ajustes → Fazer backup** com frequência e guarde o arquivo `.json` (no app Arquivos, iCloud, Drive…).
-- Para levar para outro aparelho: **Ajustes → Restaurar backup** e escolha o arquivo.
+- Os dados ficam no aparelho e, com **Ajustes → Salvar no GitHub** ligado, também num repositório **privado**
+  (`renatotnegrao-hankx/hankx-dados`, arquivo `financas.json`). Cada alteração é enviada em ~2 segundos.
+- Se apagar o app ou trocar de celular: entre de novo (login/senha), vá em **Ajustes → Salvar no GitHub**,
+  cole a mesma chave e tudo volta. O GitHub guarda o histórico de versões (dá para recuperar versões antigas).
+- Os dados só são apagados se você usar **Ajustes → Limpar dados** (e mesmo assim o histórico do GitHub mantém as versões anteriores).
+- A chave do GitHub fica só no aparelho; ela nunca é gravada no repositório.
+- Continua existindo o **Fazer backup** (.json) como cópia extra.
+
+## Cancelar lançamento
+Abra o lançamento → **Cancelar lançamento**. Ele continua aparecendo riscado como CANCELADO, mas sai dos saldos,
+totais, gráficos e relatórios. Para desfazer: **Reativar lançamento**. Em Transações há o filtro **Cancelados**.
 
 ## O que tem
 - **Início:** saldo acumulado, saldo da conta, saldo do período e do dia, receitas x despesas, vencimentos próximos.

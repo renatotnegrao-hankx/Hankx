@@ -279,3 +279,5 @@ textarea.in{min-height:90px;resize:vertical}
 .xclose{position:sticky;top:0;float:right;margin:-6px -6px 0 8px;width:34px;height:34px;border-radius:50%;background:var(--card2);color:var(--muted);display:flex;align-items:center;justify-content:center;z-index:2}
 .xclose .ico{width:18px;height:18px}
 #modal .sheet h3{padding-right:44px}
+.tx.canceled{opacity:.5;border-style:dashed}
+.tx.canceled .tname,.tx.canceled .tval{text-decoration:line-through}

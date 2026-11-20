@@ -1,6 +1,6 @@
 /* Cache offline do HANKX Finanças */
-const CACHE = 'hankx-fin-v6';
-const FILES = ['./', 'index.html', 'styles.css?v=5', 'app.js?v=5', 'manifest.json', 'icons/icon-192.png', 'icons/apple-touch-icon.png', 'icons/logo.png', 'vendor/xlsx.full.min.js'];
+const CACHE = 'hankx-fin-v7';
+const FILES = ['./', 'index.html', 'styles.css?v=6', 'app.js?v=6', 'manifest.json', 'icons/icon-192.png', 'icons/apple-touch-icon.png', 'icons/logo.png', 'vendor/xlsx.full.min.js'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

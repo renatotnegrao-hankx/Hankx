@@ -101,7 +101,7 @@ const DEF_CATS = [
 ];
 function defaults() {
   return {
-    v: 1,
+    v: 1, updatedAt: 0,
     profile: { name: '', birth: '', cep: '', city: '', uf: '', email: '', photo: '' },
     settings: { theme: 'dark', skin: 'padrao' },
     accounts: [{ id: 'acc_' + uid(), name: 'Minha conta', kind: 'conta', type: 'Conta corrente', initial: 0, color: '#ec7000', isDefault: true }],
@@ -117,7 +117,9 @@ function load() {
   for (const k of Object.keys(d)) if (S[k] === undefined) S[k] = d[k];
   if (!S.accounts.length) S.accounts = d.accounts;
 }
-function save() {
+function save(fromRemote = false) {
+  if (!fromRemote) S.updatedAt = Date.now();
+  if (!fromRemote) schedulePush();
   try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast('Não foi possível salvar (memória cheia?)'); }
 }
 
@@ -125,6 +127,7 @@ const cat = id => S.categories.find(c => c.id === id);
 const acc = id => S.accounts.find(a => a.id === id);
 const defAcc = () => (S.accounts.find(a => a.isDefault) || S.accounts[0]);
 const sign = t => t.type === 'receita' ? +t.amount : -t.amount;
+const LIVE = () => S.transactions.filter(t => !t.canceled);
 
 /* ======================= Estado de tela ======================= */
 const T0 = today();
@@ -143,22 +146,23 @@ function range(mode = V.mode) {
   return ['0000-01-01', '9999-12-31'];
 }
 const accOk = t => V.acc === 'all' || t.accountId === V.acc;
-const stOk = (t, st = V.status) => st === 'todos' || (st === 'pendentes' ? !t.paid : t.paid);
+const stOk = (t, st = V.status) => st === 'todos' || st === 'cancelados' || (st === 'pendentes' ? !t.paid : t.paid);
 function txIn(a, b, o = {}) {
   const st = o.status ?? V.status, ty = o.type ?? 'todos';
-  return S.transactions.filter(t => accOk(t) && t.date >= a && t.date <= b && stOk(t, st) && (ty === 'todos' || t.type === ty));
+  if (st === 'cancelados') return S.transactions.filter(t => t.canceled && accOk(t) && t.date >= a && t.date <= b && (ty === 'todos' || t.type === ty));
+  return S.transactions.filter(t => (o.withCanceled || !t.canceled) && accOk(t) && t.date >= a && t.date <= b && (t.canceled || stOk(t, st)) && (ty === 'todos' || t.type === ty));
 }
 function initialSum() {
   return S.accounts.filter(a => V.acc === 'all' ? a.kind !== 'cartao' : a.id === V.acc).reduce((s, a) => s + (+a.initial || 0), 0);
 }
 function balanceAt(date, paidOnly = false) {
   let s = initialSum();
-  for (const t of S.transactions) if (accOk(t) && t.date <= date && (!paidOnly || t.paid)) s += sign(t);
+  for (const t of LIVE()) if (accOk(t) && t.date <= date && (!paidOnly || t.paid)) s += sign(t);
   return r2(s);
 }
 function accBalance(a) {
   let s = +a.initial || 0;
-  for (const t of S.transactions) if (t.accountId === a.id && t.paid) s += sign(t);
+  for (const t of LIVE()) if (t.accountId === a.id && t.paid) s += sign(t);
   return r2(s);
 }
 const sumType = (list, ty) => r2(list.filter(t => t.type === ty).reduce((s, t) => s + +t.amount, 0));
@@ -192,13 +196,13 @@ function txRow(t, o = {}) {
   const name = t.desc || c?.name || (t.type === 'receita' ? 'Receita' : 'Despesa');
   const parc = t.total > 1 ? ` <small class="muted">${t.idx}/${t.total}</small>` : '';
   const rep = t.lote ? ' ' + I('repeat') : '';
-  const late = !t.paid && t.date < T0 && t.type === 'despesa';
-  return `<div class="tx ${t.type} ${t.paid ? 'paid' : ''}" data-act="edit-tx" data-id="${t.id}">
+  const late = !t.paid && !t.canceled && t.date < T0 && t.type === 'despesa';
+  return `<div class="tx ${t.type} ${t.paid ? 'paid' : ''} ${t.canceled ? 'canceled' : ''}" data-act="edit-tx" data-id="${t.id}">
     ${o.when ? `<div class="when">${fmtDS(t.date)}${late ? ' · <span class="red">atrasada</span>' : ''}</div>` : ''}
     <div class="txm"><div class="ticon">${c ? c.icon : I(t.type === 'receita' ? 'cash' : 'card')}</div>
-    <div class="tinfo"><div class="tname">${esc(name)}${parc}${rep}</div><div class="tsub">${esc(a?.name || 'Sem conta')}${c && t.desc && t.desc !== c.name ? ' · ' + esc(c.name) : ''}${o.date ? ' · ' + fmtD(t.date) : ''}</div></div>
+    <div class="tinfo"><div class="tname">${esc(name)}${parc}${rep}</div><div class="tsub">${t.canceled ? '<b class="red">CANCELADO</b> · ' : ''}${esc(a?.name || 'Sem conta')}${c && t.desc && t.desc !== c.name ? ' · ' + esc(c.name) : ''}${o.date ? ' · ' + fmtD(t.date) : ''}</div></div>
     <div class="tval">${o.signed ? (t.type === 'despesa' ? '-' : '+') : ''}${brl(t.amount)}</div>
-    <button class="chk" data-act="toggle-paid" data-id="${t.id}" aria-label="Marcar como pago">${I(t.paid ? 'check' : 'circle')}</button>
+    ${t.canceled ? `<button class="chk" data-act="uncancel-tx" data-id="${t.id}" aria-label="Reativar" title="Reativar">${I('repeat')}</button>` : `<button class="chk" data-act="toggle-paid" data-id="${t.id}" aria-label="Marcar como pago">${I(t.paid ? 'check' : 'circle')}</button>`}
     <button class="ib" data-act="del-tx" data-id="${t.id}" aria-label="Excluir">${I('trash')}</button></div></div>`;
 }
 function txGrouped(list, opts = {}) {
@@ -225,7 +229,7 @@ function scrInicio() {
   const pct = rec > 0 ? Math.max(0, Math.min(1, per / rec)) : 0;
   const C = 2 * Math.PI * 50;
   const p = S.profile, nm = (p.name || 'você').toUpperCase();
-  const soon = S.transactions.filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= addDays(T0, 7) && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
+  const soon = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= addDays(T0, 7) && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
   const shown = list.filter(t => V.homeType === 'todos' || t.type === V.homeType);
   return `
   <div class="hello"><svg class="deco" viewBox="0 0 400 100" preserveAspectRatio="none"><path d="M0 80 Q120 70 200 45 T400 5" stroke="var(--green)" fill="none" stroke-width="1.5"/>${[150, 170, 190, 210, 230, 250, 270].map((x, i) => `<rect x="${x}" y="${30 + (i * 13) % 25}" width="7" height="${20 + (i * 17) % 22}" fill="var(--green)" opacity=".5"/>`).join('')}</svg>
@@ -248,6 +252,7 @@ function scrInicio() {
     <div style="text-align:right"><div class="lbl">Saldo do dia</div><b class="${dia >= 0 ? 'green' : 'red'}" style="font-size:15px">${brl(dia)}</b></div></div>
     <div class="rd2"><div class="rdbox r"><span class="green">Receitas</span><b class="green">${brl(rec)}</b></div><div class="rdbox d"><span class="red">Despesas</span><b class="red">${brl(desp)}</b></div></div>
   </div>
+  ${!syncOn() ? `<div class="alert" data-act="go" data-sub="sync" style="cursor:pointer"><div class="h">${I('info')} Seus dados estão só neste aparelho</div><span class="small">Toque aqui para ativar o salvamento no GitHub e não perder nada se apagar o app.</span></div>` : SYS.err ? `<div class="alert" data-act="go" data-sub="sync"><div class="h">${I('info')} GitHub</div><span class="small">${esc(SYS.err)}</span></div>` : ''}
   ${soon.length ? `<div class="alert"><div class="h">${I('bell')} Vencimentos próximos</div>${soon.slice(0, 6).map(t => `<div class="it" data-act="edit-tx" data-id="${t.id}"><span>${esc(t.desc || cat(t.categoryId)?.name || '')} <small class="${t.date < T0 ? 'red' : 'muted'}">&nbsp;${t.date < T0 ? 'atrasada ' : ''}${fmtD(t.date).slice(0, 5)}</small></span><b class="red">${brl(t.amount)}</b></div>`).join('')}${soon.length > 6 ? `<small class="muted">+ ${soon.length - 6} outros</small>` : ''}</div>` : ''}
   <div class="between"><h2>Próximos</h2><button class="ib" data-act="cycle-home">${I('filter')}${V.homeType !== 'todos' ? `<small class="accent">${V.homeType}</small>` : ''}</button></div>
   ${shown.length ? sortTx(shown, 'data').map(t => txRow(t, { when: true, signed: true })).join('') : '<div class="empty">Nenhum lançamento neste período.</div>'}`;
@@ -260,7 +265,7 @@ function scrCalendario() {
   const month = txIn(`${V.ym}-01`, `${V.ym}-${pad(n)}`, { type: ty });
   const byDay = {};
   for (const t of month) (byDay[t.date] ||= []).push(t);
-  let bal = (() => { let s = initialSum(); for (const t of S.transactions) if (accOk(t) && t.date < `${V.ym}-01` && stOk(t) && (ty === 'todos' || t.type === ty)) s += sign(t); return s; })();
+  let bal = (() => { let s = initialSum(); for (const t of LIVE()) if (accOk(t) && t.date < `${V.ym}-01` && stOk(t) && (ty === 'todos' || t.type === ty)) s += sign(t); return s; })();
   let cells = '';
   for (let i = 0; i < first; i++) cells += '<div class="d"></div>';
   for (let d = 1; d <= n; d++) {
@@ -293,8 +298,9 @@ function scrCalendario() {
 
 function scrTransacoes() {
   const [a, b] = range();
-  let list = txIn(a, b);
-  const rec = sumType(list, 'receita'), desp = sumType(list, 'despesa');
+  const tot = txIn(a, b);
+  const rec = sumType(tot, 'receita'), desp = sumType(tot, 'despesa');
+  let list = txIn(a, b, { withCanceled: true });
   if (V.type !== 'todos') list = list.filter(t => t.type === V.type);
   if (V.q) { const q = V.q.toLowerCase(); list = list.filter(t => [t.desc, cat(t.categoryId)?.name, t.note, acc(t.accountId)?.name, t.lote].join(' ').toLowerCase().includes(q)); }
   return `
@@ -303,7 +309,7 @@ function scrTransacoes() {
   ${seg('mode', [['mensal', 'Mensal'], ['anual', 'Anual'], ['todos', 'Todos'], ['periodo', 'Período']], V.mode)}
   ${periodNav()}
   ${accChips()}
-  ${pills('status', [['todos', 'Todos'], ['pendentes', 'Pendentes'], ['realizados', 'Realizados']], V.status, 'plain')}
+  ${pills('status', [['todos', 'Todos'], ['pendentes', 'Pendentes'], ['realizados', 'Realizados'], ['cancelados', 'Cancelados']], V.status, 'plain')}
   ${three(rec, desp, r2(rec - desp))}
   ${seg('type', [['todos', 'Todos'], ['receita', 'Receita', 'rec'], ['despesa', 'Despesa', 'desp']], V.type)}
   <div class="between" style="margin:14px 0 4px"><span class="muted">${list.length} transações</span>${sortBar()}</div>
@@ -442,7 +448,7 @@ function scrAjustes() {
   ${li('rep-excel', 'sheet', 'Exportar para Excel', 'Receitas e despesas por categoria e mês, com saldo do mês e acumulado (.xlsx)', 'c-green')}
   ${li('rep-csv', 'chart', 'Exportar Fluxo de Caixa Diário', 'Lista diária de entradas, saídas e saldo acumulado (.csv)', 'c-blue')}</div>
   <div class="sect">DADOS</div>
-  <div class="list">${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
+  <div class="list"><button class="li" data-act="go" data-sub="sync">${I('ul')}<span class="tx2"><b>Salvar no GitHub</b><small data-synclabel>${esc(syncLabel())}</small></span>${I('right')}</button>${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
   <div class="sect">CONTA</div>
   <div class="list">${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}</div>
   <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · os dados ficam somente neste aparelho.<br>Faça backup com frequência.</p>`;
@@ -478,7 +484,7 @@ function scrContas() {
     <div class="banklogo" style="background:${a.color}">${esc(a.name.split(' ')[0].slice(0, 6))}</div>
     <div style="flex:1;min-width:0"><div class="between"><b style="font-size:16px">${esc(a.name)}</b>${a.isDefault ? '<span class="badge done" style="padding:2px 10px;font-size:12px">Padrão</span>' : ''}</div>
     <div class="muted small">${esc(a.kind === 'cartao' ? `Cartão${a.dueDay ? ' · vence dia ' + a.dueDay : ''}${a.limit ? ' · limite ' + brl(+a.limit) : ''}` : a.type || 'Conta corrente')}</div>
-    <div class="between"><b style="font-size:16px;margin-top:4px">${brl(a.kind === 'cartao' ? -S.transactions.filter(t => t.accountId === a.id && !t.paid && t.type === 'despesa').reduce((s, t) => s + +t.amount, 0) : accBalance(a))}</b>
+    <div class="between"><b style="font-size:16px;margin-top:4px">${brl(a.kind === 'cartao' ? -LIVE().filter(t => t.accountId === a.id && !t.paid && t.type === 'despesa').reduce((s, t) => s + +t.amount, 0) : accBalance(a))}</b>
     <span><button class="ib" data-act="acc-default" data-id="${a.id}" style="color:${a.isDefault ? 'var(--accent)' : 'var(--muted)'}">${I('star')}</button><button class="ib" data-act="acc-edit" data-id="${a.id}">${I('pen')}</button><button class="ib" data-act="acc-del" data-id="${a.id}">${I('trash')}</button></span></div></div></div></div>`).join('')}
   <button class="ad" data-act="acc-edit">+ Adicionar ${V.accTab === 'conta' ? 'conta' : 'cartão'}</button>
   ${V.accTab === 'cartao' ? '<p class="muted small" style="margin-top:12px">No cartão, o valor exibido é o total de despesas ainda não pagas lançadas nele.</p>' : ''}`;
@@ -552,8 +558,8 @@ function scrEmprestimos() {
 }
 function scrOrientacao() {
   const horizon = `${V.ym}-${pad(dim(+V.ym.slice(0, 4), +V.ym.slice(5) - 1))}`;
-  const pend = S.transactions.filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= horizon);
-  const income = S.transactions.filter(t => accOk(t) && !t.paid && t.type === 'receita' && t.date <= horizon).reduce((s, t) => s + +t.amount, 0);
+  const pend = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= horizon);
+  const income = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'receita' && t.date <= horizon).reduce((s, t) => s + +t.amount, 0);
   const cash = balanceAt('9999-12-31', true);
   const ESS = /água|agua|energia|luz|gás|gas|aluguel|condom|internet|telefone|celular|saúde|saude|remédio|mercado|escola/i;
   const JUROS = /cartão|cartao|cheque|consignado|financiamento|empréstimo|emprestimo|imposto|iptu|ipva|multa|dívida|divida|acordo/i;
@@ -614,10 +620,129 @@ function showLogin(msg = '') {
     try { h = await sha256('hankx-fin|' + f.user.value.trim().toLowerCase() + '|' + f.pass.value.trim()); } catch (err) { return showLogin('Abra pelo endereço https://www.hankx.com.br/app/'); }
     if (h !== AUTH_HASH) return showLogin('Login ou senha incorretos');
     try { (f.keep.checked ? localStorage : sessionStorage).setItem(AUTH_KEY, AUTH_HASH); } catch (err) {}
-    render(false);
+    render(false); syncNow();
   });
 }
 function logout() { try { localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); } catch (e) {} V.tab = 'inicio'; V.sub = null; showLogin(); }
+
+
+/* ======================= Sincronização com GitHub ======================= */
+const SYNC_KEY = 'hankx-fin-sync';
+let SY = {};
+try { SY = JSON.parse(localStorage.getItem(SYNC_KEY) || '{}'); } catch (e) { SY = {}; }
+SY.repo ||= 'renatotnegrao-hankx/hankx-dados'; SY.path ||= 'financas.json';
+const SYS = { busy: false, ready: false, err: '', timer: null };
+const saveSY = () => { try { localStorage.setItem(SYNC_KEY, JSON.stringify({ repo: SY.repo, path: SY.path, token: SY.token, sha: SY.sha, lastSync: SY.lastSync })); } catch (e) {} };
+const syncOn = () => !!SY.token;
+function b64e(str) { const by = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < by.length; i += 0x8000) bin += String.fromCharCode(...by.subarray(i, i + 0x8000)); return btoa(bin); }
+const b64d = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, '')), c => c.charCodeAt(0)));
+function ghFetch(method, body, raw) {
+  return fetch(`https://api.github.com/repos/${SY.repo}/contents/${encodeURI(SY.path)}${method === 'GET' ? `?t=${Date.now()}` : ''}`, {
+    method, cache: 'no-store',
+    headers: { Authorization: `Bearer ${SY.token}`, Accept: raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined
+  });
+}
+function ghError(r) {
+  if (r.status === 401) return 'Chave do GitHub inválida ou expirada';
+  if (r.status === 403) return 'A chave não tem permissão de escrita (Contents: Read and write)';
+  if (r.status === 404) return 'Repositório não encontrado (confira o nome e se a chave dá acesso a ele)';
+  return 'Erro do GitHub (' + r.status + ')';
+}
+async function ghPull() {
+  const r = await ghFetch('GET');
+  if (r.status === 404) {
+    const rr = await fetch(`https://api.github.com/repos/${SY.repo}`, { headers: { Authorization: `Bearer ${SY.token}` }, cache: 'no-store' });
+    if (rr.ok) return { missing: true };
+    throw new Error(ghError(rr));
+  }
+  if (!r.ok) throw new Error(ghError(r));
+  const j = await r.json();
+  let text;
+  if (j.content && j.encoding === 'base64') text = b64d(j.content);
+  else { const r2 = await ghFetch('GET', null, true); if (!r2.ok) throw new Error(ghError(r2)); text = await r2.text(); }
+  return { sha: j.sha, data: JSON.parse(text) };
+}
+async function ghPush(retry = true) {
+  const body = { message: `Dados atualizados em ${new Date().toLocaleString('pt-BR')}`, content: b64e(JSON.stringify(S)) };
+  if (SY.sha) body.sha = SY.sha;
+  const r = await ghFetch('PUT', body);
+  if ((r.status === 409 || r.status === 422) && retry) {
+    const p = await ghPull();
+    SY.sha = p.sha;
+    if (p.data && (p.data.updatedAt || 0) > (S.updatedAt || 0)) { adoptRemote(p.data); return; }
+    return ghPush(false);
+  }
+  if (!r.ok) throw new Error(ghError(r));
+  const j = await r.json(); SY.sha = j.content.sha; SY.lastSync = Date.now(); saveSY();
+}
+function adoptRemote(data) {
+  const keep = { ...S.settings };
+  S = data; for (const k of Object.keys(defaults())) if (S[k] === undefined) S[k] = defaults()[k];
+  if (!S.settings) S.settings = keep;
+  save(true); applyTheme(); SY.lastSync = Date.now(); saveSY();
+}
+async function syncNow(opts = {}) {
+  if (!syncOn() || SYS.busy) return;
+  SYS.busy = true; SYS.err = ''; refreshSyncUI();
+  try {
+    const p = await ghPull();
+    if (p.missing) { SY.sha = undefined; await ghPush(false); }
+    else {
+      SY.sha = p.sha;
+      const rt = p.data.updatedAt || 0, lt = S.updatedAt || 0;
+      if (opts.firstConnect && rt && lt && rt !== lt) {
+        SYS.busy = false;
+        const n = (p.data.transactions || []).length, nl = S.transactions.length;
+        const ch = await ask('Já existem dados no GitHub', `No GitHub: ${n} lançamentos (salvo em ${new Date(rt).toLocaleString('pt-BR')}). Neste aparelho: ${nl} lançamentos. Qual você quer manter?`, [['remote', 'Usar os dados do GitHub', 'primary'], ['local', 'Substituir pelos deste aparelho', 'danger']]);
+        SYS.busy = true;
+        if (ch === 'remote') adoptRemote(p.data); else if (ch === 'local') await ghPush(false); else { SYS.busy = false; refreshSyncUI(); return; }
+      } else if (rt > lt) adoptRemote(p.data);
+      else if (lt > rt) await ghPush();
+      else { SY.lastSync = Date.now(); saveSY(); }
+    }
+    SYS.ready = true;
+  } catch (e) { SYS.err = e.message || 'Sem conexão com o GitHub'; }
+  SYS.busy = false; refreshSyncUI(); if (isLogged()) render();
+}
+function schedulePush() {
+  if (!syncOn() || !SYS.ready) return;
+  clearTimeout(SYS.timer);
+  SYS.timer = setTimeout(async () => {
+    if (SYS.busy) return schedulePush();
+    SYS.busy = true; SYS.err = ''; refreshSyncUI();
+    try { await ghPush(); } catch (e) { SYS.err = e.message || 'Sem conexão — tentaremos de novo'; setTimeout(schedulePush, 30000); }
+    SYS.busy = false; refreshSyncUI();
+  }, 2000);
+}
+function syncLabel() {
+  if (!syncOn()) return 'Desligado — dados só neste aparelho';
+  if (SYS.busy) return 'Sincronizando…';
+  if (SYS.err) return '⚠️ ' + SYS.err;
+  return SY.lastSync ? 'Salvo no GitHub · ' + new Date(SY.lastSync).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'Conectado';
+}
+function refreshSyncUI() { $$('[data-synclabel]').forEach(el => el.textContent = syncLabel()); }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && isLogged()) syncNow(); });
+window.addEventListener('online', () => isLogged() && syncNow());
+function scrSync() {
+  return `${backHead('Salvar no GitHub')}
+  <div class="card"><div class="between"><b>Situação</b><span class="small ${SYS.err ? 'red' : syncOn() ? 'green' : 'muted'}" data-synclabel>${esc(syncLabel())}</span></div></div>
+  <p class="muted small">Com isso ligado, cada alteração é enviada para um repositório <b>privado</b> seu no GitHub. Se você apagar o app ou trocar de celular, é só entrar de novo e informar a mesma chave que tudo volta. O GitHub também guarda o histórico de todas as versões.</p>
+  <form id="syf" class="card" autocomplete="on">
+  <input type="text" name="username" value="github-hankx-financas" autocomplete="username" hidden>
+  <label class="f"><span>Repositório privado (usuário/nome)</span><input class="in" name="repo" value="${esc(SY.repo)}" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+  <label class="f"><span>Chave de acesso do GitHub (token)</span><input class="in" name="token" type="password" value="${esc(SY.token || '')}" placeholder="github_pat_..." autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+  <button class="btn primary">${syncOn() ? 'Salvar e sincronizar agora' : 'Conectar'}</button>
+  ${syncOn() ? '<button type="button" class="btn" data-act="sync-off" style="margin-top:10px">Desconectar deste aparelho</button>' : ''}
+  </form>
+  <div class="card small"><b>Como criar (uma vez só)</b>
+  <ol class="muted" style="padding-left:18px;margin:8px 0 0;line-height:1.5">
+  <li>No GitHub, crie um repositório <b>privado</b> chamado <b>hankx-dados</b> (<a class="accent" href="https://github.com/new" target="_blank">github.com/new</a> → marque <i>Private</i> → <i>Create repository</i>).</li>
+  <li>Abra <a class="accent" href="https://github.com/settings/personal-access-tokens/new" target="_blank">criar chave no GitHub</a> (Settings → Developer settings → Fine-grained tokens → Generate new token).</li>
+  <li>Dê um nome, escolha a validade (pode ser "No expiration"), em <i>Repository access</i> escolha <i>Only select repositories</i> → <b>hankx-dados</b>.</li>
+  <li>Em <i>Permissions</i> → <i>Repository permissions</i> → <b>Contents: Read and write</b>. Gere e copie a chave.</li>
+  <li>Cole a chave aqui e toque em Conectar. O iPhone oferece guardar a chave nas Senhas: aceite, assim depois é só tocar para preencher.</li></ol></div>`;
+}
 
 /* ======================= Render ======================= */
 function applyTheme() {
@@ -631,7 +756,7 @@ function render(keepScroll = true) {
   if (!isLogged()) return showLogin();
   const y = window.scrollY;
   let h;
-  if (V.tab === 'ajustes' && V.sub) h = ({ perfil: scrPerfil, contas: scrContas, categorias: scrCategorias, dividas: scrDividas, emprestimos: scrEmprestimos, orientacao: scrOrientacao })[V.sub]();
+  if (V.tab === 'ajustes' && V.sub) h = ({ perfil: scrPerfil, contas: scrContas, categorias: scrCategorias, dividas: scrDividas, emprestimos: scrEmprestimos, orientacao: scrOrientacao, sync: scrSync })[V.sub]();
   else h = ({ inicio: scrInicio, calendario: scrCalendario, transacoes: scrTransacoes, graficos: scrGraficos, ajustes: scrAjustes })[V.tab]();
   $('#main').innerHTML = h;
   $('#tabbar').innerHTML = TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
@@ -711,7 +836,8 @@ function txForm(t) {
    </div></div>
   ${t.lote ? `<div class="code">Código do lote: <b>${esc(t.lote)}</b>${t.total > 1 ? ` · parcela ${t.idx}/${t.total}` : ''}</div>` : ''}
   <label class="f"><span>Nota</span><textarea class="in" name="note" placeholder="Adicionar observação...">${esc(t.note || '')}</textarea></label>
-  ${isNew ? '' : `<button type="button" class="btn danger" data-act="del-tx" data-id="${t.id}" style="margin-bottom:12px">${I('trash')} Excluir transação</button>`}
+  ${isNew ? '' : `<button type="button" class="btn" data-act="${t.canceled ? 'uncancel-tx' : 'cancel-tx'}" data-id="${t.id}" style="margin-bottom:10px">${I(t.canceled ? 'repeat' : 'x')} ${t.canceled ? 'Reativar lançamento' : 'Cancelar lançamento'}</button>
+  <button type="button" class="btn danger" data-act="del-tx" data-id="${t.id}" style="margin-bottom:12px">${I('trash')} Excluir transação</button>`}
   <button class="btn primary" type="submit">${isNew ? 'Adicionar' : 'Salvar alterações'}</button>
   </form>`);
   const f = $('#txf'); f._r = { ...r }; f._orig = isNew ? null : t;
@@ -759,6 +885,16 @@ function txForm(t) {
     }
     save(); closeModal(); render(); toast('Salvo');
   });
+}
+async function cancelTx(id, on) {
+  const t = S.transactions.find(x => x.id === id); if (!t) return;
+  const nm = esc(t.desc || cat(t.categoryId)?.name || '') + ' · ' + brl(t.amount);
+  const msg = on ? 'O lançamento continua na lista como CANCELADO, mas não entra mais nos saldos, totais e gráficos.' : 'O lançamento volta a contar nos saldos e totais.';
+  const opts = t.lote ? [['one', on ? 'Só este' : 'Reativar só este', on ? 'danger' : 'primary'], ['next', on ? 'Este e os próximos' : 'Este e os próximos', on ? 'danger' : 'primary']] : [['one', on ? 'Cancelar lançamento' : 'Reativar', on ? 'danger' : 'primary']];
+  const scope = await ask((on ? 'Cancelar ' : 'Reativar ') + nm + '?', msg, opts);
+  if (!scope) return;
+  for (const x of S.transactions) if (x.id === id || (scope === 'next' && t.lote && x.lote === t.lote && x.date >= t.date)) { if (on) { x.canceled = true; x.paid = false; } else delete x.canceled; syncDebtFromTx(x); }
+  save(); closeModal(); render(); toast(on ? 'Lançamento cancelado' : 'Lançamento reativado');
 }
 async function delTx(id) {
   const t = S.transactions.find(x => x.id === id); if (!t) return;
@@ -904,7 +1040,7 @@ function cashMatrix(Y) {
   const rows = [], mon = [...Array(12).keys()];
   const ends = mon.map(m => `${Y}-${pad(m + 1)}-${pad(dim(Y, m))}`);
   const starts = mon.map(m => `${Y}-${pad(m + 1)}-01`);
-  const txY = S.transactions.filter(t => accOk(t) && t.date.startsWith(String(Y)));
+  const txY = LIVE().filter(t => accOk(t) && t.date.startsWith(String(Y)));
   const byCat = ty => {
     const ids = [...new Set(txY.filter(t => t.type === ty).map(t => t.categoryId || ''))];
     return ids.map(id => ({ label: cat(id)?.name || 'Sem categoria', vals: mon.map(m => r2(txY.filter(t => t.type === ty && (t.categoryId || '') === id && +t.date.slice(5, 7) === m + 1).reduce((s, t) => s + +t.amount, 0))) })).sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
@@ -968,7 +1104,7 @@ async function repExcel() {
   for (const r of rows) a1.push(r.vals ? [r.label, ...r.vals, r.total] : [r.label]);
   const tx = sortTx(S.transactions.filter(t => accOk(t) && t.date.startsWith(String(Y))), 'data');
   const a2 = [['Data', 'Descrição', 'Categoria', 'Conta', 'Tipo', 'Valor', 'Situação', 'Lote', 'Nota']];
-  for (const t of tx) a2.push([fmtD(t.date), t.desc, cat(t.categoryId)?.name || '', acc(t.accountId)?.name || '', t.type === 'receita' ? 'Receita' : 'Despesa', t.type === 'receita' ? +t.amount : -t.amount, t.paid ? 'Realizado' : 'Pendente', t.lote || '', t.note || '']);
+  for (const t of tx) a2.push([fmtD(t.date), t.desc, cat(t.categoryId)?.name || '', acc(t.accountId)?.name || '', t.type === 'receita' ? 'Receita' : 'Despesa', t.type === 'receita' ? +t.amount : -t.amount, t.canceled ? 'Cancelado' : t.paid ? 'Realizado' : 'Pendente', t.lote || '', t.note || '']);
   const wb = X.utils.book_new();
   const w1 = X.utils.aoa_to_sheet(a1); w1['!cols'] = [{ wch: 24 }, ...Array(13).fill({ wch: 12 })];
   const w2 = X.utils.aoa_to_sheet(a2); w2['!cols'] = [{ wch: 10 }, { wch: 28 }, { wch: 18 }, { wch: 16 }, { wch: 9 }, { wch: 12 }, { wch: 10 }, { wch: 14 }, { wch: 24 }];
@@ -982,7 +1118,7 @@ async function repCsv() {
   const lines = ['Data;Entradas;Saídas;Saldo do dia;Saldo acumulado'];
   let bal = balanceAt(`${Y - 1}-12-31`);
   for (let d = `${Y}-01-01`; d <= `${Y}-12-31`; d = addDays(d, 1)) {
-    const L = S.transactions.filter(t => accOk(t) && t.date === d);
+    const L = LIVE().filter(t => accOk(t) && t.date === d);
     const inc = sumType(L, 'receita'), out = sumType(L, 'despesa'); bal = r2(bal + inc - out);
     if (L.length) lines.push([fmtD(d), num2(inc), num2(out), num2(inc - out), num2(bal)].join(';'));
   }
@@ -1031,6 +1167,8 @@ document.addEventListener('click', async e => {
     case 'edit-tx': { const t = S.transactions.find(x => x.id === id); if (t) txForm(t); break; }
     case 'toggle-paid': { const t = S.transactions.find(x => x.id === id); if (t) { t.paid = !t.paid; syncDebtFromTx(t); save(); render(); toast(t.paid ? (t.type === 'receita' ? 'Marcado como recebido' : 'Marcado como pago') : 'Marcado como pendente'); } break; }
     case 'del-tx': delTx(id); break;
+    case 'cancel-tx': cancelTx(id, true); break;
+    case 'uncancel-tx': cancelTx(id, false); break;
     case 'cycle-home': V.homeType = { todos: 'despesa', despesa: 'receita', receita: 'todos' }[V.homeType]; render(); break;
     case 'search': V.searching = !V.searching; if (!V.searching) V.q = ''; V.focusQ = true; render(); break;
     case 'calday': V.calDay = V.calDay === el.dataset.d ? null : el.dataset.d; render(); break;
@@ -1067,6 +1205,7 @@ document.addEventListener('click', async e => {
       const t = S.transactions.find(x => x.id === i.txId); if (t) t.paid = i.paid; save(); render(); break;
     }
     case 'loan-go': loanGo(); break;
+    case 'sync-off': { const r = await ask('Desconectar o GitHub deste aparelho?', 'Seus dados continuam guardados no GitHub. Este aparelho só para de enviar alterações.', [['y', 'Desconectar', 'danger']]); if (r) { SY.token = ''; SY.sha = undefined; SY.lastSync = undefined; SYS.ready = false; saveSY(); render(); } break; }
     case 'logout': { const r = await ask('Sair do app?', 'Seus lançamentos continuam salvos neste aparelho.', [['y', 'Sair', 'danger']]); if (r) logout(); break; }
     case 'rep-caixa': repCaixa(); break;
     case 'rep-pdf': repPdf(); break;
@@ -1080,16 +1219,28 @@ document.addEventListener('click', async e => {
           const j = JSON.parse(await inp.files[0].text());
           if (!j || !Array.isArray(j.transactions) || !Array.isArray(j.accounts)) throw 0;
           const r = await ask('Restaurar backup?', `${j.transactions.length} lançamentos e ${j.accounts.length} contas. Os dados atuais serão substituídos.`, [['y', 'Restaurar', 'primary']]);
-          if (!r) return; localStorage.setItem(KEY, JSON.stringify(j)); load(); applyTheme(); V.acc = 'all'; render(false); toast('Backup restaurado');
+          if (!r) return; localStorage.setItem(KEY, JSON.stringify(j)); load(); save(); applyTheme(); V.acc = 'all'; render(false); toast('Backup restaurado');
         } catch (err) { toast('Arquivo de backup inválido'); }
       };
       inp.click(); break;
     }
     case 'clear': {
-      const r = await ask('Limpar dados?', 'Apaga todos os lançamentos e dívidas e zera o saldo inicial das contas. Contas, categorias, perfil e tema são mantidos. Faça um backup antes.', [['y', 'Apagar tudo', 'danger']]);
+      const r = await ask('Limpar dados?', 'Apaga todos os lançamentos e dívidas e zera o saldo inicial das contas' + (syncOn() ? ', também no GitHub' : '') + '. Contas, categorias, perfil e tema são mantidos. Faça um backup antes.', [['y', 'Apagar tudo', 'danger']]);
       if (!r) return; S.transactions = []; S.debts = []; S.accounts.forEach(a => a.initial = 0); save(); render(); toast('Dados apagados'); break;
     }
   }
+});
+document.addEventListener('submit', async e => {
+  if (e.target.id !== 'syf') return;
+  e.preventDefault(); const f = e.target;
+  const repo = f.repo.value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+  const token = f.token.value.trim();
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return toast('Repositório no formato usuário/nome');
+  if (!token) return toast('Cole a chave do GitHub');
+  const first = SY.token !== token || SY.repo !== repo || !SY.lastSync;
+  SY.repo = repo; SY.token = token; if (first) { SY.sha = undefined; SY.lastSync = undefined; } saveSY();
+  await syncNow({ firstConnect: first });
+  toast(SYS.err ? SYS.err : 'Conectado ao GitHub');
 });
 document.addEventListener('change', async e => {
   const el = e.target;
@@ -1106,5 +1257,5 @@ document.addEventListener('input', e => {
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (S.settings.theme === 'auto') { applyTheme(); render(); } });
 
 /* ======================= Início ======================= */
-load(); applyTheme(); render(false);
+load(); applyTheme(); render(false); if (isLogged()) syncNow();
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
