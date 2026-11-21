@@ -437,7 +437,7 @@ function scrGraficos() {
 }
 
 /* ---------- Ajustes ---------- */
-const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['windows', '🪟', 'Windows', 'Estilo Windows'], ['dos', '🖥️', 'MS-DOS', 'Verde no preto']];
+const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['windows', '🪟', 'Windows', 'Estilo Windows'], ['dos', '🖥️', 'MS-DOS', 'Verde no preto'], ['moderno', '💜', 'Moderno', 'Estilo Mobills']];
 function li(act, icon, title, sub, cls = '', extra = '') {
   return `<button class="li ${cls}" data-act="${act}" ${extra}>${I(icon)}<span class="tx2"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${cls ? '' : I('right')}</button>`;
 }
@@ -896,7 +896,7 @@ function applyTheme() {
   const st = S.settings, b = document.body;
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
   const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'mobills') !== 'app';
-  b.className = mob ? 'light skin-mobills' : (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
+  b.className = mob ? 'light skin-mobills' : st.skin === 'moderno' ? 'light skin-moderno' : (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
   if (typeof isLogged === 'function') { b.classList.toggle('logged', isLogged()); b.classList.toggle('desk', isDesk()); }
   const meta = $('meta[name=theme-color]'); if (meta) meta.content = getComputedStyle(b).getPropertyValue('--bg2').trim() || '#12161f';
 }

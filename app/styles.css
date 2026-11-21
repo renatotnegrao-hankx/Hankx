@@ -525,3 +525,51 @@ textarea.in{min-height:90px;resize:vertical}
   body.desk .mbanner>.ico{flex:none}
 }
 @media (min-width:900px){body.desk[data-scr=calendario] .scr>.monthnav{display:none}}
+
+/* ===== Perfil "Moderno" (estilo Mobills no celular) ===== */
+body.skin-moderno{--bg:#f4f5fa;--bg2:#f4f5fa;--card:#ffffff;--card2:#f3f4f9;--line:#eceef4;--text:#2a2d3e;--muted:#8a8fa5;
+  --accent:#7b3ff2;--accent-soft:rgba(123,63,242,.1);--green:#12b76a;--green-d:#12b76a;--green-soft:rgba(18,183,106,.12);
+  --red:#f04461;--red2:#f04461;--red-soft:rgba(240,68,97,.1);--orange:#f79009;--blue:#3b82f6;
+  --shadow:0 1px 2px rgba(30,30,70,.04),0 4px 14px rgba(30,30,70,.06);--font:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body.skin-moderno #app{background:var(--bg)}
+body.skin-moderno .card,body.skin-moderno .tx,body.skin-moderno .list,body.skin-moderno .cal,body.skin-moderno .catrow,body.skin-moderno .monthnav,
+body.skin-moderno .three .card,body.skin-moderno .box,body.skin-moderno .accchip,body.skin-moderno .seg,body.skin-moderno .sortbar{border-color:transparent;box-shadow:var(--shadow)}
+body.skin-moderno .tx.receita,body.skin-moderno .tx.despesa{border-color:transparent}
+body.skin-moderno .tx.canceled{border:1px dashed var(--line)}
+body.skin-moderno .ticon,body.skin-moderno .catrow .em{border-radius:50%}
+body.skin-moderno .seg button.on{background:var(--accent);color:#fff}
+body.skin-moderno .seg.rd button.on.rec{background:var(--green)}
+body.skin-moderno .seg.rd button.on.desp{background:var(--red)}
+body.skin-moderno .accchip.on{box-shadow:0 6px 14px rgba(123,63,242,.25)}
+body.skin-moderno .pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+body.skin-moderno .big{color:var(--accent)}
+body.skin-moderno .rdbox{background:#fff;border:0;box-shadow:var(--shadow);position:relative;padding-left:52px}
+body.skin-moderno .rdbox::before{content:"";position:absolute;left:12px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M12 18V6M7 11l5-5 5 5'/%3E%3C/svg%3E") center/16px no-repeat}
+body.skin-moderno .rdbox.d::before{background-color:var(--red);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M12 6v12M7 13l5 5 5-5'/%3E%3C/svg%3E")}
+body.skin-moderno .rdbox span{color:var(--muted)!important}
+body.skin-moderno .alert{background:#fff8eb;border-color:#fcd9a6}
+body.skin-moderno .alert .h{color:#b45309}
+body.skin-moderno .cal .wd{background:var(--accent);color:#fff}
+body.skin-moderno .cal .d.today{background:var(--accent-soft)}
+body.skin-moderno .tabbar{background:rgba(255,255,255,.96);border-top:1px solid var(--line);box-shadow:0 -4px 18px rgba(30,30,70,.06)}
+body.skin-moderno .tabbar button{color:#9a9fb3}
+body.skin-moderno .tabbar button.on{color:var(--accent)}
+body.skin-moderno .fab{background:linear-gradient(135deg,#8b5cf6,#6d28d9);box-shadow:0 10px 24px rgba(123,63,242,.45)}
+body.skin-moderno #modal .sheet{background:var(--bg)}
+body.skin-moderno #modal .bk{background:rgba(30,25,60,.45)}
+body.skin-moderno .switch input:checked+i::after{background:#fff}
+body.skin-moderno .table th{background:#f7f8fc}
+@media (max-width:899px){
+  /* topo roxo como no Mobills */
+  body.skin-moderno .hello{background:linear-gradient(140deg,#8b5cf6 0%,#6d28d9 100%);border:0;border-radius:0 0 26px 26px;
+    margin:calc(-1 * (var(--safe-top) + 14px)) -14px 16px;padding:calc(var(--safe-top) + 26px) 20px 30px;box-shadow:0 8px 24px rgba(109,40,217,.3)}
+  body.skin-moderno .hello .muted,body.skin-moderno .hello b{color:#fff!important}
+  body.skin-moderno .hello .muted{opacity:.95}
+  body.skin-moderno .hello svg.deco{opacity:.18}
+  body.skin-moderno .hello svg.deco *{stroke:#fff;fill:#fff}
+  body.skin-moderno .hello .avatar{border-color:rgba(255,255,255,.8);background-color:rgba(255,255,255,.18);color:#fff}
+  body.skin-moderno .back{color:var(--accent)}
+}
+.tabbar .snew{display:none}
+@media (min-width:900px){ body.desk .tabbar .snew{display:flex} }
+body.skin-moderno .pills.plain .pill.on{background:var(--accent);color:#fff}
