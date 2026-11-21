@@ -86,6 +86,8 @@ const P = {
   bars: '<path d="M6 20V10M12 20V4M18 20v-6"/>',
   x: '<path d="M6 6l12 12M18 6 6 18"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01" stroke-width="2.2"/>',
+  up: '<circle cx="12" cy="12" r="9"/><path d="M12 16V8M8.5 11.5 12 8l3.5 3.5"/>',
+  down2: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8.5 12.5 12 16l3.5-3.5"/>',
   lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
 const I = (n, cls = '') => `<span class="ico ${cls}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[n] || ''}</svg></span>`;
@@ -445,6 +447,7 @@ function scrAjustes() {
   <img src="icons/logo.png" alt="HANKX" style="width:50px;height:50px;border-radius:13px"></div>
   <div class="split even"><div class="col">
   <div class="sect">APARÊNCIA</div>
+    <div class="card deskonly"><div class="muted" style="margin:0 0 10px">Visual no notebook</div><div class="opts" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px">${[['mobills', '💜', 'Estilo Mobills', 'Claro, roxo e cartões brancos'], ['app', '📱', 'Igual ao celular', 'Usa o tema e o perfil abaixo']].map(([v, e, l, s2]) => `<button class="opt ${(st.deskTheme || 'mobills') === v ? 'on' : ''}" data-act="desktheme" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s2}</small></button>`).join('')}</div></div>
   <div class="card"><div class="muted" style="margin-bottom:10px">Tema</div>
     <div class="opts">${[['light', 'sun', 'Claro'], ['dark', 'moon', 'Escuro'], ['auto', 'phone', 'Auto']].map(([v, ic, l]) => `<button class="opt ${st.theme === v ? 'on' : ''}" data-act="theme" data-v="${v}"><span class="e accent" style="color:${st.theme === v ? 'var(--accent)' : 'var(--muted)'}">${I(ic)}</span><b>${l}</b></button>`).join('')}</div>
     <div class="muted" style="margin:16px 0 10px">Perfil de Interface</div>
@@ -771,18 +774,22 @@ function scrSync() {
 /* ======================= Versão notebook (painel financeiro) ======================= */
 const DESK_MQ = matchMedia('(min-width: 900px)');
 const isDesk = () => DESK_MQ.matches;
-DESK_MQ.addEventListener?.('change', () => { if (isLogged()) render(false); });
+DESK_MQ.addEventListener?.('change', () => { applyTheme(); if (isLogged()) render(false); });
 const TITLES = { inicio: ['Visão geral', 'Resumo financeiro do período'], calendario: ['Calendário', 'Saldo e movimentação dia a dia'], transacoes: ['Lançamentos', 'Todas as receitas e despesas'], graficos: ['Análises', 'Projeção, categorias e ranking'], ajustes: ['Ajustes', 'Aparência, cadastros, relatórios e dados'],
   perfil: ['Meu Perfil', 'Ajustes'], contas: ['Contas e cartões', 'Ajustes'], categorias: ['Categorias', 'Ajustes'], dividas: ['Dívidas', 'Ajustes'], emprestimos: ['Empréstimos', 'Ferramentas'], orientacao: ['Orientação', 'Ferramentas'], sync: ['Salvar no GitHub', 'Dados'] };
 function deskTop() {
   const k = V.tab === 'ajustes' && V.sub ? V.sub : V.tab, [t, sub] = TITLES[k] || ['', ''];
-  const p = S.profile, d = new Date();
-  const dt = d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-  return `<header class="dtop"><div><div class="crumb">HANKX Finanças <span>/</span> ${esc(sub)}</div><div class="dtitle">${esc(t)}</div></div>
+  const p = S.profile, h = new Date().getHours();
+  const hi = (h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite') + (p.name ? ', ' + esc(p.name.split(' ')[0]) : '') + '!';
+  const monthTabs = ['inicio', 'calendario'].includes(k);
+  const mnav = monthTabs && (k === 'calendario' || V.mode === 'mensal') ? `<div class="mpill"><button data-act="nav" data-d="-1" data-m="m">${I('left')}</button><b>${MESES[+V.ym.slice(5) - 1]} ${V.ym.slice(0, 4)}</b><button data-act="nav" data-d="1" data-m="m">${I('right')}</button></div>` : '<span></span>';
+  return `<header class="dtop"><div class="dtop-l">${k === 'inicio' ? `<div class="dtitle">${hi}</div><div class="crumb">Veja como estão suas finanças</div>` : `<div class="dtitle">${esc(t)}</div><div class="crumb">${esc(k === 'inicio' ? '' : sub)}</div>`}</div>
+  ${mnav}
   <div class="dtop-r"><span class="chipinfo ${syncOn() ? (SYS.err ? 'red' : 'green') : 'orange'}" data-act="go" data-sub="sync" title="Salvar no GitHub">${I('ul')}<span data-synclabel>${esc(syncLabel())}</span></span>
-  <span class="chipinfo muted">${I('cal')}${dt}</span>
-  <button class="dbtn primary" data-act="new-tx">${I('plus')} Novo lançamento</button>
   <button class="duser" data-act="go" data-sub="perfil"><span class="avatar sm" style="${p.photo ? `background-image:url(${p.photo})` : ''}">${p.photo ? '' : esc((p.name || '?')[0].toUpperCase())}</span><span><b>${esc(p.name || 'Meu perfil')}</b><small>${esc(p.email || 'jnegrao')}</small></span></button></div></header>`;
+}
+function mcard(label, val, ic, cls, sub = '', act = '') {
+  return `<div class="mcard ${cls}" ${act}><div><div class="ml">${label}</div><div class="mv">${val}</div>${sub ? `<div class="ms">${sub}</div>` : ''}</div><span class="mic">${I(ic)}</span></div>`;
 }
 function deskToolbar(o = {}) {
   const modes = o.modes || [['mensal', 'Mensal'], ['anual', 'Anual'], ['periodo', 'Período']];
@@ -823,45 +830,53 @@ function txTable(list, o = {}) {
 function scrInicioDesk() {
   const [a, b] = range();
   const list = txIn(a, b);
-  const rec = sumType(list, 'receita'), desp = sumType(list, 'despesa'), per = r2(rec - desp);
-  const acum = balanceAt(b, V.status === 'realizados'), conta = balanceAt('9999-12-31', true), dia = balanceAt(T0);
+  const rec = sumType(list, 'receita'), desp = sumType(list, 'despesa');
+  const acum = balanceAt(b, V.status === 'realizados'), conta = balanceAt('9999-12-31', true);
   const recP = sumType(list.filter(t => t.paid), 'receita'), despP = sumType(list.filter(t => t.paid), 'despesa');
-  const pct = rec > 0 ? Math.round(Math.max(0, per) / rec * 100) : 0;
-  const soon = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= addDays(T0, 10) && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
+  const cards = S.accounts.filter(x => x.kind === 'cartao');
+  const cardOpen = r2(LIVE().filter(t => cards.some(c => c.id === t.accountId) && !t.paid && t.type === 'despesa').reduce((s2, t) => s2 + +t.amount, 0));
+  const soon = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= b && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
+  const soonR = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'receita' && t.date <= b && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
   const { arr, tot } = catAgg('despesa', V.mode);
-  const D = monthsData(T0.slice(0, 7), 12);
-  const debtOpen = r2(S.debts.reduce((s, d) => s + debtStats(d).rem, 0));
+  const D = monthsData(ymAdd(T0.slice(0, 7), -2), 6);
+  const debtOpen = r2(S.debts.reduce((s2, d) => s2 + debtStats(d).rem, 0));
   const shown = sortTx(list.filter(t => V.homeType === 'todos' || t.type === V.homeType));
-  return `${deskToolbar()}
-  <div class="kpis">
-    ${kpi('Saldo acumulado', brl(acum), 'accent', 'Previsto até ' + fmtD(b > '9000' ? T0 : b), 'trend')}
-    ${kpi('Saldo em conta', brl(conta), conta >= 0 ? '' : 'neg', 'Somente realizados', 'bank')}
-    ${kpi('Receitas', brl(rec), 'pos', `Recebido ${brl(recP)}`, 'cash')}
-    ${kpi('Despesas', brl(desp), 'neg', `Pago ${brl(despP)}`, 'card')}
-    ${kpi('Resultado do período', brl(per), per >= 0 ? 'pos' : 'neg', `<div class="meter"><i style="width:${pct}%"></i></div>${pct}% das receitas sobram`, 'chart')}
-    ${kpi('Saldo de hoje', brl(dia), dia >= 0 ? '' : 'neg', fmtD(T0) + ' · incluindo pendentes', 'cal')}
+  const contas = S.accounts.filter(x => x.kind !== 'cartao');
+  const pend = (L, cls) => L.length ? L.slice(0, 6).map(t => `<div class="mrow" data-act="edit-tx" data-id="${t.id}"><span class="mico ${cls}">${cat(t.categoryId)?.icon || I('card')}</span><span class="grow"><b>${esc(t.desc || cat(t.categoryId)?.name || '')}</b><small class="${t.date < T0 ? 'red' : 'muted'}">${t.date < T0 ? 'Atrasada · ' : 'Vence '}${fmtD(t.date)}</small></span><b class="${cls === 'r' ? 'green' : 'red'}">${brl(t.amount)}</b><button class="ib" data-act="toggle-paid" data-id="${t.id}" title="Marcar como ${cls === 'r' ? 'recebido' : 'pago'}">${I('circle')}</button></div>`).join('') : `<div class="mempty">${I('check')}<span>Tudo em dia por aqui</span></div>`;
+  // balanço mensal (barras simples)
+  const mx = Math.max(1, ...D.flatMap(d => [d.rec, d.desp]));
+  const bal = `<div class="mbars">${D.map(d => `<div class="mb ${d.ym === T0.slice(0, 7) ? 'cur' : ''}"><div class="bb"><i class="r" style="height:${d.rec / mx * 100}%" title="Receitas ${brl(d.rec)}"></i><i class="d" style="height:${d.desp / mx * 100}%" title="Despesas ${brl(d.desp)}"></i></div><small>${MES3[+d.ym.slice(5) - 1]}</small><b class="${d.rec - d.desp >= 0 ? 'green' : 'red'}">${kfmt(d.rec - d.desp)}</b></div>`).join('')}</div>
+    <div class="legend"><span><i style="background:var(--green)"></i>Receitas</span><span><i style="background:var(--red)"></i>Despesas</span><span class="muted">número = saldo do mês</span></div>`;
+  return `
+  ${V.mode !== 'mensal' || V.acc !== 'all' || V.status !== 'todos' ? deskToolbar() : `<div class="mfilters">${deskToolbar()}</div>`}
+  <div class="mcards">
+    ${mcard('Saldo atual', brl(conta), 'bank', 'blue', 'Lançamentos realizados')}
+    ${mcard('Receitas', brl(rec), 'up', 'green', `Recebido ${brl(recP)}`)}
+    ${mcard('Despesas', brl(desp), 'down2', 'red', `Pago ${brl(despP)}`)}
+    ${mcard('Saldo previsto', brl(acum), 'trend', acum >= 0 ? 'purple' : 'red', 'No fim de ' + (V.mode === 'mensal' ? MESES[+V.ym.slice(5) - 1].toLowerCase() : 'período'))}
   </div>
-  <div class="dgrid">
-    <div class="card dcard"><div class="dch"><b>Fluxo de caixa · próximos 12 meses</b><button class="lnk" data-act="tab" data-v="graficos">Ver análises →</button></div>${projChart(D, 900, 215)}</div>
-    <div class="card dcard"><div class="dch"><b>Despesas por categoria</b><span class="muted small">${brl(tot)}</span></div>
-      ${arr.length ? `<div class="mini-donut">${donut(arr, tot)}<div class="catlist">${arr.slice(0, 6).map((x, i) => `<div class="it"><span class="dot" style="background:${PALETTE[i % PALETTE.length]}"></span><span class="nm">${esc(cat(x.id)?.name || 'Sem categoria')}</span><b>${brl(x.total)}</b><small class="muted" style="width:34px;text-align:right">${Math.round(x.total / tot * 100)}%</small></div>`).join('')}</div></div>` : '<div class="empty">Sem despesas no período</div>'}
+  <div class="mgrid">
+    <div class="mcol">
+      <div class="mbox"><div class="mh"><b>Contas</b><button class="lnk" data-act="go" data-sub="contas">Gerenciar contas</button></div>
+        ${contas.map(x => `<div class="mrow"><span class="mlogo" style="background:${x.color}">${esc(x.name.slice(0, 2).toLowerCase())}</span><span class="grow"><b>${esc(x.name)}</b><small class="muted">${esc(x.type || 'Conta corrente')}</small></span><b class="${accBalance(x) < 0 ? 'red' : ''}">${brl(accBalance(x))}</b></div>`).join('')}
+        <div class="mfoot"><span>Total</span><b>${brl(r2(contas.reduce((s2, x) => s2 + accBalance(x), 0)))}</b></div></div>
+      <div class="mbox"><div class="mh"><b>Despesas por categoria</b><span class="muted small">${brl(tot)}</span></div>
+        ${arr.length ? `<div class="mini-donut">${donut(arr, tot)}<div class="catlist">${arr.slice(0, 6).map((x, i) => `<div class="it"><span class="dot" style="background:${PALETTE[i % PALETTE.length]}"></span><span class="nm">${cat(x.id)?.icon || ''} ${esc(cat(x.id)?.name || 'Sem categoria')}</span><b>${brl(x.total)}</b><small class="muted" style="width:34px;text-align:right">${Math.round(x.total / tot * 100)}%</small></div>`).join('')}</div></div>` : `<div class="mempty">${I('pie')}<span>Sem despesas no período</span></div>`}</div>
+      ${cards.length || debtOpen ? `<div class="mbox"><div class="mh"><b>Cartões e dívidas</b><button class="lnk" data-act="go" data-sub="dividas">Ver dívidas</button></div>
+        ${cards.map(c => `<div class="mrow"><span class="mlogo" style="background:${c.color}">${I('card')}</span><span class="grow"><b>${esc(c.name)}</b><small class="muted">${c.dueDay ? 'Vence dia ' + esc(c.dueDay) : 'Cartão de crédito'}</small></span><b class="red">${brl(LIVE().filter(t => t.accountId === c.id && !t.paid && t.type === 'despesa').reduce((s2, t) => s2 + +t.amount, 0))}</b></div>`).join('')}
+        ${S.debts.map(d => { const st = debtStats(d); return st.rem > 0 ? `<div class="mrow"><span class="mico d">${I('dollar')}</span><span class="grow"><b>${esc(d.name)}</b><small class="muted">${st.paid}/${st.n} parcelas pagas</small><span class="meter"><i style="width:${Math.round(st.paid / st.n * 100)}%"></i></span></span><b class="red">${brl(st.rem)}</b></div>` : ''; }).join('')}
+        <div class="mfoot"><span>Total em aberto</span><b class="red">${brl(r2(debtOpen + cardOpen))}</b></div></div>` : ''}
+    </div>
+    <div class="mcol">
+      ${!syncOn() ? `<div class="mbanner" data-act="go" data-sub="sync">${I('info')}<span><b>Seus dados estão só neste aparelho.</b> Clique para ativar o salvamento automático no GitHub.</span>${I('right')}</div>` : ''}
+      <div class="mbox"><div class="mh"><b>Balanço mensal</b><button class="lnk" data-act="tab" data-v="graficos">Ver relatórios</button></div>${bal}</div>
+      <div class="mbox"><div class="mh"><b>Contas a pagar</b><span class="badge late">${soon.length}</span></div>${pend(soon, 'd')}</div>
+      <div class="mbox"><div class="mh"><b>Contas a receber</b><span class="badge ok">${soonR.length}</span></div>${pend(soonR, 'r')}</div>
     </div>
   </div>
-  <div class="dgrid">
-    <div class="card dcard"><div class="dch"><b>Lançamentos do período <span class="muted">(${shown.length})</span></b>
-      <div class="dseg sm">${[['todos', 'Todos'], ['receita', 'Receitas'], ['despesa', 'Despesas']].map(([v, l]) => `<button class="${V.homeType === v ? 'on' : ''}" data-act="set" data-k="homeType" data-v="${v}">${l}</button>`).join('')}</div></div>
-      ${txTable(shown, { compact: false })}</div>
-    <div class="dside">
-      ${!syncOn() ? `<div class="alert" data-act="go" data-sub="sync" style="cursor:pointer"><div class="h">${I('info')} Dados só neste aparelho</div><span class="small">Clique para ativar o salvamento no GitHub.</span></div>` : ''}
-      <div class="card dcard"><div class="dch"><b>${I('bell')} Vencimentos próximos</b><span class="muted small">10 dias</span></div>
-        ${soon.length ? soon.slice(0, 8).map(t => `<div class="drow" data-act="edit-tx" data-id="${t.id}"><span><b>${esc(t.desc || cat(t.categoryId)?.name || '')}</b><small class="${t.date < T0 ? 'red' : 'muted'}">${t.date < T0 ? 'Atrasado · ' : ''}${fmtD(t.date)}</small></span><b class="red">${brl(t.amount)}</b></div>`).join('') : '<div class="empty small">Nada vencendo 🎉</div>'}</div>
-      <div class="card dcard"><div class="dch"><b>${I('bank')} Contas</b><button class="lnk" data-act="go" data-sub="contas">Gerenciar</button></div>
-        ${S.accounts.filter(x => x.kind !== 'cartao').map(x => `<div class="drow"><span class="row"><span class="adot" style="background:${x.color}"></span>${esc(x.name)}</span><b class="${accBalance(x) < 0 ? 'red' : ''}">${brl(accBalance(x))}</b></div>`).join('')}</div>
-      <div class="card dcard"><div class="dch"><b>${I('card')} Dívidas</b><button class="lnk" data-act="go" data-sub="dividas">Ver</button></div>
-        <div class="drow"><span class="muted">Total em aberto</span><b class="red">${brl(debtOpen)}</b></div>
-        ${S.debts.map(d => { const st = debtStats(d); const nx = d.installments.find(i => !i.paid); return nx ? `<div class="drow"><span><b>${esc(d.name)}</b><small class="muted">próx. ${fmtD(nx.date)} · ${st.paid}/${st.n} pagas</small></span><span>${brl(+nx.amount)}</span></div>` : ''; }).join('')}</div>
-    </div>
-  </div>`;
+  <div class="mbox"><div class="mh"><b>Lançamentos do mês <span class="muted">(${shown.length})</span></b>
+    <div class="dseg sm">${[['todos', 'Todos'], ['receita', 'Receitas'], ['despesa', 'Despesas']].map(([v, l]) => `<button class="${V.homeType === v ? 'on' : ''}" data-act="set" data-k="homeType" data-v="${v}">${l}</button>`).join('')}</div></div>
+    ${txTable(shown)}</div>`;
 }
 function scrTransacoesDesk() {
   const [a, b] = range();
@@ -880,7 +895,9 @@ function scrTransacoesDesk() {
 function applyTheme() {
   const st = S.settings, b = document.body;
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
-  b.className = (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
+  const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'mobills') !== 'app';
+  b.className = mob ? 'light skin-mobills' : (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
+  if (typeof isLogged === 'function') { b.classList.toggle('logged', isLogged()); b.classList.toggle('desk', isDesk()); }
   const meta = $('meta[name=theme-color]'); if (meta) meta.content = getComputedStyle(b).getPropertyValue('--bg2').trim() || '#12161f';
 }
 const TABS = [['inicio', 'home', 'Início'], ['calendario', 'cal', 'Calendário'], ['transacoes', 'list', 'Transações'], ['graficos', 'pie', 'Gráficos'], ['ajustes', 'gear', 'Ajustes']];
@@ -894,7 +911,7 @@ function render(keepScroll = true) {
   else h = ({ inicio: isDesk() ? scrInicioDesk : scrInicio, calendario: scrCalendario, transacoes: isDesk() ? scrTransacoesDesk : scrTransacoes, graficos: scrGraficos, ajustes: scrAjustes })[V.tab]();
   document.body.classList.toggle('desk', isDesk());
   $('#main').innerHTML = isDesk() ? deskTop() + `<div class="scr">${h}</div>` : h;
-  $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png" alt=""><b>HANKX</b><small>Finanças</small></div>` + TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
+  $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png" alt=""><b>HANKX</b><small>Finanças</small></div><button class="snew" data-act="new-tx">${I('plus')} Novo lançamento</button>` + TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
   $('#fab').innerHTML = I('plus');
   $('#fab').classList.toggle('hide', !isLogged() || V.tab === 'ajustes' || V.tab === 'graficos');
   if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
@@ -1310,6 +1327,7 @@ document.addEventListener('click', async e => {
     case 'projsel': { const i = +el.dataset.i; V.projSel = V.projSel === i ? null : i; render(); break; }
     case 'toggle-open': V.open[el.dataset.k] = !V.open[el.dataset.k]; render(); break;
     case 'theme': S.settings.theme = el.dataset.v; save(); applyTheme(); render(); break;
+    case 'desktheme': S.settings.deskTheme = el.dataset.v; save(); applyTheme(); render(); break;
     case 'skin': S.settings.skin = el.dataset.v; save(); applyTheme(); render(); break;
     case 'save-profile': readProfileForm(); save(); toast('Perfil salvo'); render(); break;
     case 'del-photo': S.profile.photo = ''; save(); render(); break;
