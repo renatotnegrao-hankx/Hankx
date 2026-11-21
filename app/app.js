@@ -334,8 +334,8 @@ function monthsData(startYm, n) {
   }
   return out;
 }
-function projChart(D) {
-  const W = 360, H = 270, L = 34, R = 8, Tp = 14, B = 26;
+function projChart(D, W = 360, H = 270) {
+  const L = 34, R = 8, Tp = 14, B = 26;
   const maxV = Math.max(1, ...D.flatMap(d => [d.rec, d.desp, d.saldo]));
   const minV = Math.min(0, ...D.map(d => d.saldo));
   const step = niceStep((maxV - minV) / 4), top = Math.ceil(maxV / step) * step, bot = Math.floor(minV / step) * step;
@@ -466,7 +466,7 @@ function scrAjustes() {
   <div class="sect">CONTA</div>
   <div class="list">${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}</div>
   </div></div>
-  <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · os dados ficam somente neste aparelho.<br>Faça backup com frequência.</p>`;
+  <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · ${syncOn() ? 'dados salvos neste aparelho e no GitHub' : 'dados salvos só neste aparelho — ative o GitHub em Dados'}.</p>`;
 }
 function backHead(title, right = '') {
   return `<button class="back" data-act="back">${I('left')} Ajustes</button><div class="titlebar"><h1>${title}</h1>${right}</div>`;
@@ -767,6 +767,115 @@ function scrSync() {
   <li>Cole a chave aqui e toque em Conectar. O iPhone oferece guardar a chave nas Senhas: aceite, assim depois é só tocar para preencher.</li></ol></div>`;
 }
 
+
+/* ======================= Versão notebook (painel financeiro) ======================= */
+const DESK_MQ = matchMedia('(min-width: 900px)');
+const isDesk = () => DESK_MQ.matches;
+DESK_MQ.addEventListener?.('change', () => { if (isLogged()) render(false); });
+const TITLES = { inicio: ['Visão geral', 'Resumo financeiro do período'], calendario: ['Calendário', 'Saldo e movimentação dia a dia'], transacoes: ['Lançamentos', 'Todas as receitas e despesas'], graficos: ['Análises', 'Projeção, categorias e ranking'], ajustes: ['Ajustes', 'Aparência, cadastros, relatórios e dados'],
+  perfil: ['Meu Perfil', 'Ajustes'], contas: ['Contas e cartões', 'Ajustes'], categorias: ['Categorias', 'Ajustes'], dividas: ['Dívidas', 'Ajustes'], emprestimos: ['Empréstimos', 'Ferramentas'], orientacao: ['Orientação', 'Ferramentas'], sync: ['Salvar no GitHub', 'Dados'] };
+function deskTop() {
+  const k = V.tab === 'ajustes' && V.sub ? V.sub : V.tab, [t, sub] = TITLES[k] || ['', ''];
+  const p = S.profile, d = new Date();
+  const dt = d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  return `<header class="dtop"><div><div class="crumb">HANKX Finanças <span>/</span> ${esc(sub)}</div><div class="dtitle">${esc(t)}</div></div>
+  <div class="dtop-r"><span class="chipinfo ${syncOn() ? (SYS.err ? 'red' : 'green') : 'orange'}" data-act="go" data-sub="sync" title="Salvar no GitHub">${I('ul')}<span data-synclabel>${esc(syncLabel())}</span></span>
+  <span class="chipinfo muted">${I('cal')}${dt}</span>
+  <button class="dbtn primary" data-act="new-tx">${I('plus')} Novo lançamento</button>
+  <button class="duser" data-act="go" data-sub="perfil"><span class="avatar sm" style="${p.photo ? `background-image:url(${p.photo})` : ''}">${p.photo ? '' : esc((p.name || '?')[0].toUpperCase())}</span><span><b>${esc(p.name || 'Meu perfil')}</b><small>${esc(p.email || 'jnegrao')}</small></span></button></div></header>`;
+}
+function deskToolbar(o = {}) {
+  const modes = o.modes || [['mensal', 'Mensal'], ['anual', 'Anual'], ['periodo', 'Período']];
+  const isM = V.mode === 'mensal', nav = V.mode === 'periodo'
+    ? `<input class="in sm" type="date" value="${V.from}" data-chg="from"><span class="muted">até</span><input class="in sm" type="date" value="${V.to}" data-chg="to">`
+    : V.mode === 'todos' ? '' : `<div class="dnav"><button class="ib" data-act="nav" data-d="-1" data-m="${isM ? 'm' : 'y'}">${I('left')}</button><b>${isM ? monthLabel(V.ym) : V.year}</b><button class="ib" data-act="nav" data-d="1" data-m="${isM ? 'm' : 'y'}">${I('right')}</button><button class="lnk" data-act="nav-today">Hoje</button></div>`;
+  const accs = `<select class="in sm" data-chg="acc"><option value="all">Todas as contas</option>${S.accounts.map(a => `<option value="${a.id}" ${V.acc === a.id ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</select>`;
+  const st = o.status || [['todos', 'Todos'], ['pendentes', 'Pendentes'], ['realizados', 'Realizados']];
+  return `<div class="toolbar">${o.search ? `<div class="dsearch">${I('search')}<input id="q" placeholder="Buscar descrição, categoria, nota…" value="${esc(V.q)}" data-inp="q"></div>` : ''}
+  ${accs}<div class="dseg">${modes.map(([v, l]) => `<button class="${V.mode === v ? 'on' : ''}" data-act="set" data-k="mode" data-v="${v}">${l}</button>`).join('')}</div>${nav}
+  <span class="grow"></span><div class="dseg">${st.map(([v, l]) => `<button class="${V.status === v ? 'on' : ''}" data-act="set" data-k="status" data-v="${v}">${l}</button>`).join('')}</div>
+  ${o.type ? `<div class="dseg">${[['todos', 'Todos'], ['receita', 'Receitas'], ['despesa', 'Despesas']].map(([v, l]) => `<button class="${V.type === v ? 'on' : ''}" data-act="set" data-k="type" data-v="${v}">${l}</button>`).join('')}</div>` : ''}</div>`;
+}
+function kpi(label, val, cls = '', sub = '', ic = '') {
+  return `<div class="kpi ${cls}"><div class="kl">${ic ? I(ic) : ''}${label}</div><div class="kv">${val}</div>${sub ? `<div class="ks">${sub}</div>` : ''}</div>`;
+}
+function txStatus(t) {
+  if (t.canceled) return '<span class="st cancel">Cancelado</span>';
+  if (t.paid) return `<span class="st ok">${t.type === 'receita' ? 'Recebido' : 'Pago'}</span>`;
+  if (t.date < T0) return '<span class="st late">Atrasado</span>';
+  return '<span class="st pend">Pendente</span>';
+}
+function txTable(list, o = {}) {
+  if (!list.length) return '<div class="empty">Nenhum lançamento neste período.</div>';
+  const arrow = k => V.sort === k ? ' ▾' : '';
+  return `<div class="dtwrap"><table class="dtable"><thead><tr>
+  <th class="sortable" data-act="set" data-k="sort" data-v="data">Data${arrow('data')}</th><th>Descrição</th><th>Categoria</th>${o.compact ? '' : '<th>Conta</th>'}<th>Situação</th>
+  <th class="r sortable" data-act="set" data-k="sort" data-v="valor">Valor${arrow('valor')}</th><th class="acts"></th></tr></thead><tbody>
+  ${list.map(t => { const c = cat(t.categoryId), a = acc(t.accountId);
+    return `<tr class="${t.type} ${t.canceled ? 'canceled' : ''} ${t.paid ? 'paid' : ''}" data-act="edit-tx" data-id="${t.id}">
+    <td class="nw">${fmtD(t.date)}</td>
+    <td><div class="dname">${esc(t.desc || c?.name || '')}${t.total > 1 ? ` <small class="muted">${t.idx}/${t.total}</small>` : ''}${t.lote ? ' ' + I('repeat') : ''}</div>${t.note ? `<small class="muted">${esc(t.note)}</small>` : ''}</td>
+    <td class="nw">${c ? `${c.icon} ${esc(c.name)}` : '<span class="muted">—</span>'}</td>${o.compact ? '' : `<td class="nw"><span class="adot" style="background:${a?.color || '#888'}"></span>${esc(a?.name || '—')}</td>`}
+    <td>${txStatus(t)}</td><td class="r nw val">${t.type === 'receita' ? '+' : '−'} ${brl(t.amount)}</td>
+    <td class="acts nw">${t.canceled ? `<button class="ib" title="Reativar" data-act="uncancel-tx" data-id="${t.id}">${I('repeat')}</button>` : `<button class="ib ${t.paid ? 'green' : ''}" title="${t.paid ? 'Marcar como pendente' : 'Marcar como pago'}" data-act="toggle-paid" data-id="${t.id}">${I(t.paid ? 'check' : 'circle')}</button>`}<button class="ib" title="Excluir" data-act="del-tx" data-id="${t.id}">${I('trash')}</button></td></tr>`; }).join('')}
+  </tbody></table></div>`;
+}
+function scrInicioDesk() {
+  const [a, b] = range();
+  const list = txIn(a, b);
+  const rec = sumType(list, 'receita'), desp = sumType(list, 'despesa'), per = r2(rec - desp);
+  const acum = balanceAt(b, V.status === 'realizados'), conta = balanceAt('9999-12-31', true), dia = balanceAt(T0);
+  const recP = sumType(list.filter(t => t.paid), 'receita'), despP = sumType(list.filter(t => t.paid), 'despesa');
+  const pct = rec > 0 ? Math.round(Math.max(0, per) / rec * 100) : 0;
+  const soon = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= addDays(T0, 10) && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
+  const { arr, tot } = catAgg('despesa', V.mode);
+  const D = monthsData(T0.slice(0, 7), 12);
+  const debtOpen = r2(S.debts.reduce((s, d) => s + debtStats(d).rem, 0));
+  const shown = sortTx(list.filter(t => V.homeType === 'todos' || t.type === V.homeType));
+  return `${deskToolbar()}
+  <div class="kpis">
+    ${kpi('Saldo acumulado', brl(acum), 'accent', 'Previsto até ' + fmtD(b > '9000' ? T0 : b), 'trend')}
+    ${kpi('Saldo em conta', brl(conta), conta >= 0 ? '' : 'neg', 'Somente realizados', 'bank')}
+    ${kpi('Receitas', brl(rec), 'pos', `Recebido ${brl(recP)}`, 'cash')}
+    ${kpi('Despesas', brl(desp), 'neg', `Pago ${brl(despP)}`, 'card')}
+    ${kpi('Resultado do período', brl(per), per >= 0 ? 'pos' : 'neg', `<div class="meter"><i style="width:${pct}%"></i></div>${pct}% das receitas sobram`, 'chart')}
+    ${kpi('Saldo de hoje', brl(dia), dia >= 0 ? '' : 'neg', fmtD(T0) + ' · incluindo pendentes', 'cal')}
+  </div>
+  <div class="dgrid">
+    <div class="card dcard"><div class="dch"><b>Fluxo de caixa · próximos 12 meses</b><button class="lnk" data-act="tab" data-v="graficos">Ver análises →</button></div>${projChart(D, 900, 215)}</div>
+    <div class="card dcard"><div class="dch"><b>Despesas por categoria</b><span class="muted small">${brl(tot)}</span></div>
+      ${arr.length ? `<div class="mini-donut">${donut(arr, tot)}<div class="catlist">${arr.slice(0, 6).map((x, i) => `<div class="it"><span class="dot" style="background:${PALETTE[i % PALETTE.length]}"></span><span class="nm">${esc(cat(x.id)?.name || 'Sem categoria')}</span><b>${brl(x.total)}</b><small class="muted" style="width:34px;text-align:right">${Math.round(x.total / tot * 100)}%</small></div>`).join('')}</div></div>` : '<div class="empty">Sem despesas no período</div>'}
+    </div>
+  </div>
+  <div class="dgrid">
+    <div class="card dcard"><div class="dch"><b>Lançamentos do período <span class="muted">(${shown.length})</span></b>
+      <div class="dseg sm">${[['todos', 'Todos'], ['receita', 'Receitas'], ['despesa', 'Despesas']].map(([v, l]) => `<button class="${V.homeType === v ? 'on' : ''}" data-act="set" data-k="homeType" data-v="${v}">${l}</button>`).join('')}</div></div>
+      ${txTable(shown, { compact: false })}</div>
+    <div class="dside">
+      ${!syncOn() ? `<div class="alert" data-act="go" data-sub="sync" style="cursor:pointer"><div class="h">${I('info')} Dados só neste aparelho</div><span class="small">Clique para ativar o salvamento no GitHub.</span></div>` : ''}
+      <div class="card dcard"><div class="dch"><b>${I('bell')} Vencimentos próximos</b><span class="muted small">10 dias</span></div>
+        ${soon.length ? soon.slice(0, 8).map(t => `<div class="drow" data-act="edit-tx" data-id="${t.id}"><span><b>${esc(t.desc || cat(t.categoryId)?.name || '')}</b><small class="${t.date < T0 ? 'red' : 'muted'}">${t.date < T0 ? 'Atrasado · ' : ''}${fmtD(t.date)}</small></span><b class="red">${brl(t.amount)}</b></div>`).join('') : '<div class="empty small">Nada vencendo 🎉</div>'}</div>
+      <div class="card dcard"><div class="dch"><b>${I('bank')} Contas</b><button class="lnk" data-act="go" data-sub="contas">Gerenciar</button></div>
+        ${S.accounts.filter(x => x.kind !== 'cartao').map(x => `<div class="drow"><span class="row"><span class="adot" style="background:${x.color}"></span>${esc(x.name)}</span><b class="${accBalance(x) < 0 ? 'red' : ''}">${brl(accBalance(x))}</b></div>`).join('')}</div>
+      <div class="card dcard"><div class="dch"><b>${I('card')} Dívidas</b><button class="lnk" data-act="go" data-sub="dividas">Ver</button></div>
+        <div class="drow"><span class="muted">Total em aberto</span><b class="red">${brl(debtOpen)}</b></div>
+        ${S.debts.map(d => { const st = debtStats(d); const nx = d.installments.find(i => !i.paid); return nx ? `<div class="drow"><span><b>${esc(d.name)}</b><small class="muted">próx. ${fmtD(nx.date)} · ${st.paid}/${st.n} pagas</small></span><span>${brl(+nx.amount)}</span></div>` : ''; }).join('')}</div>
+    </div>
+  </div>`;
+}
+function scrTransacoesDesk() {
+  const [a, b] = range();
+  const tot = txIn(a, b);
+  const rec = sumType(tot, 'receita'), desp = sumType(tot, 'despesa');
+  let list = txIn(a, b, { withCanceled: true });
+  if (V.type !== 'todos') list = list.filter(t => t.type === V.type);
+  if (V.q) { const q = V.q.toLowerCase(); list = list.filter(t => [t.desc, cat(t.categoryId)?.name, t.note, acc(t.accountId)?.name, t.lote].join(' ').toLowerCase().includes(q)); }
+  const pend = sumType(tot.filter(t => !t.paid), 'despesa');
+  return `${deskToolbar({ search: true, type: true, modes: [['mensal', 'Mensal'], ['anual', 'Anual'], ['todos', 'Todos'], ['periodo', 'Período']], status: [['todos', 'Todos'], ['pendentes', 'Pendentes'], ['realizados', 'Realizados'], ['cancelados', 'Cancelados']] })}
+  <div class="kpis k4">${kpi('Receitas', brl(rec), 'pos', '', 'cash')}${kpi('Despesas', brl(desp), 'neg', '', 'card')}${kpi('Resultado', brl(r2(rec - desp)), rec - desp >= 0 ? 'accent' : 'neg', '', 'chart')}${kpi('A pagar (pendente)', brl(pend), 'warn', '', 'bell')}</div>
+  <div class="card dcard"><div class="dch"><b>${list.length} lançamentos</b><span class="muted small">Clique numa linha para editar · clique em Data ou Valor para ordenar</span></div>${txTable(sortTx(list))}</div>`;
+}
+
 /* ======================= Render ======================= */
 function applyTheme() {
   const st = S.settings, b = document.body;
@@ -782,8 +891,9 @@ function render(keepScroll = true) {
   const y = window.scrollY;
   let h;
   if (V.tab === 'ajustes' && V.sub) h = ({ perfil: scrPerfil, contas: scrContas, categorias: scrCategorias, dividas: scrDividas, emprestimos: scrEmprestimos, orientacao: scrOrientacao, sync: scrSync })[V.sub]();
-  else h = ({ inicio: scrInicio, calendario: scrCalendario, transacoes: scrTransacoes, graficos: scrGraficos, ajustes: scrAjustes })[V.tab]();
-  $('#main').innerHTML = h;
+  else h = ({ inicio: isDesk() ? scrInicioDesk : scrInicio, calendario: scrCalendario, transacoes: isDesk() ? scrTransacoesDesk : scrTransacoes, graficos: scrGraficos, ajustes: scrAjustes })[V.tab]();
+  document.body.classList.toggle('desk', isDesk());
+  $('#main').innerHTML = isDesk() ? deskTop() + `<div class="scr">${h}</div>` : h;
   $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png" alt=""><b>HANKX</b><small>Finanças</small></div>` + TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
   $('#fab').innerHTML = I('plus');
   $('#fab').classList.toggle('hide', !isLogged() || V.tab === 'ajustes' || V.tab === 'graficos');
