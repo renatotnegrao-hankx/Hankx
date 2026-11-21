@@ -632,7 +632,7 @@ let SY = {};
 try { SY = JSON.parse(localStorage.getItem(SYNC_KEY) || '{}'); } catch (e) { SY = {}; }
 SY.repo ||= 'renatotnegrao-hankx/hankx-dados'; SY.path ||= 'financas.json';
 const SYS = { busy: false, ready: false, err: '', timer: null };
-const SYNC_EVERY = 2 * 60 * 60 * 1000; // envia ao GitHub no máximo a cada 2 horas
+const SYNC_EVERY = 30 * 60 * 1000; // envia ao GitHub no máximo a cada 30 minutos
 const saveSY = () => { try { localStorage.setItem(SYNC_KEY, JSON.stringify({ repo: SY.repo, path: SY.path, token: SY.token, sha: SY.sha, lastSync: SY.lastSync, dirty: SY.dirty })); } catch (e) {} };
 const syncOn = () => !!SY.token;
 function b64e(str) { const by = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < by.length; i += 0x8000) bin += String.fromCharCode(...by.subarray(i, i + 0x8000)); return btoa(bin); }
@@ -734,7 +734,7 @@ function scrSync() {
   return `${backHead('Salvar no GitHub')}
   <div class="card"><div class="between"><b>Situação</b><span class="small ${SYS.err ? 'red' : syncOn() ? 'green' : 'muted'}" data-synclabel>${esc(syncLabel())}</span></div></div>
   ${syncOn() ? `<button class="btn primary" data-act="sync-now" style="margin-bottom:12px">${I('ul')} Enviar para o GitHub agora</button>` : ''}
-  <p class="muted small">Com isso ligado, suas alterações são enviadas automaticamente <b>a cada 2 horas</b> (enquanto o app estiver aberto ou quando você abri-lo de novo) para um repositório <b>privado</b> seu no GitHub. Se você apagar o app ou trocar de celular, é só entrar de novo e informar a mesma chave que tudo volta. O GitHub também guarda o histórico de todas as versões.</p>
+  <p class="muted small">Com isso ligado, suas alterações são enviadas automaticamente <b>a cada 30 minutos</b> (enquanto o app estiver aberto ou quando você abri-lo de novo) para um repositório <b>privado</b> seu no GitHub. Se você apagar o app ou trocar de celular, é só entrar de novo e informar a mesma chave que tudo volta. O GitHub também guarda o histórico de todas as versões.</p>
   <form id="syf" class="card" autocomplete="on">
   <input type="text" name="username" value="github-hankx-financas" autocomplete="username" hidden>
   <label class="f"><span>Repositório privado (usuário/nome)</span><input class="in" name="repo" value="${esc(SY.repo)}" autocapitalize="none" autocorrect="off" spellcheck="false"></label>

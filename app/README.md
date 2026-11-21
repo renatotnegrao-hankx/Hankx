@@ -15,7 +15,7 @@ No Android: abra no Chrome, toque nos três pontinhos e escolha **Instalar app**
 
 ## Onde ficam os dados
 - Os dados ficam no aparelho e, com **Ajustes → Salvar no GitHub** ligado, também num repositório **privado**
-  (`renatotnegrao-hankx/hankx-dados`, arquivo `financas.json`). As alterações são enviadas a cada 2 horas (com o app aberto ou ao abri-lo de novo); há também o botão "Enviar para o GitHub agora".
+  (`renatotnegrao-hankx/hankx-dados`, arquivo `financas.json`). As alterações são enviadas a cada 30 minutos (com o app aberto ou ao abri-lo de novo); há também o botão "Enviar para o GitHub agora".
 - Se apagar o app ou trocar de celular: entre de novo (login/senha), vá em **Ajustes → Salvar no GitHub**,
   cole a mesma chave e tudo volta. O GitHub guarda o histórico de versões (dá para recuperar versões antigas).
 - Os dados só são apagados se você usar **Ajustes → Limpar dados** (e mesmo assim o histórico do GitHub mantém as versões anteriores).
