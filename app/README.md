@@ -33,7 +33,7 @@ totais, gráficos e relatórios. Para desfazer: **Reativar lançamento**. Em Tra
 - **Lançamentos:** receita ou despesa, conta, categoria, pago/pendente, repetição (diária, semanal, quinzenal, mensal, anual;
   sem fim, até uma data ou em parcelas), código do lote e nota. Ao editar uma série, escolha "só nesta" ou "nesta e nas próximas".
 - **Gráficos:** projeção de 6/12/24 meses com linha de saldo, pizza por categoria e ranking.
-- **Ajustes:** tema Claro/Escuro/Auto, perfis de interface (Padrão, Feminino, Masculino, Minimal, Windows, MS-DOS),
+- **Ajustes:** tema Claro/Escuro/Auto, perfis de interface (Padrão, Feminino, Masculino, Minimal, Windows, Moderno),
   Meu Perfil (com busca de CEP), Contas e Cartões, Categorias, Dívidas (parcelas que você marca como pagas),
   simulador de Empréstimos (gera as parcelas divididas 40% no dia 15 e 60% no dia 30), Orientação do que pagar primeiro,
   relatórios (Controle de Caixa em Excel e PDF, Excel por categoria, fluxo diário em CSV) e backup.
