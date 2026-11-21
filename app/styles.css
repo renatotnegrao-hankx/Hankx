@@ -281,3 +281,57 @@ textarea.in{min-height:90px;resize:vertical}
 #modal .sheet h3{padding-right:44px}
 .tx.canceled{opacity:.5;border-style:dashed}
 .tx.canceled .tname,.tx.canceled .tval{text-decoration:line-through}
+
+/* ===== Notebook / telas grandes (o celular não é afetado) ===== */
+.tabbar .brand{display:none}
+@media (min-width:900px){
+  html,body{font-size:15px}
+  #app{max-width:none;background:radial-gradient(90% 50% at 60% 0%,var(--bg) 0%,var(--bg2) 100%)}
+  body.logged #main{margin-left:220px;padding:28px 36px 60px;max-width:1460px}
+  body:not(.logged) #main{max-width:440px;margin:0 auto}
+  /* barra lateral no lugar da barra de baixo */
+  .tabbar{left:0;top:0;bottom:0;transform:none;width:220px;max-width:none;flex-direction:column;justify-content:flex-start;gap:4px;padding:22px 12px;border-top:0;border-right:1px solid var(--line)}
+  .tabbar .brand{display:flex;align-items:center;gap:10px;padding:0 10px 22px}
+  .tabbar .brand img{width:40px;height:40px;border-radius:11px}
+  .tabbar .brand b{font-size:18px;letter-spacing:.5px}
+  .tabbar .brand small{color:var(--muted);font-size:12px;margin-top:3px}
+  .tabbar button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;padding:11px 14px;border-radius:12px;font-size:15px}
+  .tabbar button:hover{background:var(--card)}
+  .tabbar button.on{background:var(--accent-soft)}
+  .tabbar .ico{width:22px;height:22px}
+  .fab{right:36px;bottom:32px}
+  /* colunas */
+  .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:start}
+  .split.even{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .split.cal-split{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+  .split.proj-split{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+  .split.donut-split{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center}
+  .split.donut-split svg{width:90%!important}
+  .split>.col>h2:first-child,.split>.col>.between:first-child h2{margin-top:0}
+  .split>.col>.sect:first-child{margin-top:6px}
+  .txgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}
+  .txgrid .dayhead,.txgrid .empty{grid-column:1/-1}
+  .cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:0 14px;align-items:start}
+  .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0 12px}
+  /* telas de formulário/ajustes não ficam largas demais */
+  body[data-scr=perfil] #main,body[data-scr=emprestimos] #main,body[data-scr=sync] #main,body[data-scr=orientacao] #main{max-width:820px}
+  .accs,.seg,.pills{max-width:none}
+  .monthnav{max-width:520px;margin-left:auto;margin-right:auto}
+  .seg{max-width:720px}
+  .calbar .seg{max-width:none}
+  /* calendário maior */
+  .cal .d{min-height:96px;font-size:12.5px;padding:8px 2px}
+  .cal .d b{font-size:17px}
+  .cal .d .x{font-size:11px}
+  .cal .d:hover{background:var(--card2);cursor:pointer}
+  .tx:hover,.li:hover,.catrow:hover{border-color:var(--accent);cursor:pointer}
+  /* janelas no centro da tela */
+  #modal .bk{align-items:center}
+  #modal .sheet{border-radius:22px;max-height:88vh;max-width:560px;border:1px solid var(--line)}
+  #modal .grab{display:none}
+  #toast{bottom:40px}
+  .chartwrap svg{max-height:440px}
+}
+@media (min-width:1300px){
+  .txgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}

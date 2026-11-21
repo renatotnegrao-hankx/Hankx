@@ -239,6 +239,7 @@ function scrInicio() {
   ${seg('mode', [['mensal', 'Mensal'], ['anual', 'Anual'], ['periodo', 'Período']], V.mode)}
   ${periodNav()}
   ${pills('status', [['todos', 'Todos'], ['pendentes', 'Pendentes'], ['realizados', 'Realizados']], V.status, 'plain')}
+  <div class="split"><div class="col">
   <div class="card">
     <div class="summary">
       <div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" stroke="var(--card2)" stroke-width="13" fill="none"/><circle cx="60" cy="60" r="50" stroke="var(--accent)" stroke-width="13" fill="none" stroke-linecap="round" stroke-dasharray="${C * pct} ${C}"/></svg><div class="t"><b>${Math.round(pct * 100)}%</b><small>saldo</small></div></div>
@@ -254,8 +255,10 @@ function scrInicio() {
   </div>
   ${!syncOn() ? `<div class="alert" data-act="go" data-sub="sync" style="cursor:pointer"><div class="h">${I('info')} Seus dados estão só neste aparelho</div><span class="small">Toque aqui para ativar o salvamento no GitHub e não perder nada se apagar o app.</span></div>` : SYS.err ? `<div class="alert" data-act="go" data-sub="sync"><div class="h">${I('info')} GitHub</div><span class="small">${esc(SYS.err)}</span></div>` : ''}
   ${soon.length ? `<div class="alert"><div class="h">${I('bell')} Vencimentos próximos</div>${soon.slice(0, 6).map(t => `<div class="it" data-act="edit-tx" data-id="${t.id}"><span>${esc(t.desc || cat(t.categoryId)?.name || '')} <small class="${t.date < T0 ? 'red' : 'muted'}">&nbsp;${t.date < T0 ? 'atrasada ' : ''}${fmtD(t.date).slice(0, 5)}</small></span><b class="red">${brl(t.amount)}</b></div>`).join('')}${soon.length > 6 ? `<small class="muted">+ ${soon.length - 6} outros</small>` : ''}</div>` : ''}
+  </div><div class="col">
   <div class="between"><h2>Próximos</h2><button class="ib" data-act="cycle-home">${I('filter')}${V.homeType !== 'todos' ? `<small class="accent">${V.homeType}</small>` : ''}</button></div>
-  ${shown.length ? sortTx(shown, 'data').map(t => txRow(t, { when: true, signed: true })).join('') : '<div class="empty">Nenhum lançamento neste período.</div>'}`;
+  ${shown.length ? sortTx(shown, 'data').map(t => txRow(t, { when: true, signed: true })).join('') : '<div class="empty">Nenhum lançamento neste período.</div>'}
+  </div></div>`;
 }
 
 function scrCalendario() {
@@ -290,10 +293,13 @@ function scrCalendario() {
     ${seg('status', [['todos', 'Todos'], ['pendentes', 'Pend.'], ['realizados', 'Real.']], V.status)}
     ${seg('calView', [['fluxo', I('bars') + ' Fluxo'], ['saldo', I('trend') + ' Saldo']], V.calView)}
   </div>
+  <div class="split cal-split"><div class="col">
   <div class="cal"><div class="wd">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(x => `<div>${x}</div>`).join('')}</div><div class="grid">${cells}</div></div>
   ${three(rec, desp, r2(rec - desp))}
+  </div><div class="col">
   <div class="between"><h2 style="font-size:17px;color:var(--muted)">${V.calDay ? `Dia ${fmtD(V.calDay)} <button class="accent small" data-act="calday" data-d="${V.calDay}">(ver mês)</button>` : `Transações do mês (${month.length})`}</h2>${sortBar()}</div>
-  ${txGrouped(sortTx(list))}`;
+  ${txGrouped(sortTx(list))}
+  </div></div>`;
 }
 
 function scrTransacoes() {
@@ -313,7 +319,7 @@ function scrTransacoes() {
   ${three(rec, desp, r2(rec - desp))}
   ${seg('type', [['todos', 'Todos'], ['receita', 'Receita', 'rec'], ['despesa', 'Despesa', 'desp']], V.type)}
   <div class="between" style="margin:14px 0 4px"><span class="muted">${list.length} transações</span>${sortBar()}</div>
-  ${txGrouped(sortTx(list), { year: V.mode !== 'mensal' })}`;
+  <div class="txgrid">${txGrouped(sortTx(list), { year: V.mode !== 'mensal' })}</div>`;
 }
 
 /* ---------- Gráficos ---------- */
@@ -399,25 +405,31 @@ function scrGraficos() {
   if (V.chart === 'projecao') {
     const D = monthsData(T0.slice(0, 7), V.projN);
     body = `${pills('projN', [[6, '6 Meses'], [12, '12 Meses'], [24, '24 Meses']], V.projN)}
+    <div class="split proj-split"><div class="col">
     <div class="card"><div style="text-align:center;font-weight:700;font-size:15px;margin-bottom:6px">Fluxo de Caixa - ${V.projN} Meses</div>${projChart(D)}</div>
+    </div><div class="col">
     ${pills('tblMode', [['mes', 'Mês'], ['ano', 'Ano'], ['periodo', 'Período']], V.tblMode)}
     ${periodNav(V.tblMode === 'mes' ? 'mensal' : V.tblMode === 'ano' ? 'anual' : 'periodo')}
-    ${flowTable()}`;
+    ${flowTable()}
+    </div></div>`;
   } else if (V.chart === 'categoria') {
     const { arr, tot } = catAgg(V.catType, V.catMode);
     body = `${seg('catType', [['receita', 'Receita', 'rec'], ['despesa', 'Despesa', 'desp']], V.catType, 'rd')}
     ${pills('catMode', [['mensal', 'Mensal'], ['anual', 'Anual'], ['periodo', 'Período']], V.catMode)}
     ${periodNav(V.catMode)}
-    <div class="card">${donut(arr, tot)}<div class="between" style="padding:12px 4px;border-top:1px solid var(--line)"><span class="muted">Total do período</span><b style="font-size:17px">${brl(tot)}</b></div>
-    <div class="catlist">${arr.map((x, i) => { const c = cat(x.id); const op = V.open['c' + x.id]; return `<div class="it" data-act="toggle-open" data-k="c${x.id}"><span class="dot" style="background:${PALETTE[i % PALETTE.length]}"></span><span class="nm">${esc(c?.name || 'Sem categoria')}</span><small class="muted">${x.n}x</small><b>${brl(x.total)}</b><small class="muted" style="width:38px;text-align:right">${Math.round(x.total / tot * 100)}%</small>${I(op ? 'up' : 'right')}</div>${op ? x.list.map(t => `<div class="between small" style="padding:4px 26px"><span class="muted">${fmtD(t.date)} · ${esc(t.desc || '')}</span><span>${brl(t.amount)}</span></div>`).join('') : ''}`; }).join('')}</div></div>`;
+    <div class="card"><div class="split donut-split"><div class="col">${donut(arr, tot)}</div><div class="col"><div class="between" style="padding:12px 4px;border-top:1px solid var(--line)"><span class="muted">Total do período</span><b style="font-size:17px">${brl(tot)}</b></div>
+    <div class="catlist">${arr.map((x, i) => { const c = cat(x.id); const op = V.open['c' + x.id]; return `<div class="it" data-act="toggle-open" data-k="c${x.id}"><span class="dot" style="background:${PALETTE[i % PALETTE.length]}"></span><span class="nm">${esc(c?.name || 'Sem categoria')}</span><small class="muted">${x.n}x</small><b>${brl(x.total)}</b><small class="muted" style="width:38px;text-align:right">${Math.round(x.total / tot * 100)}%</small>${I(op ? 'up' : 'right')}</div>${op ? x.list.map(t => `<div class="between small" style="padding:4px 26px"><span class="muted">${fmtD(t.date)} · ${esc(t.desc || '')}</span><span>${brl(t.amount)}</span></div>`).join('') : ''}`; }).join('')}</div></div></div></div>`;
   } else {
     const mode = V.rankMode === 'mes' ? 'mensal' : V.rankMode === 'ano' ? 'anual' : 'periodo';
     const R = catAgg('receita', mode), D = catAgg('despesa', mode);
     const rank = (o, col) => { const mx = Math.max(1, ...o.arr.map(x => x.total)); return o.arr.length ? `<div class="rank">${o.arr.slice(0, 10).map(x => `<div class="it"><span>${esc(cat(x.id)?.name || 'Sem categoria')}</span><div class="bar" style="width:${Math.max(2, x.total / mx * 78)}%;background:${col}"><em>${kfmt(x.total)}</em></div></div>`).join('')}</div>` : '<div class="empty">Sem dados</div>'; };
     body = `${pills('rankMode', [['mes', 'Mês Atual'], ['ano', 'Ano'], ['periodo', 'Período']], V.rankMode)}
     ${periodNav(mode)}
+    <div class="split even"><div class="col">
     <div class="card"><div class="between"><b style="font-size:15px">Maiores Receitas por Categoria</b><b class="green">${brl(R.tot)}</b></div>${rank(R, '#34d399')}</div>
-    <div class="card"><div class="between"><b style="font-size:15px">Maiores Despesas por Categoria</b><b class="red">${brl(D.tot)}</b></div>${rank(D, '#f87171')}</div>`;
+    </div><div class="col">
+    <div class="card"><div class="between"><b style="font-size:15px">Maiores Despesas por Categoria</b><b class="red">${brl(D.tot)}</b></div>${rank(D, '#f87171')}</div>
+    </div></div>`;
   }
   return `<h1>Gráficos</h1>${accChips()}${seg('chart', [['projecao', 'Projeção'], ['categoria', 'Categoria'], ['ranking', 'Ranking']], V.chart)}${body}`;
 }
@@ -431,6 +443,7 @@ function scrAjustes() {
   const st = S.settings;
   return `<div class="titlebar"><div><h1 style="margin-bottom:4px">Ajustes</h1><div class="muted" style="font-size:14px">${esc(S.profile.email || 'Seus dados ficam salvos neste aparelho')}</div></div>
   <img src="icons/logo.png" alt="HANKX" style="width:50px;height:50px;border-radius:13px"></div>
+  <div class="split even"><div class="col">
   <div class="sect">APARÊNCIA</div>
   <div class="card"><div class="muted" style="margin-bottom:10px">Tema</div>
     <div class="opts">${[['light', 'sun', 'Claro'], ['dark', 'moon', 'Escuro'], ['auto', 'phone', 'Auto']].map(([v, ic, l]) => `<button class="opt ${st.theme === v ? 'on' : ''}" data-act="theme" data-v="${v}"><span class="e accent" style="color:${st.theme === v ? 'var(--accent)' : 'var(--muted)'}">${I(ic)}</span><b>${l}</b></button>`).join('')}</div>
@@ -442,6 +455,7 @@ function scrAjustes() {
   <div class="list">${li('go', 'spark', 'Orientação', 'O que pagar primeiro', '', 'data-sub="orientacao"')}${li('go', 'calc', 'Empréstimos', 'Simular parcelas e gerar lançamentos', '', 'data-sub="emprestimos"')}</div>
   <div class="sect">GESTÃO</div>
   <div class="list">${li('go', 'dollar', 'Contas', '', '', 'data-sub="contas"')}${li('go', 'shield', 'Categorias', '', '', 'data-sub="categorias"')}${li('go', 'card', 'Dívidas', '', '', 'data-sub="dividas"')}</div>
+  </div><div class="col">
   <div class="sect">RELATÓRIOS</div>
   <div class="list">${li('rep-caixa', 'sheet', 'Planilha Controle de Caixa', 'Modelo Cash Control: descrições nas linhas, meses nas colunas, receitas, despesas e saldos (.xlsx)', 'c-green')}
   ${li('rep-pdf', 'file', 'Planilha Controle de Caixa em PDF', 'Mesmo modelo da planilha, pronto para imprimir (.pdf)', 'c-red')}
@@ -451,6 +465,7 @@ function scrAjustes() {
   <div class="list"><button class="li" data-act="go" data-sub="sync">${I('ul')}<span class="tx2"><b>Salvar no GitHub</b><small data-synclabel>${esc(syncLabel())}</small></span>${I('right')}</button>${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
   <div class="sect">CONTA</div>
   <div class="list">${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}</div>
+  </div></div>
   <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · os dados ficam somente neste aparelho.<br>Faça backup com frequência.</p>`;
 }
 function backHead(title, right = '') {
@@ -480,12 +495,13 @@ function scrContas() {
   return `${backHead('Contas')}
   <div class="seg"><button class="${V.accTab === 'conta' ? 'on' : ''}" data-act="set" data-k="accTab" data-v="conta">${I('bank')} Contas</button><button class="${V.accTab === 'cartao' ? 'on' : ''}" data-act="set" data-k="accTab" data-v="cartao">${I('card')} Cartões</button></div>
   ${V.accTab === 'conta' ? `<div class="card between"><span class="muted" style="font-size:15px">Saldo total em caixa</span><b style="font-size:18px">${brl(total)}</b></div>` : ''}
-  ${contas.map(a => `<div class="card" style="${a.isDefault ? 'border-color:var(--accent)' : ''}"><div class="row" style="align-items:flex-start">
+  <div class="cardgrid">${contas.map(a => `<div class="card" style="${a.isDefault ? 'border-color:var(--accent)' : ''}"><div class="row" style="align-items:flex-start">
     <div class="banklogo" style="background:${a.color}">${esc(a.name.split(' ')[0].slice(0, 6))}</div>
     <div style="flex:1;min-width:0"><div class="between"><b style="font-size:16px">${esc(a.name)}</b>${a.isDefault ? '<span class="badge done" style="padding:2px 10px;font-size:12px">Padrão</span>' : ''}</div>
     <div class="muted small">${esc(a.kind === 'cartao' ? `Cartão${a.dueDay ? ' · vence dia ' + a.dueDay : ''}${a.limit ? ' · limite ' + brl(+a.limit) : ''}` : a.type || 'Conta corrente')}</div>
     <div class="between"><b style="font-size:16px;margin-top:4px">${brl(a.kind === 'cartao' ? -LIVE().filter(t => t.accountId === a.id && !t.paid && t.type === 'despesa').reduce((s, t) => s + +t.amount, 0) : accBalance(a))}</b>
     <span><button class="ib" data-act="acc-default" data-id="${a.id}" style="color:${a.isDefault ? 'var(--accent)' : 'var(--muted)'}">${I('star')}</button><button class="ib" data-act="acc-edit" data-id="${a.id}">${I('pen')}</button><button class="ib" data-act="acc-del" data-id="${a.id}">${I('trash')}</button></span></div></div></div></div>`).join('')}
+  </div>
   <button class="ad" data-act="acc-edit">+ Adicionar ${V.accTab === 'conta' ? 'conta' : 'cartão'}</button>
   ${V.accTab === 'cartao' ? '<p class="muted small" style="margin-top:12px">No cartão, o valor exibido é o total de despesas ainda não pagas lançadas nele.</p>' : ''}`;
 }
@@ -493,7 +509,7 @@ function scrCategorias() {
   const L = S.categories.filter(c => c.type === V.catTab).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
   return `${backHead('Categorias', `<button class="ib" data-act="cat-edit">${I('plus')}</button>`)}
   ${seg('catTab', [['receita', 'Receita', 'rec'], ['despesa', 'Despesa', 'desp']], V.catTab, 'rd')}
-  ${L.map(c => `<div class="catrow ${c.type === 'receita' ? 'rec' : ''}"><div class="em">${c.icon}</div><div class="nm">${esc(c.name)}</div><button class="ib" data-act="cat-edit" data-id="${c.id}">${I('pen')}</button><button class="ib" data-act="cat-del" data-id="${c.id}">${I('trash')}</button></div>`).join('')}`;
+  <div class="catgrid">${L.map(c => `<div class="catrow ${c.type === 'receita' ? 'rec' : ''}"><div class="em">${c.icon}</div><div class="nm">${esc(c.name)}</div><button class="ib" data-act="cat-edit" data-id="${c.id}">${I('pen')}</button><button class="ib" data-act="cat-del" data-id="${c.id}">${I('trash')}</button></div>`).join('')}</div>`;
 }
 function debtStats(d) {
   const tot = r2(d.installments.reduce((s, i) => s + +i.amount, 0));
@@ -507,7 +523,7 @@ function scrDividas() {
   return `${backHead('Dívidas', `<button class="ib" data-act="debt-edit">${I('plus')}</button>`)}
   <div class="card between"><span class="muted" style="font-size:15px">Total em aberto</span><b class="red" style="font-size:18px">${brl(total)}</b></div>
   ${S.debts.length ? '' : '<div class="empty">Nenhuma dívida cadastrada.<br><small>Toque em + para adicionar.</small></div>'}
-  ${S.debts.map(d => {
+  <div class="cardgrid">${S.debts.map(d => {
     const s = debtStats(d), op = V.open['d' + d.id];
     return `<div class="card"><div class="between" style="align-items:flex-start"><div><b style="font-size:17px">${esc(d.name)}</b>${d.desc ? `<div class="muted">${esc(d.desc)}</div>` : ''}</div>
     <span style="white-space:nowrap;flex:none"><button class="ib" data-act="debt-edit" data-id="${d.id}">${I('pen')}</button><button class="ib" data-act="debt-del" data-id="${d.id}">${I('trash')}</button></span></div>
@@ -515,7 +531,7 @@ function scrDividas() {
     <div class="between">${s.rem <= 0 ? '<span class="badge done">Quitada</span>' : s.late ? '<span class="badge late">Atrasada</span>' : '<span class="badge ok">Em dia</span>'}
     <button class="muted" data-act="toggle-open" data-k="d${d.id}" style="font-size:14px">Parcelas ${I(op ? 'up' : 'down')}</button></div>
     ${op ? `<div class="hr" style="margin:14px -18px"></div>${d.installments.map((i, k) => `<button class="inst ${i.paid ? 'paid' : ''}" data-act="inst" data-id="${d.id}" data-k="${k}">${I(i.paid ? 'check' : 'circle')}<span class="nm">Parcela ${i.n}/${s.n}</span><span class="dt ${!i.paid && i.date < T0 ? 'red' : ''}">${fmtD(i.date)}</span><span class="v">${brl(+i.amount)}</span></button>`).join('')}` : ''}</div>`;
-  }).join('')}`;
+  }).join('')}</div>`;
 }
 function loanCalc() {
   const L = V.loan, i = parseMoney(L.i) / 100, n = parseInt(L.n) || 0;
@@ -605,7 +621,7 @@ async function sha256(t) {
 const isLogged = () => { try { return localStorage.getItem(AUTH_KEY) === AUTH_HASH || sessionStorage.getItem(AUTH_KEY) === AUTH_HASH; } catch (e) { return false; } };
 function showLogin(msg = '') {
   $('#tabbar').innerHTML = ''; $('#fab').classList.add('hide');
-  $('#main').innerHTML = `<div style="min-height:80vh;display:flex;flex-direction:column;justify-content:center">
+  $('#main').innerHTML = `<div class="loginwrap" style="min-height:80vh;display:flex;flex-direction:column;justify-content:center">
   <div style="text-align:center;margin-bottom:28px"><img src="icons/logo.png" alt="HANKX" style="width:96px;height:96px;border-radius:24px"><h1 style="margin:16px 0 4px">HANKX Finanças</h1><p class="muted" style="margin:0">Entre para acessar</p></div>
   <form id="loginf" class="card" autocomplete="on">
   <label class="f"><span>Login</span><input class="in" name="user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
@@ -760,13 +776,15 @@ function applyTheme() {
 }
 const TABS = [['inicio', 'home', 'Início'], ['calendario', 'cal', 'Calendário'], ['transacoes', 'list', 'Transações'], ['graficos', 'pie', 'Gráficos'], ['ajustes', 'gear', 'Ajustes']];
 function render(keepScroll = true) {
+  document.body.classList.toggle('logged', isLogged());
+  document.body.dataset.scr = V.tab === 'ajustes' && V.sub ? V.sub : V.tab;
   if (!isLogged()) return showLogin();
   const y = window.scrollY;
   let h;
   if (V.tab === 'ajustes' && V.sub) h = ({ perfil: scrPerfil, contas: scrContas, categorias: scrCategorias, dividas: scrDividas, emprestimos: scrEmprestimos, orientacao: scrOrientacao, sync: scrSync })[V.sub]();
   else h = ({ inicio: scrInicio, calendario: scrCalendario, transacoes: scrTransacoes, graficos: scrGraficos, ajustes: scrAjustes })[V.tab]();
   $('#main').innerHTML = h;
-  $('#tabbar').innerHTML = TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
+  $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png" alt=""><b>HANKX</b><small>Finanças</small></div>` + TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
   $('#fab').innerHTML = I('plus');
   $('#fab').classList.toggle('hide', !isLogged() || V.tab === 'ajustes' || V.tab === 'graficos');
   if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
