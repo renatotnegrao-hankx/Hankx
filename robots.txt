@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.hankx.com.br/sitemap.xml
+Sitemap: https://hankx.com.br/sitemap.xml

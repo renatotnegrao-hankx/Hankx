@@ -1275,29 +1275,3 @@ body.skin-ios .ticon{border-radius:9px}
 .cmp-b small{font-size:11.5px;color:var(--muted)}
 .cmp-b em{font-style:normal;font-size:12.5px;font-weight:700;text-align:right}
 body .seg button{min-width:0;overflow:hidden;text-overflow:ellipsis}
-
-/* ===== Premium: aviso de teste e tela de assinatura ===== */
-.pbanner{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;margin-bottom:12px;cursor:pointer;
-  background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 20%,var(--card)),var(--card));border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
-.pbanner.end{background:linear-gradient(120deg,color-mix(in srgb,var(--orange) 22%,var(--card)),var(--card));border-color:color-mix(in srgb,var(--orange) 45%,transparent)}
-.pbanner>.ico{color:var(--accent);width:24px;height:24px}.pbanner.end>.ico{color:var(--orange)}
-.pbanner>span:not(.ico){flex:1;min-width:0}.pbanner>.ico{flex:none}.pbanner b{display:block;font-size:14px}.pbanner small{display:block;font-size:12px;color:var(--muted);margin-top:1px}
-.pbanner em{font-style:normal;font-weight:800;font-size:13px;color:#fff;background:var(--accent);padding:7px 12px;border-radius:20px;white-space:nowrap}
-.pw-h{display:flex;align-items:center;gap:12px;margin:2px 0 12px;padding-right:40px}
-.pw-h img{width:52px;height:52px;border-radius:14px}
-.pw-h b{display:block;font-size:21px}.pw-h small{color:var(--muted);font-size:13px}
-.pw-r{display:flex;gap:8px;align-items:center;background:var(--accent-soft);border-radius:12px;padding:10px 12px;font-size:13.5px;margin:0 0 10px}
-.pw-r .ico{color:var(--accent);width:18px;height:18px}
-.pw-l{list-style:none;padding:0;margin:0 0 14px}
-.pw-l li{display:flex;gap:10px;align-items:center;padding:6px 0;font-size:14.5px}
-.pw-l .ico{color:var(--green);width:20px;height:20px}
-.pw-plans{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.pw-p{position:relative;text-align:left;border:2px solid var(--line);border-radius:16px;padding:14px 12px 12px;background:var(--card)}
-.pw-p.on{border-color:var(--accent);background:var(--accent-soft)}
-.pw-p b{display:block;font-size:14px;color:var(--muted)}
-.pw-p strong{display:block;font-size:22px;margin:4px 0 2px}.pw-p strong small{font-size:13px;font-weight:600;color:var(--muted)}
-.pw-p>small{font-size:11.5px;color:var(--muted)}
-.pw-tag{position:absolute;top:-10px;right:10px;background:var(--green);color:#fff;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase}
-.loginwrap .card h3{font-size:19px}
-@media (min-width:900px){ body:not(.logged) #main{max-width:460px} }
-body:not(.logged) .tabbar,body:not(.logged) .fab{display:none!important}
