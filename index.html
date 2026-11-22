@@ -3,21 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HANKX Finanças — controle financeiro simples, no celular e no computador</title>
-<meta name="description" content="Organize receitas, despesas, contas e dívidas. Calendário de saldo dia a dia, gráficos claros e relatórios em Excel. Teste o Premium grátis por 7 dias.">
-<meta property="og:title" content="HANKX Finanças — seu dinheiro organizado">
+<title>Hankx — controle financeiro simples, no celular e no computador</title>
+<meta name="description" content="Organize receitas, despesas, contas e dívidas com o Hankx. Calendário de saldo dia a dia, gráficos claros e relatórios em Excel. Teste o Premium grátis por 7 dias.">
+<meta property="og:title" content="Hankx — seu dinheiro organizado">
 <meta property="og:description" content="Lançamentos, calendário de saldo, gráficos, dívidas e relatórios. 7 dias de Premium grátis.">
 <meta property="og:image" content="https://www.hankx.com.br/img/tela-notebook.webp">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0a0f1a">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/png" href="app/icons/logo.png">
 <link rel="apple-touch-icon" href="app/icons/apple-touch-icon.png">
-<link rel="stylesheet" href="site.css?v=3">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=4">
 </head>
 <body>
 
-<header class="nav"><div class="wrap">
-  <a class="brand" href="/"><img src="app/icons/logo.png" alt="">HANKX <small>Finanças</small></a>
+<header class="nav" id="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="app/icons/logo.png" alt="">Hankx</a>
   <nav><a href="#recursos">Recursos</a><a href="#telas">Telas</a><a href="#precos">Preços</a><a href="#perguntas">Dúvidas</a></nav>
   <a class="btn ghost" href="app/">Entrar</a>
   <a class="btn primary" href="app/">Começar grátis</a>
@@ -25,100 +27,147 @@
 
 <section class="hero"><div class="wrap">
   <div>
-    <span class="pill">✨ 7 dias de Premium grátis · sem cartão</span>
-    <h1>Seu dinheiro <span class="grad">organizado</span>, do jeito que você entende.</h1>
-    <p class="lead">Anote receitas e despesas em segundos, veja o saldo de cada dia do mês, saiba exatamente o que pagar primeiro e acompanhe suas dívidas até a quitação.</p>
+    <span class="pill"><i></i>7 dias de Premium grátis · sem cartão</span>
+    <h1>Seu dinheiro <span class="hl">organizado</span>, do jeito que você entende.</h1>
+    <p class="lead">Anote receitas e despesas em segundos, veja o saldo de cada dia do mês, saiba o que pagar primeiro e acompanhe suas dívidas até a quitação.</p>
     <div class="ctas">
       <a class="btn primary big" href="app/">Testar grátis por 7 dias</a>
       <span class="gplay" title="Em breve"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="#34a853" d="M3.6 2.3 13.4 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1z"/><path fill="#fbbc04" d="m16.8 8.6-3.4 3.4 3.4 3.4 3.9-2.2c.8-.5.8-1.7 0-2.2z"/><path fill="#4285f4" d="M3.6 2.3c.3-.2.8-.2 1.2 0l12 6.3-3.4 3.4z"/><path fill="#ea4335" d="m13.4 12 3.4 3.4-12 6.3c-.4.2-.9.2-1.2 0z"/></svg><span><small>EM BREVE NO</small><b>Google Play</b></span></span>
     </div>
-    <ul class="trust"><li>✓ Sem cartão de crédito</li><li>✓ Cancele quando quiser</li><li>✓ Dados protegidos (LGPD)</li></ul>
-    <p class="note">Funciona no <b>celular</b> (instala na tela inicial) e no <b>computador</b>. Seus dados ficam salvos na nuvem.</p>
+    <ul class="trust"><li>Sem cartão de crédito</li><li>Cancele quando quiser</li><li>Dados protegidos (LGPD)</li></ul>
   </div>
   <div class="phones">
-    <div class="phone p1"><img src="img/tela-inicio.webp" alt="Tela inicial do HANKX Finanças com saldo, receitas e despesas" width="585" height="1266"></div>
-    <div class="phone p2"><img src="img/tela-graficos.webp" alt="Resumo do mês com renda comprometida" width="585" height="1266" loading="lazy"></div>
+    <div class="float f1"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/></svg></span><span>Saldo previsto<b>R$ 4.606,79</b></span></div>
+    <div class="phone p1"><img src="img/tela-inicio.webp" alt="Tela inicial do Hankx com saldo, receitas e despesas" width="585" height="1266"></div>
+    <div class="phone p2"><img src="img/tela-calendario.webp" alt="Calendário com o saldo de cada dia do mês" width="585" height="1266"></div>
+    <div class="float f2"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span>Próximo vencimento<b>Mercado · 25/11</b></span></div>
   </div>
 </div></section>
 
-<section style="padding-top:20px"><div class="wrap">
+<section style="padding:28px 0 0"><div class="wrap">
   <div class="stats">
-    <div class="stat"><b>30 s</b><span>para lançar uma conta</span></div>
+    <div class="stat"><b>30 segundos</b><span>para lançar uma conta</span></div>
     <div class="stat"><b>Dia a dia</b><span>saldo previsto no calendário</span></div>
     <div class="stat"><b>Excel e PDF</b><span>relatórios prontos</span></div>
-    <div class="stat"><b>Nuvem</b><span>dados em qualquer aparelho</span></div>
+    <div class="stat"><b>Na nuvem</b><span>no celular e no computador</span></div>
   </div>
 </div></section>
 
-<section id="recursos"><div class="wrap center">
+<section><div class="wrap split">
+  <div class="media"><img src="img/fotos/calculando-economia.webp" alt="Pessoa calculando as economias do mês" width="1600" height="1066" loading="lazy"><div class="badge">Renda comprometida<b>71% → 58%</b></div></div>
+  <div>
+    <span class="eyebrow">Feito para a vida real</span>
+    <h2>Chega de descobrir no fim do mês que o dinheiro acabou</h2>
+    <p class="sub">O Hankx mostra antes o que vai acontecer com o seu saldo, para você decidir com calma.</p>
+    <ul class="checks">
+      <li><span><b>Contas que se repetem lançam sozinhas.</b> Salário, aluguel, parcelas e assinaturas nos meses seguintes.</span></li>
+      <li><span><b>Avisos de vencimento e atraso</b> logo na tela inicial.</span></li>
+      <li><span><b>Orientação do que pagar primeiro</b> quando o dinheiro não dá para tudo.</span></li>
+    </ul>
+  </div>
+</div></section>
+
+<section id="recursos" style="background:var(--bg2)"><div class="wrap center">
   <span class="eyebrow">Recursos</span>
-  <h2>Tudo o que você precisa para sair do aperto</h2>
-  <p class="sub">Sem planilhas complicadas: o HANKX Finanças mostra onde está o seu dinheiro e o que fazer com ele.</p>
-  <div class="feats" style="text-align:left">
-    <div class="feat"><div class="ic">🧾</div><h3>Lançamentos inteligentes</h3><p>Contas fixas, parcelas e salários que se repetem sozinhos. Marque como pago com um toque.</p></div>
-    <div class="feat"><div class="ic" style="background:rgba(45,212,163,.14)">📅</div><h3>Calendário de saldo</h3><p>Veja quanto vai sobrar em cada dia do mês e evite o vermelho antes que ele aconteça.</p></div>
-    <div class="feat"><div class="ic" style="background:rgba(124,92,255,.16)">📊</div><h3>Gráficos que se entendem</h3><p>Quanto da renda está comprometida, gastos por categoria, comparação com o mês anterior e projeção.</p></div>
-    <div class="feat"><div class="ic" style="background:rgba(255,93,115,.14)">💳</div><h3>Dívidas sob controle</h3><p>Acompanhe cada parcela, quanto falta pagar e simule empréstimos antes de fechar negócio.</p></div>
-    <div class="feat"><div class="ic" style="background:rgba(255,184,77,.16)">🧭</div><h3>O que pagar primeiro</h3><p>Uma orientação clara de prioridade: contas atrasadas, essenciais e dívidas com juros altos.</p></div>
-    <div class="feat"><div class="ic" style="background:rgba(34,167,240,.14)">📤</div><h3>Relatórios e backup</h3><p>Controle de Caixa em Excel e PDF, fluxo diário em CSV e cópia de segurança dos seus dados.</p></div>
+  <h2>Tudo o que você precisa, sem complicação</h2>
+  <p class="sub">Sem planilhas: o Hankx mostra onde está o seu dinheiro e o que fazer com ele.</p>
+  <div class="feats">
+    <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><h3>Lançamentos inteligentes</h3><p>Contas fixas, parcelas e salários que se repetem sozinhos. Marque como pago com um toque.</p></div>
+    <div class="feat g"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></div><h3>Calendário de saldo</h3><p>Veja quanto vai sobrar em cada dia do mês e evite o vermelho antes que ele aconteça.</p></div>
+    <div class="feat v"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg></div><h3>Gráficos que se entendem</h3><p>Quanto da renda está comprometida, gastos por categoria, comparação com o mês anterior e projeção.</p></div>
+    <div class="feat r"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div><h3>Dívidas sob controle</h3><p>Acompanhe cada parcela, quanto falta pagar e simule empréstimos antes de fechar negócio.</p></div>
+    <div class="feat y"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3z"/></svg></div><h3>O que pagar primeiro</h3><p>Prioridade clara: contas atrasadas, essenciais e dívidas com juros altos.</p></div>
+    <div class="feat c"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg></div><h3>Relatórios e backup</h3><p>Controle de caixa em Excel e PDF, fluxo diário em CSV e cópia de segurança dos seus dados.</p></div>
+  </div>
+</div></section>
+
+<section id="telas"><div class="wrap center">
+  <span class="eyebrow">Telas</span>
+  <h2>Bonito no celular. Completo no computador.</h2>
+  <p class="sub">As mesmas informações em qualquer aparelho, sempre sincronizadas.</p>
+  <div class="gallery">
+    <figure><div class="phone"><img src="img/tela-inicio.webp" alt="Tela Início" loading="lazy" width="585" height="1266"></div><figcaption>Início<span>saldo e vencimentos</span></figcaption></figure>
+    <figure><div class="phone"><img src="img/tela-calendario.webp" alt="Tela Calendário" loading="lazy" width="585" height="1266"></div><figcaption>Calendário<span>saldo de cada dia</span></figcaption></figure>
+    <figure><div class="phone"><img src="img/tela-graficos.webp" alt="Tela Gráficos" loading="lazy" width="585" height="1266"></div><figcaption>Gráficos<span>renda comprometida</span></figcaption></figure>
+    <figure><div class="phone"><img src="img/tela-transacoes.webp" alt="Tela Transações" loading="lazy" width="585" height="1266"></div><figcaption>Transações<span>filtros e busca</span></figcaption></figure>
+  </div>
+  <div class="laptop"><img src="img/tela-notebook.webp" alt="Painel do Hankx no computador" loading="lazy" width="1440" height="900"></div>
+</div></section>
+
+<section style="background:var(--bg2)"><div class="wrap split rev">
+  <div class="media"><img src="img/fotos/mesa-financas.webp" alt="Pessoa organizando as finanças em casa" width="1600" height="1066" loading="lazy"></div>
+  <div>
+    <span class="eyebrow">Celular e computador</span>
+    <h2>Lance no celular, analise no computador</h2>
+    <p class="sub">Entre com o mesmo e-mail em qualquer aparelho e tudo aparece na hora. No computador, um painel completo com contas, gráficos e contas a pagar.</p>
+    <ul class="checks">
+      <li><span><b>Funciona no navegador</b>, sem instalar nada. No celular, vira um app na tela inicial.</span></li>
+      <li><span><b>Várias contas e cartões</b> em um só lugar.</span></li>
+      <li><span><b>Exporte para Excel</b> quando precisar.</span></li>
+    </ul>
+    <p style="margin-top:26px"><a class="btn primary" href="app/">Abrir o Hankx</a></p>
   </div>
 </div></section>
 
 <section><div class="wrap center">
-  <span class="eyebrow">Por que o HANKX?</span>
-  <h2>Mais fácil que planilha. Mais claro que extrato.</h2>
-  <div class="cmp">
-    <div class="cmp-row head"><span></span><span>Planilha</span><span>Extrato do banco</span><span class="hx">HANKX Finanças</span></div>
-    <div class="cmp-row"><span>Mostra o saldo de cada dia do mês</span><span>Dá trabalho</span><span>Só o passado</span><span class="hx">✓ Automático</span></div>
-    <div class="cmp-row"><span>Contas que se repetem e parcelas</span><span>Copiar e colar</span><span>—</span><span class="hx">✓ Lança sozinho</span></div>
-    <div class="cmp-row"><span>Aviso de vencimentos e atrasos</span><span>—</span><span>—</span><span class="hx">✓ No início do app</span></div>
-    <div class="cmp-row"><span>O que pagar primeiro quando falta dinheiro</span><span>—</span><span>—</span><span class="hx">✓ Orientação pronta</span></div>
-    <div class="cmp-row"><span>Todas as contas e cartões juntos</span><span>Manual</span><span>Um banco por vez</span><span class="hx">✓ Em um só lugar</span></div>
-    <div class="cmp-row"><span>Funciona no celular</span><span>Difícil</span><span>✓</span><span class="hx">✓ E no computador</span></div>
+  <span class="eyebrow">Para cada objetivo</span>
+  <h2>Do aperto à tranquilidade</h2>
+  <p class="sub">Seja para quitar dívidas, guardar dinheiro ou planejar o futuro, o Hankx acompanha você.</p>
+  <div class="mosaic">
+    <figure class="tile w2 h2"><img src="img/fotos/cofrinho-grafico.webp" alt="Moeda entrando no cofrinho" loading="lazy" width="1600" height="1067"><figcaption><b>Guardar dinheiro</b>veja o quanto sobra todo mês</figcaption></figure>
+    <figure class="tile"><img src="img/fotos/calculadora-laranja.webp" alt="Calculadora sobre cadernos" loading="lazy" width="1000" height="1500"><figcaption><b>Quitar dívidas</b>parcela por parcela</figcaption></figure>
+    <figure class="tile"><img src="img/fotos/numeros-coloridos.webp" alt="Números coloridos e calculadora" loading="lazy" width="1600" height="1600"><figcaption><b>Entender os números</b></figcaption></figure>
+    <figure class="tile w2"><img src="img/fotos/orcamento-compras.webp" alt="Mãos com nota fiscal, cofrinho, calculadora e dinheiro" loading="lazy" width="1600" height="1067" style="object-position:center 40%"><figcaption><b>Controlar o orçamento</b>gastos por categoria</figcaption></figure>
+    <figure class="tile w2"><img src="img/fotos/planejando-cidade.webp" alt="Pessoa planejando com a cidade ao fundo" loading="lazy" width="1600" height="1209" style="object-position:center 58%"><figcaption><b>Planejar o futuro</b>projeção dos próximos meses</figcaption></figure>
+    <figure class="tile"><img src="img/fotos/tablet-dupla.webp" alt="Duas pessoas consultando um tablet" loading="lazy" width="1600" height="1068"><figcaption><b>Organizar a casa</b></figcaption></figure>
+    <figure class="tile"><img src="img/fotos/calculadora-azul.webp" alt="Calculadora azul e caderno" loading="lazy" width="1000" height="1500"><figcaption><b>Sem planilha</b></figcaption></figure>
   </div>
 </div></section>
 
-<section id="telas" style="background:var(--bg2)"><div class="wrap center">
-  <span class="eyebrow">Telas</span>
-  <h2>Bonito no celular. Completo no computador.</h2>
-  <p class="sub">Escolha entre vários temas — claro, escuro, estilo iPhone, Material, Office e mais.</p>
-  <div class="gallery">
-    <figure><div class="phone"><img src="img/tela-inicio.webp" alt="Início" loading="lazy" width="585" height="1266"></div><figcaption>Início com saldo e vencimentos</figcaption></figure>
-    <figure><div class="phone"><img src="img/tela-calendario.webp" alt="Calendário" loading="lazy" width="585" height="1266"></div><figcaption>Calendário de saldo diário</figcaption></figure>
-    <figure><div class="phone"><img src="img/tela-graficos.webp" alt="Gráficos" loading="lazy" width="585" height="1266"></div><figcaption>Resumo do mês</figcaption></figure>
-    <figure><div class="phone"><img src="img/tela-transacoes.webp" alt="Transações" loading="lazy" width="585" height="1266"></div><figcaption>Transações com filtros</figcaption></figure>
+<section style="background:var(--bg2)"><div class="wrap center">
+  <span class="eyebrow">Por que o Hankx?</span>
+  <h2>Mais fácil que planilha. Mais claro que extrato.</h2>
+  <div class="cmp">
+    <div class="cmp-row head"><span></span><span>Planilha</span><span>Extrato</span><span class="hx">Hankx</span></div>
+    <div class="cmp-row"><span>Saldo de cada dia do mês</span><span>Dá trabalho</span><span>Só o passado</span><span class="hx">✓ Automático</span></div>
+    <div class="cmp-row"><span>Contas que se repetem e parcelas</span><span>Copiar e colar</span><span>—</span><span class="hx">✓ Lança sozinho</span></div>
+    <div class="cmp-row"><span>Aviso de vencimentos e atrasos</span><span>—</span><span>—</span><span class="hx">✓ Na tela inicial</span></div>
+    <div class="cmp-row"><span>O que pagar primeiro</span><span>—</span><span>—</span><span class="hx">✓ Orientação pronta</span></div>
+    <div class="cmp-row"><span>Todas as contas juntas</span><span>Manual</span><span>Um banco por vez</span><span class="hx">✓ Em um só lugar</span></div>
+    <div class="cmp-row"><span>Celular e computador</span><span>Difícil</span><span>Só celular</span><span class="hx">✓ Os dois</span></div>
   </div>
-  <div class="themes"><span style="--a:#22a7f0">Padrão</span><span style="--a:#007aff">iOS</span><span style="--a:#0b57d0">Material</span><span style="--a:#107c41">Office</span><span style="--a:#ec4899">Feminino</span><span style="--a:#2563eb">Masculino</span><span style="--a:#0ea5a0">União dos Povos</span><span style="--a:#6b7280">Minimal</span><span class="mob">+ Estilo Mobills no computador</span></div>
-  <div class="laptop"><img src="img/tela-notebook.webp" alt="Painel do HANKX Finanças no computador" loading="lazy" width="1440" height="900"></div>
 </div></section>
 
 <section><div class="wrap center">
   <span class="eyebrow">Como funciona</span>
   <h2>Comece em 3 passos</h2>
-  <div class="steps" style="text-align:left">
+  <div class="steps">
     <div class="step"><h3>Crie sua conta</h3><p>Só e-mail e senha. Os 7 dias de Premium começam na hora, sem pedir cartão.</p></div>
     <div class="step"><h3>Lance suas contas</h3><p>Salário, aluguel, luz, cartão, parcelas… Marque o que se repete e o app cuida dos próximos meses.</p></div>
     <div class="step"><h3>Acompanhe e decida</h3><p>Veja o saldo de cada dia, o que pagar primeiro e quanto falta para quitar cada dívida.</p></div>
   </div>
 </div></section>
 
-<section><div class="wrap">
-  <div class="sec-grid">
-    <div><span class="eyebrow">Segurança</span><h2>Seus dados são só seus</h2><p class="sub">Você controla tudo: o HANKX Finanças nunca pede senha de banco e não movimenta dinheiro.</p></div>
+<section style="background:var(--bg2)"><div class="wrap split">
+  <div class="media"><img src="img/fotos/empreendedor-sorrindo.webp" alt="Homem sorrindo enquanto revisa suas contas" width="1600" height="1067" loading="lazy" style="object-position:62% center"></div>
+  <div>
+    <span class="eyebrow">Segurança</span>
+    <h2>Seus dados são só seus</h2>
+    <p class="sub">O Hankx nunca pede senha de banco e não movimenta dinheiro.</p>
     <div class="sec-list">
-      <div><b>🔒 Conexão criptografada</b><span>Tudo trafega por HTTPS, do seu aparelho até a nuvem.</span></div>
-      <div><b>👤 Cada um vê só o seu</b><span>Regras de segurança no banco de dados impedem o acesso de outras contas.</span></div>
-      <div><b>🏦 Sem acesso ao banco</b><span>Você lança suas contas; não conectamos à sua conta bancária.</span></div>
-      <div><b>📦 Exporte ou apague quando quiser</b><span>Backup, Excel e exclusão da conta pelo próprio app, conforme a LGPD.</span></div>
+      <div><b>Conexão criptografada</b><span>Tudo trafega por HTTPS, do seu aparelho até a nuvem.</span></div>
+      <div><b>Cada um vê só o seu</b><span>Regras de segurança no banco de dados bloqueiam o acesso de outras contas.</span></div>
+      <div><b>Sem acesso ao seu banco</b><span>Você lança suas contas; não conectamos à sua conta bancária.</span></div>
+      <div><b>Exporte ou apague quando quiser</b><span>Backup, Excel e exclusão da conta pelo próprio app, conforme a LGPD.</span></div>
     </div>
   </div>
 </div></section>
 
-<section id="precos" style="background:var(--bg2)"><div class="wrap center">
+<section id="precos"><div class="wrap center">
   <span class="eyebrow">Preços</span>
   <h2>Comece grátis. Assine se fizer diferença.</h2>
   <p class="sub">Toda conta nova ganha 7 dias de Premium completo. Depois, continue no plano grátis ou assine.</p>
-  <div class="plans four" style="text-align:left">
+  <div class="plans">
     <div class="plan">
       <h3>Grátis</h3>
       <div class="price">R$ 0</div>
@@ -128,7 +177,7 @@
         <li>Calendário de saldo diário</li>
         <li>Resumo do mês</li>
         <li>1 conta bancária</li>
-        <li>Dados na nuvem, no celular e no computador</li>
+        <li>Dados na nuvem</li>
         <li class="off">Recursos Premium</li>
       </ul>
       <a class="btn" href="app/">Criar conta grátis</a>
@@ -144,8 +193,8 @@
       <span class="tag">MAIS VANTAJOSO</span>
       <h3>Anual</h3>
       <div class="price">R$ 89,90 <small>/ano</small></div>
-      <div class="alt">sai por <b>R$ 7,49 por mês</b> — economia de 24%</div>
-      <ul><li>Tudo do Premium</li><li>2 meses e meio de graça</li><li>Renovação automática</li></ul>
+      <div class="alt">sai por <b>R$ 7,49 por mês</b> (24% mais barato)</div>
+      <ul><li>Tudo do Premium</li><li>Quase 3 meses de graça</li><li>Renovação automática</li></ul>
       <a class="btn primary" href="app/">Assinar anual</a>
     </div>
     <div class="plan life">
@@ -159,45 +208,49 @@
   </div>
   <div class="incl">
     <b>O Premium inclui:</b>
-    <span>📊 Gráficos completos (projeção, categorias e ranking)</span><span>📤 Relatórios em Excel, PDF e CSV</span><span>💳 Controle de dívidas</span><span>🧮 Simulador de empréstimos</span><span>🧭 Orientação do que pagar primeiro</span><span>🏦 Várias contas e cartões</span><span>🎨 Todos os temas</span>
+    <span>Gráficos completos</span><span>Relatórios em Excel, PDF e CSV</span><span>Controle de dívidas</span><span>Simulador de empréstimos</span><span>O que pagar primeiro</span><span>Várias contas e cartões</span><span>Todos os temas</span>
   </div>
-  <p class="note" style="margin-top:20px">Toda conta nova ganha <b>7 dias de Premium grátis</b>, sem cartão. Pagamento por Pix ou cartão (Mercado Pago) no site, ou pelo Google Play no app Android.</p>
+  <p class="note" style="margin-top:20px">Pagamento por Pix ou cartão (Mercado Pago) no site, ou pelo Google Play no app Android.</p>
 </div></section>
 
-<section id="perguntas"><div class="wrap center">
+<section id="perguntas" style="background:var(--bg2)"><div class="wrap center">
   <span class="eyebrow">Dúvidas</span>
   <h2>Perguntas frequentes</h2>
-  <div class="faq" style="text-align:left">
-    <details><summary>Preciso de cartão para testar?</summary><p>Não. Basta criar a conta com e-mail e senha. Os 7 dias de Premium começam na hora e, se você não assinar, a conta continua no plano grátis — nada é cobrado.</p></details>
-    <details><summary>O HANKX Finanças acessa minha conta do banco?</summary><p>Não. Você mesmo lança suas receitas e despesas. O app nunca pede senha de banco nem movimenta dinheiro.</p></details>
+  <div class="faq">
+    <details><summary>Preciso de cartão para testar?</summary><p>Não. Basta criar a conta com e-mail e senha. Os 7 dias de Premium começam na hora e, se você não assinar, a conta continua no plano grátis. Nada é cobrado.</p></details>
+    <details><summary>O Hankx acessa minha conta do banco?</summary><p>Não. Você mesmo lança suas receitas e despesas. O app nunca pede senha de banco nem movimenta dinheiro.</p></details>
     <details><summary>Meus dados ficam seguros?</summary><p>Sim. Cada conta só enxerga os próprios dados, a conexão é criptografada e você pode exportar ou excluir tudo quando quiser. Veja a <a href="privacidade.html">Política de privacidade</a>.</p></details>
     <details><summary>Funciona no iPhone e no computador?</summary><p>Sim. Abra <b>hankx.com.br/app</b> no navegador. No iPhone, toque em Compartilhar → "Adicionar à Tela de Início" para usar como aplicativo. No Android, ele estará em breve no Google Play.</p></details>
     <details><summary>Como funciona o plano vitalício?</summary><p>Você paga R$ 199,90 uma única vez e tem o Premium para sempre, sem mensalidade, incluindo as melhorias futuras do app.</p></details>
     <details><summary>Como cancelo a assinatura?</summary><p>Assinou pelo site: no Mercado Pago, em Assinaturas. Assinou pelo app Android: na Play Store, em Pagamentos e assinaturas. O Premium continua até o fim do período pago.</p></details>
-    <details><summary>Posso levar meus dados para outro celular?</summary><p>Sim. É só entrar com o mesmo e-mail em outro aparelho: tudo aparece automaticamente.</p></details>
+    <details><summary>Posso usar em outro celular?</summary><p>Sim. É só entrar com o mesmo e-mail em outro aparelho: tudo aparece automaticamente.</p></details>
   </div>
 </div></section>
 
-<div class="cta-final">
-  <h2 style="margin-top:0">Comece hoje a organizar seu dinheiro</h2>
-  <p class="sub" style="margin:0 auto 24px">7 dias de Premium grátis. Sem cartão. Cancele quando quiser.</p>
-  <a class="btn primary big" href="app/">Criar minha conta grátis</a>
-</div>
+<section style="padding-top:80px;padding-bottom:0"><div class="cta-final">
+  <img src="img/fotos/maos-financas.webp" alt="Mãos segurando lupa, calculadora, cofrinho, dinheiro e gráfico" width="1600" height="1066" loading="lazy">
+  <div class="in"><div>
+    <h2>Comece hoje a organizar seu dinheiro</h2>
+    <p class="sub" style="margin-bottom:26px">7 dias de Premium grátis. Sem cartão. Cancele quando quiser.</p>
+    <a class="btn primary big" href="app/">Criar minha conta grátis</a>
+  </div></div>
+</div></section>
 
 <footer><div class="wrap">
-  <div><a class="brand" href="/"><img src="app/icons/logo.png" alt="">HANKX <small>Finanças</small></a><p style="margin:12px 0 0;max-width:340px">Controle financeiro pessoal simples, para sair do aperto e chegar à estabilidade.</p></div>
+  <div><a class="brand" href="/"><img src="app/icons/logo.png" alt="">Hankx</a><p style="margin:12px 0 0;max-width:340px">Controle financeiro pessoal simples, para sair do aperto e chegar à estabilidade.</p></div>
   <nav>
     <a href="app/">Entrar no app</a>
+    <a href="#precos">Preços</a>
     <a href="privacidade.html">Privacidade</a>
     <a href="termos.html">Termos de uso</a>
     <a href="excluir-conta.html">Excluir conta</a>
-    <a href="consultoria/">Consultoria HANKX</a>
+    <a href="consultoria/">Consultoria</a>
     <a href="https://wa.me/5511996119090" rel="noopener">WhatsApp</a>
     <a href="https://instagram.com/hankx.br" rel="noopener">Instagram</a>
   </nav>
-  <p style="width:100%;margin:10px 0 0">© 2026 HANKX. Todos os direitos reservados.</p>
+  <div class="legal"><span>© 2026 Hankx Tecnologia Ltda. Todos os direitos reservados.</span><span>Hankx é uma marca da Hankx Tecnologia Ltda.</span></div>
 </div></footer>
 <div class="mcta"><span><b>7 dias grátis</b><small>sem cartão</small></span><a class="btn primary" href="app/">Começar agora</a></div>
-
+<script>addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('sc',scrollY>10),{passive:true})</script>
 </body>
 </html>
