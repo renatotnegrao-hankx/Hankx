@@ -404,6 +404,7 @@ function donut(arr, tot) {
   return `<svg viewBox="0 0 200 200" width="62%" style="display:block;margin:6px auto 14px">${g}</svg>`;
 }
 function scrGraficos() {
+  if (!isDesk()) return scrGraficosMob();
   let body = '';
   if (V.chart === 'projecao') {
     const D = monthsData(T0.slice(0, 7), V.projN);
@@ -435,6 +436,83 @@ function scrGraficos() {
     </div></div>`;
   }
   return `<h1>Gráficos</h1>${accChips()}${seg('chart', [['projecao', 'Projeção'], ['categoria', 'Categoria'], ['ranking', 'Ranking']], V.chart)}${body}`;
+}
+
+
+/* ---------- Gráficos no celular: mais claros e com rótulos visíveis ---------- */
+const brl0 = n => (n < -0.5 ? '-' : '') + 'R$ ' + Math.round(Math.abs(n)).toLocaleString('pt-BR');
+const mlab = ym => `${MES3[+ym.slice(5) - 1]}/${ym.slice(2, 4)}`;
+function saldoLine(D) {
+  const W = 360, H = 200, L = 14, R = 14, T = 30, B = 30;
+  const vals = D.map(d => d.saldo), mx = Math.max(...vals, 0), mn = Math.min(...vals, 0);
+  const span = (mx - mn) || 1, y = v => T + (mx - v) / span * (H - T - B);
+  const step = (W - L - R) / Math.max(1, D.length - 1), x = i => L + i * step;
+  const every = D.length > 12 ? 4 : D.length > 6 ? 2 : 1;
+  const pts = D.map((d, i) => `${x(i)},${y(d.saldo)}`).join(' ');
+  let g = `<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".35"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>`;
+  if (mn < 0 && mx > 0) g += `<line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--muted)" stroke-dasharray="4 4" stroke-width="1"/><text x="${W - R}" y="${y(0) - 4}" text-anchor="end" font-size="10" fill="var(--muted)">R$ 0</text>`;
+  g += `<polygon points="${L},${y(Math.max(mn, Math.min(0, mx)))} ${pts} ${x(D.length - 1)},${y(Math.max(mn, Math.min(0, mx)))}" fill="url(#sg)"/>`;
+  g += `<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+  D.forEach((d, i) => {
+    const show = i % every === 0 || i === D.length - 1;
+    const neg = d.saldo < 0, cx = x(i), cy = y(d.saldo);
+    g += `<circle cx="${cx}" cy="${cy}" r="${show ? 4.5 : 3}" fill="var(--card)" stroke="${neg ? 'var(--red)' : 'var(--accent)'}" stroke-width="2.5"/>`;
+  });
+  D.forEach((d, i) => {
+    const show = i % every === 0 || i === D.length - 1;
+    const neg = d.saldo < 0, cx = x(i), cy = y(d.saldo);
+    if (show) {
+      const lab = kfmt(d.saldo), tw = lab.length * 6.6 + 10, ty = Math.max(14, cy - 12);
+      const ax = Math.min(W - tw / 2 - 2, Math.max(tw / 2 + 2, cx));
+      g += `<rect x="${ax - tw / 2}" y="${ty - 11}" width="${tw}" height="17" rx="8.5" fill="${neg ? 'var(--red)' : 'var(--accent)'}"/><text x="${ax}" y="${ty + 1.5}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${lab}</text>`;
+      g += `<text x="${cx}" y="${H - 9}" text-anchor="middle" font-size="11" fill="var(--muted)" font-weight="${d.ym === T0.slice(0, 7) ? 700 : 500}">${MES3[+d.ym.slice(5) - 1]}${d.ym.slice(5) === '01' || i === 0 ? '/' + d.ym.slice(2, 4) : ''}</text>`;
+    }
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" class="gline">${g}</svg>`;
+}
+function scrGraficosMob() {
+  let body = '';
+  if (V.chart === 'projecao') {
+    const D = monthsData(T0.slice(0, 7), V.projN);
+    const tr = r2(D.reduce((s2, d) => s2 + d.rec, 0)), td = r2(D.reduce((s2, d) => s2 + d.desp, 0)), last = D[D.length - 1];
+    const mx = Math.max(1, ...D.flatMap(d => [d.rec, d.desp]));
+    body = `${pills('projN', [[6, '6 meses'], [12, '12 meses'], [24, '24 meses']], V.projN)}
+    <div class="gsum"><div class="r"><small>Receitas</small><b>${brl0(tr)}</b></div><div class="d"><small>Despesas</small><b>${brl0(td)}</b></div><div class="s ${last.saldo < 0 ? 'neg' : ''}"><small>Saldo em ${mlab(last.ym)}</small><b>${brl0(last.saldo)}</b></div></div>
+    <div class="card gcard"><div class="gt"><b>Evolução do saldo</b><small>saldo acumulado no fim de cada mês</small></div>${saldoLine(D)}</div>
+    <div class="card gcard"><div class="gt"><b>Receitas x despesas por mês</b><small>a barra mostra o tamanho de cada valor</small></div>
+    ${D.map(d => { const res = r2(d.rec - d.desp); return `<div class="gm ${d.ym === T0.slice(0, 7) ? 'cur' : ''}">
+      <div class="gm-h"><b>${MESES[+d.ym.slice(5) - 1]} ${d.ym.slice(0, 4)}${d.ym === T0.slice(0, 7) ? ' <span class="tag">atual</span>' : ''}</b><span class="${res >= 0 ? 'green' : 'red'}">${res >= 0 ? 'Sobra' : 'Falta'} ${brl0(Math.abs(res))}</span></div>
+      <div class="gb"><span>Receitas</span><div class="gtrack"><i class="r" style="width:${Math.max(1.5, d.rec / mx * 100)}%"></i></div><em class="green">${brl0(d.rec)}</em></div>
+      <div class="gb"><span>Despesas</span><div class="gtrack"><i class="d" style="width:${Math.max(1.5, d.desp / mx * 100)}%"></i></div><em class="red">${brl0(d.desp)}</em></div>
+      <div class="gm-f">Saldo no fim do mês: <b class="${d.saldo >= 0 ? '' : 'red'}">${brl(d.saldo)}</b></div></div>`; }).join('')}</div>
+    ${pills('tblMode', [['mes', 'Mês'], ['ano', 'Ano'], ['periodo', 'Período']], V.tblMode)}
+    ${periodNav(V.tblMode === 'mes' ? 'mensal' : V.tblMode === 'ano' ? 'anual' : 'periodo')}
+    ${flowTable()}`;
+  } else if (V.chart === 'categoria') {
+    const { arr, tot } = catAgg(V.catType, V.catMode);
+    const isR = V.catType === 'receita';
+    body = `${seg('catType', [['despesa', 'Despesas', 'desp'], ['receita', 'Receitas', 'rec']], V.catType, 'rd')}
+    ${pills('catMode', [['mensal', 'Mês'], ['anual', 'Ano'], ['periodo', 'Período']], V.catMode)}
+    ${periodNav(V.catMode)}
+    <div class="card gcard">
+      ${arr.length ? `<div class="gdonut">${donut(arr, tot)}<div class="gc"><small>Total de ${isR ? 'receitas' : 'despesas'}</small><b class="${isR ? 'green' : 'red'}">${brl0(tot)}</b><small>${arr.length} categoria${arr.length > 1 ? 's' : ''}</small></div></div>
+      <div class="gcats">${arr.map((x, i) => { const c = cat(x.id), pc = x.total / tot * 100, op = V.open['c' + x.id]; return `<div class="gcat" data-act="toggle-open" data-k="c${x.id}">
+        <div class="gcat-h"><span class="dot" style="background:${PALETTE[i % PALETTE.length]}"></span><span class="nm">${c ? c.icon + ' ' : ''}${esc(c?.name || 'Sem categoria')}</span><b>${brl(x.total)}</b></div>
+        <div class="gcat-b"><div class="gtrack"><i style="width:${Math.max(1.5, pc)}%;background:${PALETTE[i % PALETTE.length]}"></i></div><em>${pc.toFixed(pc < 10 ? 1 : 0).replace('.', ',')}%</em></div>
+        ${op ? `<div class="gcat-l">${x.list.map(t => `<div><span>${fmtD(t.date)} · ${esc(t.desc || '')}</span><span>${brl(t.amount)}</span></div>`).join('')}</div>` : `<small class="muted">${x.n} lançamento${x.n > 1 ? 's' : ''} · toque para ver</small>`}</div>`; }).join('')}</div>`
+      : `<div class="empty">Nenhuma ${isR ? 'receita' : 'despesa'} neste período.</div>`}</div>`;
+  } else {
+    const mode = V.rankMode === 'mes' ? 'mensal' : V.rankMode === 'ano' ? 'anual' : 'periodo';
+    const R = catAgg('receita', mode), D = catAgg('despesa', mode);
+    const rank = (o, col, ty) => o.arr.length ? o.arr.slice(0, 10).map((x, i) => { const c = cat(x.id), pc = x.total / (o.arr[0].total || 1) * 100, sh = x.total / o.tot * 100;
+      return `<div class="grk"><span class="pos">${i + 1}º</span><div class="grk-m"><div class="grk-h"><span class="nm">${c ? c.icon + ' ' : ''}${esc(c?.name || 'Sem categoria')}</span><b class="${ty}">${brl(x.total)}</b></div>
+      <div class="gcat-b"><div class="gtrack"><i style="width:${Math.max(1.5, pc)}%;background:${col}"></i></div><em>${sh.toFixed(0)}%</em></div></div></div>`; }).join('') : '<div class="empty">Sem dados no período.</div>';
+    body = `${pills('rankMode', [['mes', 'Mês'], ['ano', 'Ano'], ['periodo', 'Período']], V.rankMode)}
+    ${periodNav(mode)}
+    <div class="card gcard"><div class="gt row-b"><b>Onde você mais gastou</b><b class="red">${brl0(D.tot)}</b></div>${rank(D, 'var(--red)', 'red')}</div>
+    <div class="card gcard"><div class="gt row-b"><b>De onde veio o dinheiro</b><b class="green">${brl0(R.tot)}</b></div>${rank(R, 'var(--green)', 'green')}</div>`;
+  }
+  return `<h1>Gráficos</h1>${accChips()}${seg('chart', [['projecao', 'Projeção'], ['categoria', 'Categorias'], ['ranking', 'Ranking']], V.chart)}${body}`;
 }
 
 /* ---------- Ajustes ---------- */
