@@ -20,10 +20,6 @@ body.skin-masculino:not(.light){--bg:#0d1526;--bg2:#0a1120;--card:#152038;--card
 body.skin-masculino.light{--bg:#eef4ff;--bg2:#e0eaff;--line:#cfdcf7}
 body.skin-minimal{--accent:#9ca3af;--accent-soft:rgba(156,163,175,.15);--radius:10px;--radius-s:8px}
 body.skin-minimal.light{--accent:#111827;--accent-soft:rgba(17,24,39,.08)}
-body.skin-windows{--font:Tahoma,Verdana,"Segoe UI",sans-serif;--radius:0;--radius-s:0;--accent:#000080;--accent-soft:rgba(0,0,128,.15)}
-body.skin-windows.light{--bg:#008080;--bg2:#007070;--card:#c0c0c0;--card2:#d4d0c8;--line:#808080;--text:#000;--muted:#333}
-body.skin-windows:not(.light){--accent:#3a6ea5;--bg:#1b2b3a;--card:#2b2b2b;--card2:#3a3a3a;--line:#555}
-body.skin-windows .card,body.skin-windows .seg,body.skin-windows .btn{box-shadow:inset 1px 1px #fff,inset -1px -1px #404040}
 body.skin-dos{--font:"Courier New",Consolas,monospace;--radius:0;--radius-s:0;--bg:#000;--bg2:#000;--card:#000;--card2:#071a07;--line:#1f7a1f;
   --text:#33ff33;--muted:#1fbf1f;--accent:#33ff33;--accent-soft:rgba(51,255,51,.12);--green:#33ff33;--red:#ff5555;--red2:#ff5555;--orange:#ffff55;--blue:#55ffff}
 body.skin-dos .btn.primary,body.skin-dos .seg button.on{color:#000}
@@ -593,7 +589,6 @@ body.light{--glass-a:58%;--glass-brd:rgba(255,255,255,.75);--glass-hi:inset 0 1p
 body.skin-feminino{--blob2:#f472b6;--blob3:#c084fc}
 body.skin-masculino{--blob2:#06b6d4;--blob3:#6366f1}
 body.skin-minimal{--blob1:#94a3b8;--blob2:#cbd5e1;--blob3:#64748b}
-body.skin-windows{--blob1:#3a6ea5;--blob2:#008080;--blob3:#5b8bd0}
 body.skin-moderno,body.skin-mobills{--blob1:#7b3ff2;--blob2:#c4b5fd;--blob3:#38bdf8}
 
 /* fundo com manchas de cor para o vidro "refratar" */
@@ -671,8 +666,75 @@ body.light #app::before{opacity:.75}
   #modal .sheet{border-radius:28px}
 }
 /* Windows mantém cantos retos; quem preferir menos efeitos no sistema, vidro sólido */
-body.skin-windows .seg,body.skin-windows .dseg,body.skin-windows .seg button,body.skin-windows .dseg button{border-radius:0!important}
 @media (prefers-reduced-transparency:reduce){
   .card,.tx,.list,.tabbar,.seg,#modal .sheet{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--card)!important}
 }
-body.skin-windows{--glass-a:84%}
+
+
+/* ===== Tema Windows — padrão Windows 11 (Fluent / Mica / Acrylic) ===== */
+body.skin-windows{
+  --font:"Segoe UI Variable Text","Segoe UI Variable","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --radius:8px;--radius-s:4px;
+  --bg:#202020;--bg2:#1c1c1c;--card:#2b2b2b;--card2:#323232;--line:rgba(255,255,255,.08);
+  --text:#ffffff;--muted:#c5c5c5;--accent:#4cc2ff;--accent-soft:rgba(76,194,255,.14);--accent-ink:#00213a;
+  --green:#6ccb5f;--green-d:#6ccb5f;--green-soft:rgba(108,203,95,.14);--red:#ff99a4;--red2:#ff99a4;--red-soft:rgba(255,153,164,.13);
+  --orange:#fce100;--blue:#4cc2ff;
+  --blob1:#0067c0;--blob2:#4cc2ff;--blob3:#1f3fa8;--glass-a:72%;
+  --glass-brd:rgba(255,255,255,.07);--glass-hi:inset 0 1px 0 rgba(255,255,255,.06);--glass-sh:0 2px 8px rgba(0,0,0,.26);
+  --glass-blur:saturate(125%) blur(30px)}
+body.skin-windows.light{
+  --bg:#f3f3f3;--bg2:#eeeeee;--card:#fbfbfb;--card2:#f6f6f6;--line:rgba(0,0,0,.06);
+  --text:#1b1b1b;--muted:#5f5f5f;--accent:#0067c0;--accent-soft:rgba(0,103,192,.1);--accent-ink:#ffffff;
+  --green:#0f7b0f;--green-d:#0f7b0f;--green-soft:rgba(15,123,15,.1);--red:#c42b1c;--red2:#c42b1c;--red-soft:rgba(196,43,28,.08);
+  --orange:#9d5d00;--blue:#0067c0;
+  --blob1:#4cc2ff;--blob2:#0067c0;--blob3:#99d9ff;--glass-a:78%;
+  --glass-brd:rgba(0,0,0,.06);--glass-hi:inset 0 1px 0 rgba(255,255,255,.9);--glass-sh:0 2px 6px rgba(0,0,0,.05)}
+body.skin-windows #app::before{opacity:.55}
+/* cantos e controles no padrão Fluent */
+body.skin-windows .card,body.skin-windows .tx,body.skin-windows .list,body.skin-windows .cal,body.skin-windows .catrow,body.skin-windows .monthnav,
+body.skin-windows .box,body.skin-windows .alert,body.skin-windows .hello,body.skin-windows .rdbox,body.skin-windows .opt,body.skin-windows .kpi,
+body.skin-windows .toolbar,body.skin-windows .mcard,body.skin-windows .mbox,body.skin-windows .accchip,body.skin-windows .code,body.skin-windows .adv{border-radius:8px!important}
+body.skin-windows .seg,body.skin-windows .dseg,body.skin-windows .sortbar{border-radius:6px!important;padding:2px}
+body.skin-windows .seg button,body.skin-windows .dseg button,body.skin-windows .pill,body.skin-windows .chips button,body.skin-windows .sortbar button{border-radius:4px!important}
+body.skin-windows .in,body.skin-windows .btn,body.skin-windows .dbtn,body.skin-windows .chipinfo,body.skin-windows .duser,body.skin-windows .dsearch{border-radius:4px!important}
+body.skin-windows .in{border-bottom:1px solid color-mix(in srgb,var(--text) 35%,transparent)}
+body.skin-windows .in:focus{border-bottom:2px solid var(--accent)}
+/* botões de destaque: azul liso, sem gota */
+body.skin-windows .seg button.on,body.skin-windows .dseg button.on,body.skin-windows .pill.on,body.skin-windows .chips button.on,body.skin-windows .accchip.on,
+body.skin-windows .btn.primary,body.skin-windows .dbtn.primary,body.skin-windows.desk .snew{
+  background:var(--accent)!important;color:var(--accent-ink)!important;
+  box-shadow:inset 0 -1px 0 rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.12)!important}
+body.skin-windows .seg.rd button.on.rec{background:var(--green)!important;color:#fff!important}
+body.skin-windows .seg.rd button.on.desp{background:var(--red)!important;color:#fff!important}
+body.skin-windows:not(.light) .seg.rd button.on.rec,body.skin-windows:not(.light) .seg.rd button.on.desp{color:#1b1b1b!important}
+body.skin-windows .accchip.on::after{background:var(--accent)}
+body.skin-windows .fab{border-radius:8px!important;background:var(--accent)!important;color:var(--accent-ink);border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 8px 16px rgba(0,0,0,.28)!important;width:54px;height:54px}
+body.skin-windows .xclose{border-radius:4px!important}
+body.skin-windows .xclose:hover{background:#c42b1c!important;color:#fff}
+body.skin-windows .ticon,body.skin-windows .catrow .em,body.skin-windows .mlogo,body.skin-windows .mico{border-radius:6px}
+body.skin-windows .cal .wd{background:var(--accent);color:var(--accent-ink)}
+body.skin-windows .cal .d.today b{border-radius:4px;background:var(--accent);color:var(--accent-ink)}
+body.skin-windows .switch i{border-radius:20px}
+body.skin-windows .switch input:checked+i{background:var(--accent)}
+body.skin-windows .switch input:checked+i::after{background:var(--accent-ink)}
+body.skin-windows .big,body.skin-windows .accent{color:var(--accent)}
+body.skin-windows .ring circle:nth-child(2){stroke:var(--accent)}
+body.skin-windows #modal .sheet{border-radius:8px 8px 0 0!important}
+body.skin-windows #toast{border-radius:6px}
+/* barra de abas no estilo barra de tarefas do Windows 11 */
+@media (max-width:899px){
+  body.skin-windows .tabbar{border-radius:8px!important;left:8px!important;right:8px;padding:6px 4px!important;
+    background:color-mix(in srgb,var(--bg) 75%,transparent)!important}
+  body.skin-windows .tabbar button{border-radius:6px;position:relative}
+  body.skin-windows .tabbar button.on{background:color-mix(in srgb,var(--text) 8%,transparent);color:var(--text)}
+  body.skin-windows .tabbar button.on .ico{color:var(--accent)}
+  body.skin-windows .tabbar button.on::after{content:"";position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:16px;height:3px;border-radius:3px;background:var(--accent)}
+  body.skin-windows .hello{border-radius:8px!important}
+}
+@media (min-width:900px){
+  body.skin-windows.desk .tabbar button{border-radius:4px;position:relative}
+  body.skin-windows.desk .tabbar button.on{background:color-mix(in srgb,var(--text) 6%,transparent);color:var(--text)}
+  body.skin-windows.desk .tabbar button.on::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;border-radius:3px;background:var(--accent)}
+  body.skin-windows #modal .sheet{border-radius:8px!important}
+}
