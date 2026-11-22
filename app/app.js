@@ -610,7 +610,8 @@ function scrAjustes() {
     <div class="muted" style="margin:16px 0 10px">Perfil de Interface</div>
     <div class="opts">${SKINS.map(([v, e, l, s]) => `<button class="opt ${st.skin === v ? 'on' : ''}" data-act="skin" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s}</small></button>`).join('')}</div></div>
   <div class="sect">PERFIL</div>
-  <div class="list">${li('go', 'user', 'Meu Perfil', '', '', 'data-sub="perfil"')}</div>
+  <div class="list">${li('go', 'user', 'Meu Perfil', '', '', 'data-sub="perfil"')}${CLOUD_ON ? li('premium', 'star', 'HANKX Premium', premiumLabel()) : ''}</div>
+  ${isAdmin() ? `<div class="sect">ADMINISTRADOR</div><div class="list">${li('go', 'shield', 'Painel do administrador', 'Usuários, assinantes, receita e acessos de cortesia', '', 'data-sub="admin"')}</div>` : ''}
   <div class="sect">FERRAMENTAS</div>
   <div class="list">${li('go', 'spark', 'Orientação', 'O que pagar primeiro', '', 'data-sub="orientacao"')}${li('go', 'calc', 'Empréstimos', 'Simular parcelas e gerar lançamentos', '', 'data-sub="emprestimos"')}</div>
   <div class="sect">GESTÃO</div>
@@ -626,7 +627,7 @@ function scrAjustes() {
   <div class="sect">CONTA</div>
   <div class="list">${CLOUD_ON ? li('go', 'user', esc(CL.session?.user?.email || 'Minha conta'), 'Dados salvos na nuvem', '', 'data-sub="sync"') : ''}${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}${CLOUD_ON ? li('delete-account', 'trash', 'Excluir minha conta', 'Apaga a conta e todos os dados da nuvem', 'c-red') : ''}</div>
   </div></div>
-  <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · ${CLOUD_ON ? 'dados salvos na nuvem com segurança' : 'dados salvos só neste aparelho'}.</p>`;
+  <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · ${CLOUD_ON ? 'dados salvos na nuvem com segurança' : 'dados salvos só neste aparelho'} · <a class="muted" href="../privacidade.html">Privacidade</a> · <a class="muted" href="../termos.html">Termos</a>.</p>`;
 }
 function backHead(title, right = '') {
   return `<button class="back" data-act="back">${I('left')} Ajustes</button><div class="titlebar"><h1>${title}</h1>${right}</div>`;
@@ -780,21 +781,24 @@ const CL = { session: null, profile: null, busy: false, err: '', timer: null, re
 const IS_TWA = (() => { try { if (document.referrer.startsWith('android-app://')) sessionStorage.setItem('hankx-twa', '1'); return sessionStorage.getItem('hankx-twa') === '1'; } catch (e) { return false; } })();
 const uidOf = () => CL.session?.user?.id;
 function isPremium() {
-  return true; // sem planos pagos: tudo liberado
-  if (!CLOUD_ON) return true;
+  if (!CLOUD_ON || isAdmin()) return true;
   const p = CL.profile; if (!p) return true;
   const now = Date.now();
   return (p.premium_until && Date.parse(p.premium_until) > now) || (p.trial_ends_at && Date.parse(p.trial_ends_at) > now);
 }
+const isAdmin = () => CLOUD_ON && !!CL.admin; // quem é administrador é decidido pelo banco (função is_admin)
+const isLifetime = () => { const p = CL.profile; return !!(p && p.premium_until && p.premium_until.slice(0, 4) >= '9000'); };
+const PLAN_NAME = { mensal: 'Mensal', anual: 'Anual', vitalicio: 'Vitalício', cortesia: 'Cortesia' };
 const isPaid = () => { const p = CL.profile; return !!(p && p.premium_until && Date.parse(p.premium_until) > Date.now()); };
 const trialDaysLeft = () => { const p = CL.profile; return p && p.trial_ends_at ? Math.max(0, Math.ceil((Date.parse(p.trial_ends_at) - Date.now()) / 864e5)) : 0; };
 function premiumLabel() {
-  if (isPaid()) return `Ativo até ${fmtD(CL.profile.premium_until.slice(0, 10))}${CL.profile.plan ? ' · plano ' + CL.profile.plan : ''}`;
+  if (isAdmin()) return 'Administrador · tudo liberado';
+  if (isPaid()) return isLifetime() ? `Premium vitalício${CL.profile.plan === 'cortesia' ? ' (cortesia)' : ''}` : `Ativo até ${fmtD(CL.profile.premium_until.slice(0, 10))} · ${PLAN_NAME[CL.profile.plan] || 'Premium'}`;
   const d = trialDaysLeft();
   return d ? `Teste grátis: ${d} dia${d > 1 ? 's' : ''} restante${d > 1 ? 's' : ''}` : 'Teste terminado — assine para liberar tudo';
 }
 function trialBanner() {
-  return '';
+  if (isAdmin()) return '';
   if (!CLOUD_ON || !CL.profile || isPaid()) return '';
   const d = trialDaysLeft();
   return `<div class="pbanner ${d ? '' : 'end'}" data-act="premium">${I('star')}<span><b>${d ? `Teste Premium: ${d} dia${d > 1 ? 's' : ''} restante${d > 1 ? 's' : ''}` : 'Seu teste Premium terminou'}</b><small>${d ? 'Aproveite tudo liberado. Assine para não perder.' : 'Assine para voltar a usar gráficos, relatórios, dívidas e temas.'}</small></span><em>Assinar</em></div>`;
@@ -807,14 +811,15 @@ function paywall(reason = '') {
   const paid = isPaid(), d = trialDaysLeft();
   const perks = ['Gráficos completos: projeção, categorias e ranking', 'Relatórios em Excel, PDF e CSV', 'Controle de dívidas e simulador de empréstimos', 'Orientação do que pagar primeiro', 'Várias contas e cartões', 'Todos os temas e perfis de interface'];
   openModal(`<div class="pw">
-    <div class="pw-h"><img src="icons/logo.png" alt=""><div><b>HANKX Premium</b><small>${paid ? `Ativo até ${fmtD(CL.profile.premium_until.slice(0, 10))}` : d ? `Seu teste grátis termina em ${d} dia${d > 1 ? 's' : ''}` : 'Seu teste grátis terminou'}</small></div></div>
+    <div class="pw-h"><img src="icons/logo.png" alt=""><div><b>HANKX Premium</b><small>${paid ? premiumLabel() : d ? `Seu teste grátis termina em ${d} dia${d > 1 ? 's' : ''}` : 'Seu teste grátis terminou'}</small></div></div>
     ${reason ? `<p class="pw-r">${I('lock')} <span><b>${esc(reason)}</b> faz parte do Premium.</span></p>` : ''}
     <ul class="pw-l">${perks.map(x => `<li>${I('check')}<span>${x}</span></li>`).join('')}</ul>
-    ${paid ? `<p class="muted small">${CL.profile.provider === 'googleplay' ? 'Para cancelar ou mudar o plano: Play Store → Pagamentos e assinaturas → Assinaturas.' : 'Para cancelar: Mercado Pago → Assinaturas. O Premium continua até o fim do período pago.'}</p>`
-      : `<div class="pw-plans"><button type="button" class="pw-p on" data-plan="anual"><span class="pw-tag">mais vantajoso</span><b>Anual</b><strong>R$ 89,90<small>/ano</small></strong><small>equivale a R$ 7,49 por mês</small></button>
-      <button type="button" class="pw-p" data-plan="mensal"><b>Mensal</b><strong>R$ 9,90<small>/mês</small></strong><small>cancele quando quiser</small></button></div>
+    ${paid ? `<p class="muted small">${isLifetime() || CL.profile.plan === 'cortesia' ? 'Seu acesso Premium já está garantido. Obrigado!' : CL.profile.provider === 'googleplay' ? 'Para cancelar ou mudar o plano: Play Store → Pagamentos e assinaturas → Assinaturas.' : 'Para cancelar: Mercado Pago → Assinaturas. O Premium continua até o fim do período pago.'}</p>`
+      : `<div class="pw-plans three"><button type="button" class="pw-p" data-plan="mensal"><b>Mensal</b><strong>R$ 9,90<small>/mês</small></strong><small>cancele quando quiser</small></button>
+      <button type="button" class="pw-p on" data-plan="anual"><span class="pw-tag">mais vantajoso</span><b>Anual</b><strong>R$ 89,90<small>/ano</small></strong><small>R$ 7,49 por mês</small></button>
+      <button type="button" class="pw-p" data-plan="vitalicio"><span class="pw-tag gold">pague 1 vez</span><b>Vitalício</b><strong>R$ 199,90</strong><small>acesso para sempre</small></button></div>
       <button class="btn primary" id="pwgo">Assinar Premium</button>
-      <p class="muted small" style="text-align:center;margin:10px 0 0">${IS_TWA ? 'Pagamento seguro pelo Google Play. Renovação automática; cancele quando quiser na Play Store.' : 'Pagamento seguro por Pix ou cartão via Mercado Pago. Renovação automática; cancele quando quiser.'}</p>`}
+      <p class="muted small" style="text-align:center;margin:10px 0 0">${IS_TWA ? 'Pagamento seguro pelo Google Play. Mensal e anual renovam automaticamente; cancele quando quiser na Play Store. Vitalício é pagamento único.' : 'Pagamento seguro por Pix ou cartão via Mercado Pago. Mensal e anual renovam automaticamente; cancele quando quiser. Vitalício é pagamento único.'}</p>`}
   </div>`);
   let plan = 'anual';
   $$('.pw-p').forEach(b => b.addEventListener('click', () => { plan = b.dataset.plan; $$('.pw-p').forEach(x => x.classList.toggle('on', x === b)); }));
@@ -834,9 +839,10 @@ async function subscribe(plan) {
 async function playBuy(plan) {
   await window.getDigitalGoodsService('https://play.google.com/billing');
   const sku = (CFG.playSkus || {})[plan];
+  const service = await window.getDigitalGoodsService('https://play.google.com/billing');
   const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }], { total: { label: 'Total', amount: { currency: 'BRL', value: '0' } } });
   const res = await req.show();
-  const { data, error } = await sb.functions.invoke('play-verify', { body: { purchaseToken: res.details.purchaseToken } });
+  const { data, error } = await sb.functions.invoke('play-verify', { body: { purchaseToken: res.details.purchaseToken, sku } });
   await res.complete(error || !data?.active ? 'fail' : 'success');
   if (error || !data?.active) throw new Error('Não foi possível confirmar a compra. Tente de novo em instantes.');
   await cloudLoadProfile(); closeModal(); applyTheme(); render(); toast('Premium ativado! 🎉');
@@ -846,7 +852,7 @@ async function playRestore() {
     if (!('getDigitalGoodsService' in window)) return;
     const service = await window.getDigitalGoodsService('https://play.google.com/billing');
     const list = await service.listPurchases();
-    for (const p of list) await sb.functions.invoke('play-verify', { body: { purchaseToken: p.purchaseToken } });
+    for (const p of list) await sb.functions.invoke('play-verify', { body: { purchaseToken: p.purchaseToken, sku: p.itemId } });
     if (list.length) { await cloudLoadProfile(); applyTheme(); render(); }
   } catch (e) { /* sem compras */ }
 }
@@ -861,6 +867,7 @@ async function waitPayment() {
   toast('Pagamento recebido. O Premium é liberado assim que o Mercado Pago confirmar.');
 }
 async function cloudLoadProfile() {
+  try { const r = await sb.rpc('is_admin'); CL.admin = r.data === true; } catch (e) { CL.admin = false; }
   try { const { data } = await sb.from('profiles').select('*').eq('id', uidOf()).maybeSingle(); if (data) CL.profile = data; } catch (e) { /* offline */ }
 }
 async function cloudAfterLogin() {
@@ -886,6 +893,7 @@ async function cloudAfterLogin() {
     CL.err = '';
   } catch (e) { console.error('nuvem', e); CL.err = cloudErr(e); }
   CL.ready = true;
+  if (IS_TWA) playRestore();
 }
 function cloudErr(e) {
   const m = String(e?.message || e || ''), c = e?.code || '';
@@ -919,7 +927,7 @@ async function cloudRefresh() {
 async function cloudLogout() {
   if (CL.dirty) await cloudPush();
   try { await sb.auth.signOut(); } catch (e) { /* offline */ }
-  CL.session = null; CL.profile = null; CL.ready = false; STORE = KEY; load(); V.tab = 'inicio'; V.sub = null; applyTheme(); showAuth('entrar');
+  CL.session = null; CL.profile = null; CL.admin = false; CL.ready = false; STORE = KEY; load(); V.tab = 'inicio'; V.sub = null; applyTheme(); showAuth('entrar');
 }
 async function deleteAccount() {
   const r = await ask('Excluir sua conta?', 'Isso apaga sua conta e TODOS os seus dados da nuvem, para sempre.', [['y', 'Continuar', 'danger']]);
@@ -945,7 +953,7 @@ function showAuth(mode = 'entrar', msg = '', ok = '') {
   $('#tabbar').innerHTML = ''; $('#fab').classList.add('hide'); document.body.classList.remove('logged');
   const T = { entrar: 'Entrar', criar: 'Criar conta', esqueci: 'Recuperar senha', nova: 'Criar nova senha' }[mode];
   $('#main').innerHTML = `<div class="loginwrap" style="min-height:82vh;display:flex;flex-direction:column;justify-content:center">
-  <div style="text-align:center;margin-bottom:22px"><img src="icons/logo.png" alt="HANKX" style="width:84px;height:84px;border-radius:22px"><h1 style="margin:14px 0 4px">HANKX Finanças</h1><p class="muted" style="margin:0">Seu dinheiro organizado em todos os aparelhos</p></div>
+  <div style="text-align:center;margin-bottom:22px"><img src="icons/logo.png" alt="HANKX" style="width:84px;height:84px;border-radius:22px"><h1 style="margin:14px 0 4px">HANKX Finanças</h1><p class="muted" style="margin:0">${mode === 'criar' ? '7 dias de Premium grátis, sem cartão' : 'Seu dinheiro organizado em todos os aparelhos'}</p></div>
   ${mode === 'entrar' || mode === 'criar' ? `<div class="seg" style="margin-bottom:12px"><button class="${mode === 'entrar' ? 'on' : ''}" data-auth="entrar">Entrar</button><button class="${mode === 'criar' ? 'on' : ''}" data-auth="criar">Criar conta</button></div>` : ''}
   <form id="authf" class="card" autocomplete="on"><h3 style="margin:0 0 12px">${T}</h3>
   ${mode === 'criar' ? `<label class="f"><span>Seu nome</span><input class="in" name="name" autocomplete="name" required></label>` : ''}
@@ -955,8 +963,9 @@ function showAuth(mode = 'entrar', msg = '', ok = '') {
   <button class="btn primary">${{ entrar: 'Entrar', criar: 'Criar conta e começar', esqueci: 'Enviar link por e-mail', nova: 'Salvar nova senha' }[mode]}</button>
   ${mode === 'entrar' ? `<button type="button" class="lnk" data-auth="esqueci" style="display:block;margin:12px auto 0">Esqueci minha senha</button>` : ''}
   ${mode === 'esqueci' ? `<button type="button" class="lnk" data-auth="entrar" style="display:block;margin:12px auto 0">Voltar para entrar</button>` : ''}
+  ${mode === 'criar' ? `<p class="muted small" style="margin:12px 0 0">Ao criar a conta você concorda com os <a href="../termos.html" class="accent">Termos de uso</a> e a <a href="../privacidade.html" class="accent">Política de privacidade</a>.</p>` : ''}
   </form>
-  <p style="text-align:center;margin-top:16px"><a href="../" class="muted small">← Voltar para hankx.com.br</a></p></div>`;
+  <p style="text-align:center;margin-top:16px"><a href="../" class="muted small">← Conhecer o HANKX Finanças</a></p></div>`;
   $$('[data-auth]').forEach(b => b.addEventListener('click', () => showAuth(b.dataset.auth)));
   $('#authf').addEventListener('submit', async e => {
     e.preventDefault(); const f = e.target, btn = f.querySelector('.btn.primary'); btn.disabled = true; btn.textContent = 'Aguarde…';
@@ -969,7 +978,7 @@ function showAuth(mode = 'entrar', msg = '', ok = '') {
       } else if (mode === 'criar') {
         const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { name: f.name.value.trim() }, emailRedirectTo: back } }); if (error) throw error;
         if (!data.session) return showAuth('entrar', '', `Quase lá! Enviamos um link de confirmação para ${email}. Abra o e-mail, confirme e depois entre aqui.`);
-        CL.session = data.session; S.profile.name = f.name.value.trim(); await cloudAfterLogin(); render(false); toast('Conta criada! 🎉');
+        CL.session = data.session; S.profile.name = f.name.value.trim(); await cloudAfterLogin(); render(false); toast('Conta criada! Seus 7 dias de Premium começaram 🎉');
       } else if (mode === 'esqueci') {
         const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: back }); if (error) throw error;
         showAuth('esqueci', '', 'Se existir uma conta com esse e-mail, enviamos um link para criar uma nova senha.');
@@ -984,9 +993,12 @@ function scrConta() {
   const u = CL.session?.user;
   return `${backHead('Minha conta')}
   <div class="card"><div class="between"><span class="muted">E-mail</span><b>${esc(u?.email || '')}</b></div><div class="hr"></div>
+  <div class="between"><span class="muted">Plano</span><b>${isAdmin() ? 'Administrador' : isPaid() ? 'Premium ' + (PLAN_NAME[CL.profile.plan] || '') : trialDaysLeft() ? 'Teste Premium' : 'Grátis'}</b></div><div class="hr"></div>
+  <div class="between"><span class="muted">Situação</span><span class="small">${esc(premiumLabel())}</span></div><div class="hr"></div>
   <div class="between"><span class="muted">Nuvem</span><span class="small" data-synclabel>${esc(syncLabel())}</span></div></div>
-  <button class="btn primary" data-act="cloud-save">Salvar na nuvem agora</button>
-  <p class="muted small" style="margin-top:14px">Seus dados ficam guardados com segurança na nuvem e aparecem em qualquer aparelho (celular ou computador) em que você entrar com este e-mail. Cada alteração é salva em poucos segundos.</p>`;
+  ${isAdmin() ? '' : `<button class="btn primary" data-act="premium">${isPaid() ? 'Ver meu plano' : 'Assinar Premium'}</button>`}
+  <button class="btn" data-act="cloud-save" style="margin-top:10px">Salvar na nuvem agora</button>
+  <p class="muted small" style="margin-top:14px">Seus dados ficam guardados com segurança na nuvem e aparecem em qualquer aparelho (celular ou computador) em que você entrar com este e-mail.</p>`;
 }
 async function boot() {
   load(); applyTheme();
@@ -1002,6 +1014,7 @@ async function boot() {
   if (CL.recovery || /type=recovery/.test(location.hash)) { CL.recovery = true; return showAuth('nova'); }
   if (session) await cloudAfterLogin();
   applyTheme(); render(false);
+  if (session && /[?&]pago=1/.test(location.search)) waitPayment();
 }
 
 /* ======================= Login ======================= */
@@ -1061,7 +1074,7 @@ const DESK_MQ = matchMedia('(min-width: 900px)');
 const isDesk = () => DESK_MQ.matches;
 DESK_MQ.addEventListener?.('change', () => { applyTheme(); if (isLogged()) render(false); });
 const TITLES = { inicio: ['Visão geral', 'Resumo financeiro do período'], calendario: ['Calendário', 'Saldo e movimentação dia a dia'], transacoes: ['Lançamentos', 'Todas as receitas e despesas'], graficos: ['Análises', 'Projeção, categorias e ranking'], ajustes: ['Ajustes', 'Aparência, cadastros, relatórios e dados'],
-  perfil: ['Meu Perfil', 'Ajustes'], contas: ['Contas e cartões', 'Ajustes'], categorias: ['Categorias', 'Ajustes'], dividas: ['Dívidas', 'Ajustes'], emprestimos: ['Empréstimos', 'Ferramentas'], orientacao: ['Orientação', 'Ferramentas'], sync: ['Minha conta e nuvem', 'Dados'] };
+  perfil: ['Meu Perfil', 'Ajustes'], contas: ['Contas e cartões', 'Ajustes'], categorias: ['Categorias', 'Ajustes'], dividas: ['Dívidas', 'Ajustes'], emprestimos: ['Empréstimos', 'Ferramentas'], orientacao: ['Orientação', 'Ferramentas'], sync: ['Minha conta e nuvem', 'Dados'], admin: ['Painel do administrador', 'Administrador'] };
 function deskTop() {
   const k = V.tab === 'ajustes' && V.sub ? V.sub : V.tab, [t, sub] = TITLES[k] || ['', ''];
   const p = S.profile, h = new Date().getHours();
@@ -1179,12 +1192,80 @@ function scrTransacoesDesk() {
 }
 
 /* faixa colorida do topo no celular (cor do tema) */
-const MTITLES = { calendario: 'Calendário', transacoes: 'Transações', graficos: 'Gráficos', ajustes: 'Ajustes', perfil: 'Meu Perfil', contas: 'Contas', categorias: 'Categorias', dividas: 'Dívidas', emprestimos: 'Empréstimos', orientacao: 'Orientação', sync: 'Minha conta' };
+const MTITLES = { calendario: 'Calendário', transacoes: 'Transações', graficos: 'Gráficos', ajustes: 'Ajustes', perfil: 'Meu Perfil', contas: 'Contas', categorias: 'Categorias', dividas: 'Dívidas', emprestimos: 'Empréstimos', orientacao: 'Orientação', sync: 'Minha conta', admin: 'Administrador' };
 function mobBar() {
   const k = V.tab === 'ajustes' && V.sub ? V.sub : V.tab;
   if (k === 'inicio') return '';
   return `<header class="mbar">${V.sub ? `<button class="mback" data-act="back" aria-label="Voltar">${I('left')}</button>` : ''}<div class="mbar-t">${esc(MTITLES[k] || '')}${V.sub ? '<small>Ajustes</small>' : ''}</div><div class="mbar-r"></div></header>`;
 }
+
+/* ======================= Painel do administrador (só aparece para quem o banco reconhece como admin) ======================= */
+const AD = { stats: null, users: null, q: '', loading: false, err: '' };
+async function adminLoad() {
+  if (!isAdmin() || AD.loading) return;
+  AD.loading = true; AD.err = '';
+  try {
+    const [st, us] = await Promise.all([sb.rpc('admin_stats'), sb.rpc('admin_users', { q: AD.q })]);
+    if (st.error) throw st.error; if (us.error) throw us.error;
+    AD.stats = st.data; AD.users = us.data || [];
+  } catch (e) {
+    const m = e.message || String(e);
+    AD.err = /acesso negado/i.test(m) ? 'Acesso negado.' : /admin_|function|schema cache/i.test(m) ? 'Rode a PARTE 2 do schema.sql no Supabase para ativar o painel.' : 'Não foi possível carregar: ' + m;
+  }
+  AD.loading = false; if (V.sub === 'admin') render();
+}
+function userStatus(u) {
+  const now = Date.now();
+  if (u.premium_until && Date.parse(u.premium_until) > now) {
+    const life = u.premium_until.slice(0, 4) >= '9000';
+    return { cls: u.plan === 'cortesia' ? 'gift' : 'paid', txt: (PLAN_NAME[u.plan] || 'Premium') + (life ? (u.plan === 'vitalicio' ? '' : ' · vitalício') : ' · até ' + fmtD(u.premium_until.slice(0, 10))) };
+  }
+  if (u.trial_ends_at && Date.parse(u.trial_ends_at) > now) return { cls: 'trial', txt: 'Teste · ' + Math.ceil((Date.parse(u.trial_ends_at) - now) / 864e5) + ' dias' };
+  return { cls: 'free', txt: 'Grátis' };
+}
+function scrAdmin() {
+  if (!isAdmin()) { V.sub = null; return scrAjustes(); }
+  if (!AD.stats && !AD.loading && !AD.err) adminLoad();
+  const s = AD.stats || {}, n = v => Number(v || 0).toLocaleString('pt-BR');
+  const paying = (+s.mensal || 0) + (+s.anual || 0) + (+s.vitalicio || 0);
+  const conv = s.users ? Math.round(paying / s.users * 100) : 0;
+  const BM = s.by_month || [], mx = Math.max(1, ...BM.map(x => +x.v));
+  return `${backHead('Painel do administrador', `<button class="ib" data-act="admin-reload" title="Atualizar">${I('repeat')}</button>`)}
+  ${AD.err ? `<div class="alert"><div class="h">${I('info')} Painel</div><span class="small">${esc(AD.err)}</span></div>` : ''}
+  ${AD.loading && !AD.stats ? '<div class="empty">Carregando…</div>' : ''}
+  ${AD.stats ? `
+  <div class="akpis">
+    <div class="ak"><small>Receita recorrente mensal</small><b class="green">${brl(+s.mrr)}</b><em>assinaturas mensal + anual</em></div>
+    <div class="ak"><small>Receita no mês</small><b>${brl(+s.revenue_month)}</b><em>últimos 30 dias: ${brl(+s.revenue_30d)}</em></div>
+    <div class="ak"><small>Receita total</small><b>${brl(+s.revenue_total)}</b><em>desde o início</em></div>
+    <div class="ak"><small>Assinantes pagantes</small><b class="accent">${n(paying)}</b><em>${conv}% dos usuários</em></div>
+    <div class="ak"><small>Usuários</small><b>${n(s.users)}</b><em>+${n(s.new_7d)} em 7 dias · +${n(s.new_30d)} em 30</em></div>
+    <div class="ak"><small>Ativos (7 dias)</small><b>${n(s.active_7d)}</b><em>usaram o app na semana</em></div>
+  </div>
+  <div class="card"><b>Assinantes por plano</b>
+    <div class="aplans">${[['Mensal', s.mensal, '#3b82f6'], ['Anual', s.anual, '#22c55e'], ['Vitalício', s.vitalicio, '#f59e0b'], ['Cortesia', s.cortesia, '#a855f7'], ['Em teste', s.trial, '#94a3b8']].map(([l, v, c]) => `<div><i style="background:${c}"></i><span>${l}</span><b>${n(v)}</b></div>`).join('')}</div></div>
+  <div class="card"><b>Receita e novos usuários — últimos 6 meses</b>
+    <div class="abars">${BM.map(x => `<div class="ab"><em>${+x.v ? brl0(+x.v) : ''}</em><div class="abb"><i style="height:${Math.max(2, +x.v / mx * 100)}%"></i></div><small>${MES3[+x.m.slice(5) - 1]}</small><span>+${n(x.u)} usuários</span></div>`).join('')}</div></div>
+  ${(s.recent || []).length ? `<div class="card"><b>Últimos pagamentos</b>${s.recent.map(p => `<div class="between arow"><span><b>${esc(p.email || '—')}</b><small class="muted">${PLAN_NAME[p.plan] || p.plan} · ${p.provider === 'googleplay' ? 'Google Play' : 'Mercado Pago'} · ${fmtD(p.created_at.slice(0, 10))}</small></span><b class="green">${brl(+p.amount)}</b></div>`).join('')}</div>` : ''}
+  <div class="sect">USUÁRIOS (${n((AD.users || []).length)})</div>
+  <input class="in" id="adq" placeholder="Buscar por e-mail ou nome…" value="${esc(AD.q)}" style="margin-bottom:10px">
+  <div class="ausers">${(AD.users || []).map(u => { const st = userStatus(u); return `<div class="au" data-act="admin-user" data-id="${u.id}">
+    <span class="avatar sm">${esc(((u.name || u.email || '?')[0] || '?').toUpperCase())}</span>
+    <span class="grow"><b>${esc(u.name || '(sem nome)')}</b><small>${esc(u.email || '')}</small><small class="muted">desde ${fmtD(u.created_at.slice(0, 10))}${u.last_active ? ' · usou em ' + fmtD(u.last_active.slice(0, 10)) : ''}</small></span>
+    <span class="ast ${st.cls}">${esc(st.txt)}</span></div>`; }).join('') || '<div class="empty">Nenhum usuário encontrado.</div>'}</div>
+  <p class="muted small">Toque em um usuário para dar ou tirar o Premium de cortesia. Este painel só aparece para o administrador.</p>` : ''}`;
+}
+async function adminUser(id) {
+  const u = (AD.users || []).find(x => x.id === id); if (!u) return;
+  const st = userStatus(u);
+  const r = await ask(esc(u.name || u.email), `${esc(u.email)} · situação atual: <b>${esc(st.txt)}</b>${u.provider && u.provider !== 'admin' ? '<br><small>Este usuário paga pelo ' + (u.provider === 'googleplay' ? 'Google Play' : 'Mercado Pago') + '.</small>' : ''}`,
+    [['30d', 'Premium grátis por 30 dias', 'primary'], ['90d', 'Premium grátis por 90 dias', 'primary'], ['1y', 'Premium grátis por 1 ano', 'primary'], ['vitalicio', 'Premium vitalício (cortesia)', 'primary'], ['remover', 'Remover Premium', 'danger']]);
+  if (!r) return;
+  const { error } = await sb.rpc('admin_grant', { target: id, mode: r });
+  if (error) return toast('Não foi possível alterar: ' + error.message);
+  toast(r === 'remover' ? 'Premium removido' : 'Premium concedido 🎁'); AD.stats = null; await adminLoad();
+}
+
 /* ======================= Render ======================= */
 function applyTheme() {
   const st = S.settings, b = document.body;
@@ -1207,7 +1288,7 @@ function render(keepScroll = true) {
   if (!isLogged()) return showLogin();
   const y = window.scrollY;
   let h;
-  if (V.tab === 'ajustes' && V.sub) h = ({ perfil: scrPerfil, contas: scrContas, categorias: scrCategorias, dividas: scrDividas, emprestimos: scrEmprestimos, orientacao: scrOrientacao, sync: scrSync })[V.sub]();
+  if (V.tab === 'ajustes' && V.sub) h = ({ perfil: scrPerfil, contas: scrContas, categorias: scrCategorias, dividas: scrDividas, emprestimos: scrEmprestimos, orientacao: scrOrientacao, sync: scrSync, admin: scrAdmin })[V.sub]();
   else h = ({ inicio: isDesk() ? scrInicioDesk : scrInicio, calendario: scrCalendario, transacoes: isDesk() ? scrTransacoesDesk : scrTransacoes, graficos: scrGraficos, ajustes: scrAjustes })[V.tab]();
   document.body.classList.toggle('desk', isDesk());
   $('#main').innerHTML = isDesk() ? deskTop() + `<div class="scr">${h}</div>` : mobBar() + `<div class="scr-m">${h}</div>`;
@@ -1662,6 +1743,8 @@ document.addEventListener('click', async e => {
       const t = S.transactions.find(x => x.id === i.txId); if (t) t.paid = i.paid; save(); render(); break;
     }
     case 'loan-go': loanGo(); break;
+    case 'admin-reload': AD.stats = null; adminLoad(); break;
+    case 'admin-user': adminUser(id); break;
     case 'cloud-save': await cloudPush(); toast(CL.err || 'Salvo na nuvem'); render(); break;
     case 'logout': { const r = await ask('Sair do app?', 'Seus lançamentos continuam salvos neste aparelho.', [['y', 'Sair', 'danger']]); if (r) logout(); break; }
     case 'rep-caixa': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repCaixa(); break;
@@ -1696,6 +1779,7 @@ document.addEventListener('change', async e => {
 });
 document.addEventListener('input', e => {
   const el = e.target;
+  if (el.id === 'adq') { AD.q = el.value; clearTimeout(AD.t); AD.t = setTimeout(() => { adminLoad().then(() => { const q = $('#adq'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } }); }, 400); return; }
   if (el.dataset.inp === 'q') { V.q = el.value; const pos = el.selectionStart; render(); const q = $('#q'); q.focus(); q.setSelectionRange(pos, pos); }
   if (el.dataset.loan) { V.loan[el.dataset.loan] = el.value; $('#loanres').innerHTML = loanResult(); }
   if (el.id === 'pCep' && el.value.replace(/\D/g, '').length === 8) cepLookup(el.value);

@@ -1,383 +1,203 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HANKX — Consultoria em Gestão Financeira e Custos</title>
-<meta name="description" content="Consultoria de gestão de custos, controladoria, estoques e treinamentos em Excel e Power BI para empresas que querem crescer com lucratividade.">
-<link rel="icon" type="image/png" href="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png">
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="assets/css/style.css">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HANKX Finanças — controle financeiro simples, no celular e no computador</title>
+<meta name="description" content="Organize receitas, despesas, contas e dívidas. Calendário de saldo dia a dia, gráficos claros e relatórios em Excel. Teste o Premium grátis por 7 dias.">
+<meta property="og:title" content="HANKX Finanças — seu dinheiro organizado">
+<meta property="og:description" content="Lançamentos, calendário de saldo, gráficos, dívidas e relatórios. 7 dias de Premium grátis.">
+<meta property="og:image" content="https://www.hankx.com.br/img/tela-notebook.webp">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="icon" type="image/png" href="app/icons/logo.png">
+<link rel="apple-touch-icon" href="app/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="site.css?v=3">
 </head>
-<body class="bg-white">
-<div class="bg-white min-h-screen">
-  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A] transition-all duration-300 shadow-md">
-    <div class="max-w-7xl mx-auto px-6 lg:px-10">
-      <div class="flex items-center justify-between h-24">
-        <a href="index.html" class="flex items-center gap-3">
-          <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png" alt="HANKX" class="h-[4.8rem] lg:h-24 w-auto">
-        </a>
-        <div class="hidden lg:flex items-center gap-1 ml-6 mr-6">
-              <a href="index.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white bg-white/5">
-                INÍCIO
-                <span class="absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-[2px] w-6 bg-[#FF3D33]"></span>
-              </a>
-              <a href="sobre.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
-                SOBRE
-                
-              </a>
-              <a href="consultoria.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
-                CONSULTORIA
-                
-              </a>
-              <a href="academy.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
-                ACADEMY
-                
-              </a>
-              <a href="contato.html" class="relative px-4 py-2 text-[12px] font-semibold tracking-[0.14em] transition-colors rounded-md text-white/60 hover:text-white hover:bg-white/[0.03]">
-                CONTATO
-                
-              </a>
-        </div>
-        <div class="hidden lg:flex items-center gap-3">
-          <a href="app/" class="inline-flex items-center gap-2 border border-white/20 hover:border-white/50 text-white/80 hover:text-white text-[11px] font-bold tracking-[0.14em] px-5 py-3 rounded transition-colors"><i data-lucide="log-in" style="width:14px;height:14px"></i> ENTRAR</a>
-          <a href="contato.html" class="group inline-flex items-center gap-2 bg-[#FF3D33] hover:bg-[#ff2417] text-white text-[11px] font-bold tracking-[0.14em] px-5 py-3 rounded transition-colors">
-            FALE CONOSCO
-            <i data-lucide="arrow-right" class="transition-transform group-hover:translate-x-0.5" style="width:14px;height:14px"></i>
-          </a>
-        </div>
-        <button id="mobile-menu-btn" class="lg:hidden text-white p-2 -mr-2">
-          <span id="icon-menu-open"><i data-lucide="menu" class="" style="width:24px;height:24px"></i></span>
-          <span id="icon-menu-close" class="hidden"><i data-lucide="x" class="" style="width:24px;height:24px"></i></span>
-        </button>
-      </div>
-    </div>
-    <div class="h-[2px] bg-gradient-to-r from-transparent via-[#FF3D33]/60 to-transparent"></div>
-    <div id="mobile-menu" class="hidden lg:hidden bg-[#0A0A0A] border-t border-white/10 px-6 pb-8 pt-2">
-      <div class="flex items-center gap-3 pb-4 mb-2 border-b border-white/5">
-        <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/e80dca286_LogoTransparente.png" alt="HANKX" class="h-12 w-auto opacity-90">
-        <span class="text-white/40 text-[9px] tracking-[0.16em] leading-tight">CONSULTORIA EM<br>GESTÃO FINANCEIRA</span>
-      </div>
-            <a href="index.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white">
-              INÍCIO
-              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
-            </a>
-            <a href="sobre.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
-              SOBRE
-              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
-            </a>
-            <a href="consultoria.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
-              CONSULTORIA
-              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
-            </a>
-            <a href="academy.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
-              ACADEMY
-              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
-            </a>
-            <a href="contato.html" class="flex items-center justify-between py-3.5 text-[13px] font-semibold tracking-[0.12em] border-b border-white/5 text-white/55">
-              CONTATO
-              <i data-lucide="arrow-right" class="opacity-40" style="width:14px;height:14px"></i>
-            </a>
-      <a href="app/" class="mt-4 inline-flex items-center justify-center gap-2 border border-white/20 text-white text-[12px] font-bold tracking-[0.14em] px-5 py-3.5 rounded w-full"><i data-lucide="log-in" style="width:14px;height:14px"></i> ENTRAR</a>
-      <a href="contato.html" class="mt-4 inline-flex items-center justify-center gap-2 bg-[#FF3D33] text-white text-[12px] font-bold tracking-[0.14em] px-5 py-3.5 rounded w-full">
-        FALE CONOSCO <i data-lucide="arrow-right" class="" style="width:14px;height:14px"></i>
-      </a>
-    </div>
-  </nav>
+<body>
 
-  <section class="relative bg-white pt-28">
-    <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/d1c09e631_Imagemclarasiteprincipal4.png" alt="HANKX — Transformamos custos em resultados" class="block w-full h-auto">
-  </section>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="app/icons/logo.png" alt="">HANKX <small>Finanças</small></a>
+  <nav><a href="#recursos">Recursos</a><a href="#telas">Telas</a><a href="#precos">Preços</a><a href="#perguntas">Dúvidas</a></nav>
+  <a class="btn ghost" href="app/">Entrar</a>
+  <a class="btn primary" href="app/">Começar grátis</a>
+</div></header>
 
-  <section class="relative bg-white border-t border-slate-200 px-6 lg:px-10">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="flex items-start gap-4 px-6 py-7 border-r border-slate-200 last:border-r-0">
-        <div class="w-10 h-10 rounded-lg border border-[#FF3D33]/30 bg-[#FF3D33]/5 flex items-center justify-center shrink-0">
-          <i data-lucide="target" class="text-[#FF3D33]" style="width:20px;height:20px"></i>
-        </div>
-        <div>
-          <h3 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.1em] mb-1.5">FOCO EM RESULTADOS</h3>
-          <p class="text-slate-600 text-[13px] leading-relaxed">Metodologia orientada a performance.</p>
-        </div>
-      </div>
-      <div class="flex items-start gap-4 px-6 py-7 border-r border-slate-200 last:border-r-0">
-        <div class="w-10 h-10 rounded-lg border border-[#FF3D33]/30 bg-[#FF3D33]/5 flex items-center justify-center shrink-0">
-          <i data-lucide="bar-chart-3" class="text-[#FF3D33]" style="width:20px;height:20px"></i>
-        </div>
-        <div>
-          <h3 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.1em] mb-1.5">DECISÕES ESTRATÉGICAS</h3>
-          <p class="text-slate-600 text-[13px] leading-relaxed">Informações confiáveis para decisões seguras.</p>
-        </div>
-      </div>
-      <div class="flex items-start gap-4 px-6 py-7 border-r border-slate-200 last:border-r-0">
-        <div class="w-10 h-10 rounded-lg border border-[#FF3D33]/30 bg-[#FF3D33]/5 flex items-center justify-center shrink-0">
-          <i data-lucide="leaf" class="text-[#FF3D33]" style="width:20px;height:20px"></i>
-        </div>
-        <div>
-          <h3 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.1em] mb-1.5">SUSTENTABILIDADE</h3>
-          <p class="text-slate-600 text-[13px] leading-relaxed">Mais eficiência, menos desperdício.</p>
-        </div>
-      </div>
-      <div class="flex items-start gap-4 px-6 py-7 border-r border-slate-200 last:border-r-0">
-        <div class="w-10 h-10 rounded-lg border border-[#FF3D33]/30 bg-[#FF3D33]/5 flex items-center justify-center shrink-0">
-          <i data-lucide="users" class="text-[#FF3D33]" style="width:20px;height:20px"></i>
-        </div>
-        <div>
-          <h3 class="text-[#0A0A0A] text-[12px] font-bold tracking-[0.1em] mb-1.5">PARCERIA DE VERDADE</h3>
-          <p class="text-slate-600 text-[13px] leading-relaxed">Atuação próxima, transparente e comprometida.</p>
-        </div>
-      </div>
+<section class="hero"><div class="wrap">
+  <div>
+    <span class="pill">✨ 7 dias de Premium grátis · sem cartão</span>
+    <h1>Seu dinheiro <span class="grad">organizado</span>, do jeito que você entende.</h1>
+    <p class="lead">Anote receitas e despesas em segundos, veja o saldo de cada dia do mês, saiba exatamente o que pagar primeiro e acompanhe suas dívidas até a quitação.</p>
+    <div class="ctas">
+      <a class="btn primary big" href="app/">Testar grátis por 7 dias</a>
+      <span class="gplay" title="Em breve"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="#34a853" d="M3.6 2.3 13.4 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1z"/><path fill="#fbbc04" d="m16.8 8.6-3.4 3.4 3.4 3.4 3.9-2.2c.8-.5.8-1.7 0-2.2z"/><path fill="#4285f4" d="M3.6 2.3c.3-.2.8-.2 1.2 0l12 6.3-3.4 3.4z"/><path fill="#ea4335" d="m13.4 12 3.4 3.4-12 6.3c-.4.2-.9.2-1.2 0z"/></svg><span><small>EM BREVE NO</small><b>Google Play</b></span></span>
     </div>
-  </section>
+    <ul class="trust"><li>✓ Sem cartão de crédito</li><li>✓ Cancele quando quiser</li><li>✓ Dados protegidos (LGPD)</li></ul>
+    <p class="note">Funciona no <b>celular</b> (instala na tela inicial) e no <b>computador</b>. Seus dados ficam salvos na nuvem.</p>
+  </div>
+  <div class="phones">
+    <div class="phone p1"><img src="img/tela-inicio.webp" alt="Tela inicial do HANKX Finanças com saldo, receitas e despesas" width="585" height="1266"></div>
+    <div class="phone p2"><img src="img/tela-graficos.webp" alt="Resumo do mês com renda comprometida" width="585" height="1266" loading="lazy"></div>
+  </div>
+</div></section>
 
-  <section class="bg-white py-24 px-6 lg:px-10">
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-6 lg:gap-10 items-stretch">
-      <div class="fade-up bg-[#F7F7F5] border border-slate-200 rounded-xl p-9 flex flex-col">
-        <p class="text-[12px] font-bold tracking-[0.2em] mb-4 text-[#FF3D33]">O PROBLEMA</p>
-        <h2 class="text-[#121212] text-3xl md:text-4xl font-extrabold leading-[1.1] tracking-tight mb-5">
-          GESTÃO SEM VISIBILIDADE GERA <span class="text-[#FF3D33]">PREJUÍZOS INVISÍVEIS.</span>
-        </h2>
-        <p class="text-slate-600 text-base max-w-md leading-relaxed mb-8">
-          Muitas empresas ainda tomam decisões no escuro, sem dados precisos sobre seus custos e processos.
-        </p>
-        <a href="resultados.html" class="inline-flex items-center gap-2 bg-white border border-black text-black text-[12px] font-bold tracking-[0.12em] px-7 py-4 rounded transition-colors hover:bg-black hover:text-white w-fit">
-          ENTENDA O IMPACTO <i data-lucide="arrow-right" class="" style="width:16px;height:16px"></i>
-        </a>
-      </div>
-      <div class="fade-up grid sm:grid-cols-2 gap-6">
-        <div class="bg-white border border-slate-200 rounded-xl p-8">
-          <h3 class="text-[#121212] text-[13px] font-bold tracking-[0.1em] mb-6">O QUE TE IMPEDE DE CRESCER</h3>
-          <div class="space-y-4">
-              <div class="flex items-start gap-3">
-                <i data-lucide="minus" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Falta de controle e visibilidade dos custos</span>
-              </div>
-              <div class="flex items-start gap-3">
-                <i data-lucide="minus" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Informações dispersas e desconfiáveis</span>
-              </div>
-              <div class="flex items-start gap-3">
-                <i data-lucide="minus" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Processos ineficientes e desperdícios</span>
-              </div>
-              <div class="flex items-start gap-3">
-                <i data-lucide="minus" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Margens apertadas e pouca lucratividade</span>
-              </div>
-              <div class="flex items-start gap-3">
-                <i data-lucide="minus" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Decisões tomadas com base na intuição</span>
-              </div>
-          </div>
-        </div>
-        <div class="bg-white border border-slate-200 rounded-xl p-8">
-          <h3 class="text-[#121212] text-[13px] font-bold tracking-[0.1em] mb-6">O QUE VOCÊ PODE CONQUISTAR</h3>
-          <div class="space-y-4">
-              <div class="flex items-start gap-3">
-                <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Visibilidade total dos custos</span>
-              </div>
-              <div class="flex items-start gap-3">
-                <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Informações confiáveis e atualizadas</span>
-              </div>
-              <div class="flex items-start gap-3">
-                <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Processos eficientes e padronizados</span>
-              </div>
-              <div class="flex items-start gap-3">
-                <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Aumento da margem de contribuição</span>
-              </div>
-              <div class="flex items-start gap-3">
-                <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:18px;height:18px"></i>
-                <span class="text-slate-600 text-sm">Decisões estratégicas com segurança</span>
-              </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<section style="padding-top:20px"><div class="wrap">
+  <div class="stats">
+    <div class="stat"><b>30 s</b><span>para lançar uma conta</span></div>
+    <div class="stat"><b>Dia a dia</b><span>saldo previsto no calendário</span></div>
+    <div class="stat"><b>Excel e PDF</b><span>relatórios prontos</span></div>
+    <div class="stat"><b>Nuvem</b><span>dados em qualquer aparelho</span></div>
+  </div>
+</div></section>
 
-  <section class="bg-[#FAFAFA] py-24 px-6 lg:px-10">
-    <div class="max-w-7xl mx-auto">
-      <div class="fade-up flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-        <div>
-          <p class="text-[12px] font-bold tracking-[0.2em] mb-3 text-[#FF3D33]">SERVIÇOS</p>
-          <h2 class="text-[#0A0A0A] text-3xl md:text-4xl lg:text-[2.75rem] font-extrabold leading-[1.1] tracking-tight">
-            SOLUÇÕES QUE GERAM <span class="text-[#FF3D33]">VALOR.</span>
-          </h2>
-        </div>
-        <a href="consultoria.html" class="inline-flex items-center gap-2 border border-[#0A0A0A] text-[#0A0A0A] text-[12px] font-bold tracking-[0.12em] px-7 py-4 rounded transition-colors hover:bg-[#0A0A0A] hover:text-white">
-          CONHECER TODOS OS SERVIÇOS <i data-lucide="arrow-right" class="" style="width:16px;height:16px"></i>
-        </a>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
-            <div class="fade-up bg-white border border-slate-200 border-t-4 rounded-xl p-9 hover:shadow-lg hover:border-[#FF3D33]/30 transition-all flex flex-col h-full" style="border-top-color:#FF3D33">
-              <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style="background-color:rgba(255,61,51,0.10)">
-                <i data-lucide="calculator" class="text-[#FF3D33]" style="width:28px;height:28px"></i>
-              </div>
-              <h3 class="text-[#0A0A0A] text-base font-bold tracking-[0.05em] mb-4">GESTÃO DE CUSTOS</h3>
-              <p class="text-slate-600 text-sm leading-relaxed mb-6">Estruturamos e implementamos sistemas de custos com visibilidade total sobre onde seu dinheiro é investido ou desperdiçado.</p>
-              <div class="space-y-3 mt-auto pt-5 border-t border-slate-100">
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Mapeamento de custeio e centros de responsabilidade</span>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Implementação de metodologia de gestão de custos</span>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Controle financeiro integrado à operação</span>
-                  </div>
-              </div>
-            </div>
-            <div class="fade-up bg-white border border-slate-200 border-t-4 rounded-xl p-9 hover:shadow-lg hover:border-[#FF3D33]/30 transition-all flex flex-col h-full" style="border-top-color:#FF3D33">
-              <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style="background-color:rgba(255,61,51,0.10)">
-                <i data-lucide="bar-chart-3" class="text-[#FF3D33]" style="width:28px;height:28px"></i>
-              </div>
-              <h3 class="text-[#0A0A0A] text-base font-bold tracking-[0.05em] mb-4">ANÁLISE DE RENTABILIDADE</h3>
-              <p class="text-slate-600 text-sm leading-relaxed mb-6">Identificamos produtos, serviços, clientes e canais que realmente geram valor para o seu negócio.</p>
-              <div class="space-y-3 mt-auto pt-5 border-t border-slate-100">
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Análise de produtos por margem de contribuição</span>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Implementação de budget e projeções</span>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Indicadores de BI/IA para decisão estratégica</span>
-                  </div>
-              </div>
-            </div>
-            <div class="fade-up bg-white border border-slate-200 border-t-4 rounded-xl p-9 hover:shadow-lg hover:border-[#FF3D33]/30 transition-all flex flex-col h-full" style="border-top-color:#FF3D33">
-              <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style="background-color:rgba(255,61,51,0.10)">
-                <i data-lucide="package" class="text-[#FF3D33]" style="width:28px;height:28px"></i>
-              </div>
-              <h3 class="text-[#0A0A0A] text-base font-bold tracking-[0.05em] mb-4">CONTROLE DE ESTOQUES</h3>
-              <p class="text-slate-600 text-sm leading-relaxed mb-6">Reduz excessos, evita rupturas e otimiza o capital investido em estoque com processos sólidos.</p>
-              <div class="space-y-3 mt-auto pt-5 border-t border-slate-100">
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Inventários e conciliações física x contábil</span>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Gestão de estoques e pontos de pedido</span>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Curva ABC e priorização de capital investido</span>
-                  </div>
-              </div>
-            </div>
-            <div class="fade-up bg-white border border-slate-200 border-t-4 rounded-xl p-9 hover:shadow-lg hover:border-[#FF3D33]/30 transition-all flex flex-col h-full" style="border-top-color:#FF3D33">
-              <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-6" style="background-color:rgba(255,61,51,0.10)">
-                <i data-lucide="graduation-cap" class="text-[#FF3D33]" style="width:28px;height:28px"></i>
-              </div>
-              <h3 class="text-[#0A0A0A] text-base font-bold tracking-[0.05em] mb-4">TREINAMENTOS & CAPACITAÇÃO</h3>
-              <p class="text-slate-600 text-sm leading-relaxed mb-6">Programas práticos em Excel e Power BI que constroem equipes autônomas em dados e gestão.</p>
-              <div class="space-y-3 mt-auto pt-5 border-t border-slate-100">
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Excel aplicado à controladoria e custos</span>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Power BI para dashboards e relatórios gerenciais</span>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <i data-lucide="check-circle" class="mt-0.5 shrink-0 text-[#FF3D33]" style="width:16px;height:16px"></i>
-                    <span class="text-slate-600 text-[13px] leading-relaxed">Formação de analistas autônomos em dados</span>
-                  </div>
-              </div>
-            </div>
-      </div>
-    </div>
-  </section>
+<section id="recursos"><div class="wrap center">
+  <span class="eyebrow">Recursos</span>
+  <h2>Tudo o que você precisa para sair do aperto</h2>
+  <p class="sub">Sem planilhas complicadas: o HANKX Finanças mostra onde está o seu dinheiro e o que fazer com ele.</p>
+  <div class="feats" style="text-align:left">
+    <div class="feat"><div class="ic">🧾</div><h3>Lançamentos inteligentes</h3><p>Contas fixas, parcelas e salários que se repetem sozinhos. Marque como pago com um toque.</p></div>
+    <div class="feat"><div class="ic" style="background:rgba(45,212,163,.14)">📅</div><h3>Calendário de saldo</h3><p>Veja quanto vai sobrar em cada dia do mês e evite o vermelho antes que ele aconteça.</p></div>
+    <div class="feat"><div class="ic" style="background:rgba(124,92,255,.16)">📊</div><h3>Gráficos que se entendem</h3><p>Quanto da renda está comprometida, gastos por categoria, comparação com o mês anterior e projeção.</p></div>
+    <div class="feat"><div class="ic" style="background:rgba(255,93,115,.14)">💳</div><h3>Dívidas sob controle</h3><p>Acompanhe cada parcela, quanto falta pagar e simule empréstimos antes de fechar negócio.</p></div>
+    <div class="feat"><div class="ic" style="background:rgba(255,184,77,.16)">🧭</div><h3>O que pagar primeiro</h3><p>Uma orientação clara de prioridade: contas atrasadas, essenciais e dívidas com juros altos.</p></div>
+    <div class="feat"><div class="ic" style="background:rgba(34,167,240,.14)">📤</div><h3>Relatórios e backup</h3><p>Controle de Caixa em Excel e PDF, fluxo diário em CSV e cópia de segurança dos seus dados.</p></div>
+  </div>
+</div></section>
 
-  <section class="bg-white py-24 px-6 lg:px-10">
-    <div class="max-w-7xl mx-auto">
-      <div class="fade-up mb-12">
-        <p class="text-[12px] font-bold tracking-[0.2em] mb-3 text-[#FF3D33]">NOSSAS DIVISÕES</p>
-        <h2 class="text-[#121212] text-3xl md:text-4xl lg:text-[2.75rem] font-extrabold leading-[1.1] tracking-tight">
-          DUAS FRENTES, <span class="text-[#FF3D33]">UM OBJETIVO.</span>
-        </h2>
-      </div>
-      <div class="grid sm:grid-cols-2 gap-6">
-            <div class="fade-up bg-[#F7F7F5] border border-slate-200 rounded-xl p-7 hover:border-black/30 hover:shadow-md transition-all flex flex-col">
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background-color:rgba(255,61,51,0.12)">
-                <i data-lucide="clipboard-list" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
-              </div>
-              <p class="text-[10px] font-bold tracking-[0.2em] mb-2 text-[#FF3D33]">CONSULTORIA</p>
-              <h3 class="text-[#121212] text-lg font-extrabold mb-3">CUSTOS E CONTROLADORIA</h3>
-              <p class="text-slate-600 text-sm leading-relaxed mb-6 flex-1">Consultoria de gestão de custos, gestão de estoques, rentabilidade e controle financeiro para empresas.</p>
-              <a href="consultoria.html" class="inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.1em] hover:underline text-[#FF3D33]">
-                SAIBA MAIS <i data-lucide="arrow-right" class="" style="width:14px;height:14px"></i>
-              </a>
-            </div>
-            <div class="fade-up bg-[#F7F7F5] border border-slate-200 rounded-xl p-7 hover:border-black/30 hover:shadow-md transition-all flex flex-col">
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background-color:rgba(255,61,51,0.12)">
-                <i data-lucide="graduation-cap" class="text-[#FF3D33]" style="width:24px;height:24px"></i>
-              </div>
-              <p class="text-[10px] font-bold tracking-[0.2em] mb-2 text-[#FF3D33]">ACADEMY</p>
-              <h3 class="text-[#121212] text-lg font-extrabold mb-3">DADOS EM PODER DE DECISÃO</h3>
-              <p class="text-slate-600 text-sm leading-relaxed mb-6 flex-1">Treinamentos práticos em Excel e Power BI ministrados por quem usa essas ferramentas todos os dias.</p>
-              <a href="academy.html" class="inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.1em] hover:underline text-[#FF3D33]">
-                SAIBA MAIS <i data-lucide="arrow-right" class="" style="width:14px;height:14px"></i>
-              </a>
-            </div>
-      </div>
-    </div>
-  </section>
+<section><div class="wrap center">
+  <span class="eyebrow">Por que o HANKX?</span>
+  <h2>Mais fácil que planilha. Mais claro que extrato.</h2>
+  <div class="cmp">
+    <div class="cmp-row head"><span></span><span>Planilha</span><span>Extrato do banco</span><span class="hx">HANKX Finanças</span></div>
+    <div class="cmp-row"><span>Mostra o saldo de cada dia do mês</span><span>Dá trabalho</span><span>Só o passado</span><span class="hx">✓ Automático</span></div>
+    <div class="cmp-row"><span>Contas que se repetem e parcelas</span><span>Copiar e colar</span><span>—</span><span class="hx">✓ Lança sozinho</span></div>
+    <div class="cmp-row"><span>Aviso de vencimentos e atrasos</span><span>—</span><span>—</span><span class="hx">✓ No início do app</span></div>
+    <div class="cmp-row"><span>O que pagar primeiro quando falta dinheiro</span><span>—</span><span>—</span><span class="hx">✓ Orientação pronta</span></div>
+    <div class="cmp-row"><span>Todas as contas e cartões juntos</span><span>Manual</span><span>Um banco por vez</span><span class="hx">✓ Em um só lugar</span></div>
+    <div class="cmp-row"><span>Funciona no celular</span><span>Difícil</span><span>✓</span><span class="hx">✓ E no computador</span></div>
+  </div>
+</div></section>
 
-  <section class="bg-white py-20 px-6 lg:px-10 border-t border-slate-200 text-center">
-    <div class="max-w-3xl mx-auto fade-up">
-      <h2 class="text-[#0A0A0A] text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
-        VAMOS <span class="text-[#FF3D33]">CONVERSAR?</span>
-      </h2>
-      <p class="text-slate-600 text-base md:text-lg max-w-xl mx-auto mb-9 leading-relaxed">
-        Conte-nos sobre o seu desafio e descubra como podemos ajudar sua empresa a crescer com lucratividade.
-      </p>
-      <a href="https://wa.me/5511996119090" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-white text-[13px] font-bold tracking-[0.12em] px-10 py-5 rounded transition-colors hover:brightness-110" style="background-color:#FF3D33">
-        FAZER CONTATO <i data-lucide="arrow-right" class="" style="width:18px;height:18px"></i>
-      </a>
-    </div>
-  </section>
+<section id="telas" style="background:var(--bg2)"><div class="wrap center">
+  <span class="eyebrow">Telas</span>
+  <h2>Bonito no celular. Completo no computador.</h2>
+  <p class="sub">Escolha entre vários temas — claro, escuro, estilo iPhone, Material, Office e mais.</p>
+  <div class="gallery">
+    <figure><div class="phone"><img src="img/tela-inicio.webp" alt="Início" loading="lazy" width="585" height="1266"></div><figcaption>Início com saldo e vencimentos</figcaption></figure>
+    <figure><div class="phone"><img src="img/tela-calendario.webp" alt="Calendário" loading="lazy" width="585" height="1266"></div><figcaption>Calendário de saldo diário</figcaption></figure>
+    <figure><div class="phone"><img src="img/tela-graficos.webp" alt="Gráficos" loading="lazy" width="585" height="1266"></div><figcaption>Resumo do mês</figcaption></figure>
+    <figure><div class="phone"><img src="img/tela-transacoes.webp" alt="Transações" loading="lazy" width="585" height="1266"></div><figcaption>Transações com filtros</figcaption></figure>
+  </div>
+  <div class="themes"><span style="--a:#22a7f0">Padrão</span><span style="--a:#007aff">iOS</span><span style="--a:#0b57d0">Material</span><span style="--a:#107c41">Office</span><span style="--a:#ec4899">Feminino</span><span style="--a:#2563eb">Masculino</span><span style="--a:#0ea5a0">União dos Povos</span><span style="--a:#6b7280">Minimal</span><span class="mob">+ Estilo Mobills no computador</span></div>
+  <div class="laptop"><img src="img/tela-notebook.webp" alt="Painel do HANKX Finanças no computador" loading="lazy" width="1440" height="900"></div>
+</div></section>
 
-  <footer class="bg-[#0A0A0A] text-white/70 pt-8 pb-6 px-6">
-    <div class="max-w-7xl mx-auto">
-      <div class="grid md:grid-cols-3 gap-6 items-center">
-        <div class="flex items-center gap-3">
-          <img src="https://media.base44.com/images/public/6a4ab9281d64929c0d49ed87/6a2e68ec6_HANKX_2.jpeg" alt="HANKX" class="h-12 w-auto rounded-lg">
-          <span class="text-white/45 text-[10px] tracking-[0.12em] leading-tight">CONSULTORIA EM<br>GESTÃO FINANCEIRA</span>
-        </div>
-        <div class="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-[10px] tracking-[0.15em]">
-          <a href="index.html" class="hover:text-white transition-colors">INÍCIO</a><a href="sobre.html" class="hover:text-white transition-colors">SOBRE</a><a href="resultados.html" class="hover:text-white transition-colors">RESULTADOS</a><a href="consultoria.html" class="hover:text-white transition-colors">CONSULTORIA</a><a href="academy.html" class="hover:text-white transition-colors">ACADEMY</a><a href="contato.html" class="hover:text-white transition-colors">CONTATO</a>
-        </div>
-        <div class="flex md:justify-end items-center gap-3">
-          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
-            class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:border-white transition-colors">
-            <i data-lucide="linkedin" class="" style="width:14px;height:14px"></i>
-          </a>
-          <a href="https://instagram.com/hankx.br" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
-            class="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:border-white transition-colors">
-            <i data-lucide="instagram" class="" style="width:14px;height:14px"></i>
-          </a>
-        </div>
-      </div>
-      <div class="mt-6 pt-4 border-t border-white/10 text-center text-[10px] tracking-wider text-white/40">
-        © 2025 HANKX. Todos os direitos reservados.
-      </div>
+<section><div class="wrap center">
+  <span class="eyebrow">Como funciona</span>
+  <h2>Comece em 3 passos</h2>
+  <div class="steps" style="text-align:left">
+    <div class="step"><h3>Crie sua conta</h3><p>Só e-mail e senha. Os 7 dias de Premium começam na hora, sem pedir cartão.</p></div>
+    <div class="step"><h3>Lance suas contas</h3><p>Salário, aluguel, luz, cartão, parcelas… Marque o que se repete e o app cuida dos próximos meses.</p></div>
+    <div class="step"><h3>Acompanhe e decida</h3><p>Veja o saldo de cada dia, o que pagar primeiro e quanto falta para quitar cada dívida.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-grid">
+    <div><span class="eyebrow">Segurança</span><h2>Seus dados são só seus</h2><p class="sub">Você controla tudo: o HANKX Finanças nunca pede senha de banco e não movimenta dinheiro.</p></div>
+    <div class="sec-list">
+      <div><b>🔒 Conexão criptografada</b><span>Tudo trafega por HTTPS, do seu aparelho até a nuvem.</span></div>
+      <div><b>👤 Cada um vê só o seu</b><span>Regras de segurança no banco de dados impedem o acesso de outras contas.</span></div>
+      <div><b>🏦 Sem acesso ao banco</b><span>Você lança suas contas; não conectamos à sua conta bancária.</span></div>
+      <div><b>📦 Exporte ou apague quando quiser</b><span>Backup, Excel e exclusão da conta pelo próprio app, conforme a LGPD.</span></div>
     </div>
-  </footer>
+  </div>
+</div></section>
+
+<section id="precos" style="background:var(--bg2)"><div class="wrap center">
+  <span class="eyebrow">Preços</span>
+  <h2>Comece grátis. Assine se fizer diferença.</h2>
+  <p class="sub">Toda conta nova ganha 7 dias de Premium completo. Depois, continue no plano grátis ou assine.</p>
+  <div class="plans four" style="text-align:left">
+    <div class="plan">
+      <h3>Grátis</h3>
+      <div class="price">R$ 0</div>
+      <div class="alt">para sempre</div>
+      <ul>
+        <li>Lançamentos ilimitados e recorrentes</li>
+        <li>Calendário de saldo diário</li>
+        <li>Resumo do mês</li>
+        <li>1 conta bancária</li>
+        <li>Dados na nuvem, no celular e no computador</li>
+        <li class="off">Recursos Premium</li>
+      </ul>
+      <a class="btn" href="app/">Criar conta grátis</a>
+    </div>
+    <div class="plan">
+      <h3>Mensal</h3>
+      <div class="price">R$ 9,90 <small>/mês</small></div>
+      <div class="alt">cancele quando quiser</div>
+      <ul><li>Tudo do Premium</li><li>Renovação automática</li><li>Ideal para experimentar</li></ul>
+      <a class="btn" href="app/">Assinar mensal</a>
+    </div>
+    <div class="plan pro">
+      <span class="tag">MAIS VANTAJOSO</span>
+      <h3>Anual</h3>
+      <div class="price">R$ 89,90 <small>/ano</small></div>
+      <div class="alt">sai por <b>R$ 7,49 por mês</b> — economia de 24%</div>
+      <ul><li>Tudo do Premium</li><li>2 meses e meio de graça</li><li>Renovação automática</li></ul>
+      <a class="btn primary" href="app/">Assinar anual</a>
+    </div>
+    <div class="plan life">
+      <span class="tag gold">PAGUE UMA VEZ</span>
+      <h3>Vitalício</h3>
+      <div class="price">R$ 199,90</div>
+      <div class="alt">pagamento único, <b>acesso para sempre</b></div>
+      <ul><li>Tudo do Premium</li><li>Sem mensalidade</li><li>Todas as novidades futuras</li></ul>
+      <a class="btn" href="app/">Comprar vitalício</a>
+    </div>
+  </div>
+  <div class="incl">
+    <b>O Premium inclui:</b>
+    <span>📊 Gráficos completos (projeção, categorias e ranking)</span><span>📤 Relatórios em Excel, PDF e CSV</span><span>💳 Controle de dívidas</span><span>🧮 Simulador de empréstimos</span><span>🧭 Orientação do que pagar primeiro</span><span>🏦 Várias contas e cartões</span><span>🎨 Todos os temas</span>
+  </div>
+  <p class="note" style="margin-top:20px">Toda conta nova ganha <b>7 dias de Premium grátis</b>, sem cartão. Pagamento por Pix ou cartão (Mercado Pago) no site, ou pelo Google Play no app Android.</p>
+</div></section>
+
+<section id="perguntas"><div class="wrap center">
+  <span class="eyebrow">Dúvidas</span>
+  <h2>Perguntas frequentes</h2>
+  <div class="faq" style="text-align:left">
+    <details><summary>Preciso de cartão para testar?</summary><p>Não. Basta criar a conta com e-mail e senha. Os 7 dias de Premium começam na hora e, se você não assinar, a conta continua no plano grátis — nada é cobrado.</p></details>
+    <details><summary>O HANKX Finanças acessa minha conta do banco?</summary><p>Não. Você mesmo lança suas receitas e despesas. O app nunca pede senha de banco nem movimenta dinheiro.</p></details>
+    <details><summary>Meus dados ficam seguros?</summary><p>Sim. Cada conta só enxerga os próprios dados, a conexão é criptografada e você pode exportar ou excluir tudo quando quiser. Veja a <a href="privacidade.html">Política de privacidade</a>.</p></details>
+    <details><summary>Funciona no iPhone e no computador?</summary><p>Sim. Abra <b>hankx.com.br/app</b> no navegador. No iPhone, toque em Compartilhar → "Adicionar à Tela de Início" para usar como aplicativo. No Android, ele estará em breve no Google Play.</p></details>
+    <details><summary>Como funciona o plano vitalício?</summary><p>Você paga R$ 199,90 uma única vez e tem o Premium para sempre, sem mensalidade, incluindo as melhorias futuras do app.</p></details>
+    <details><summary>Como cancelo a assinatura?</summary><p>Assinou pelo site: no Mercado Pago, em Assinaturas. Assinou pelo app Android: na Play Store, em Pagamentos e assinaturas. O Premium continua até o fim do período pago.</p></details>
+    <details><summary>Posso levar meus dados para outro celular?</summary><p>Sim. É só entrar com o mesmo e-mail em outro aparelho: tudo aparece automaticamente.</p></details>
+  </div>
+</div></section>
+
+<div class="cta-final">
+  <h2 style="margin-top:0">Comece hoje a organizar seu dinheiro</h2>
+  <p class="sub" style="margin:0 auto 24px">7 dias de Premium grátis. Sem cartão. Cancele quando quiser.</p>
+  <a class="btn primary big" href="app/">Criar minha conta grátis</a>
 </div>
-<script src="assets/js/main.js"></script>
+
+<footer><div class="wrap">
+  <div><a class="brand" href="/"><img src="app/icons/logo.png" alt="">HANKX <small>Finanças</small></a><p style="margin:12px 0 0;max-width:340px">Controle financeiro pessoal simples, para sair do aperto e chegar à estabilidade.</p></div>
+  <nav>
+    <a href="app/">Entrar no app</a>
+    <a href="privacidade.html">Privacidade</a>
+    <a href="termos.html">Termos de uso</a>
+    <a href="excluir-conta.html">Excluir conta</a>
+    <a href="consultoria/">Consultoria HANKX</a>
+    <a href="https://wa.me/5511996119090" rel="noopener">WhatsApp</a>
+    <a href="https://instagram.com/hankx.br" rel="noopener">Instagram</a>
+  </nav>
+  <p style="width:100%;margin:10px 0 0">© 2026 HANKX. Todos os direitos reservados.</p>
+</div></footer>
+<div class="mcta"><span><b>7 dias grátis</b><small>sem cartão</small></span><a class="btn primary" href="app/">Começar agora</a></div>
+
 </body>
 </html>
