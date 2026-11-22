@@ -968,3 +968,78 @@ body.skin-diversidade .tabbar button.on{color:var(--accent)}
   body.skin-diversidade.desk .tabbar{box-shadow:inset -3px 0 0 transparent}
   body.skin-diversidade.desk .tabbar::after{content:"";position:absolute;top:0;bottom:0;right:0;width:3px;background:linear-gradient(180deg,#ff4d6d,#ff9f43,#ffd93d,#3ddc97,#4facfe,#7b6cff,#c56cff)}
 }
+
+/* ===== Temas de bandeiras e União dos Povos ===== */
+/* faixa fininha com as cores da bandeira no topo dos cartões e da barra de abas */
+body.skin-bissexual .card,body.skin-hetero .card,body.skin-lesbica .card,body.skin-uniao .card,
+body.skin-bissexual .mbox,body.skin-hetero .mbox,body.skin-lesbica .mbox,body.skin-uniao .mbox,
+body.skin-bissexual .mcard,body.skin-hetero .mcard,body.skin-lesbica .mcard,body.skin-uniao .mcard{position:relative}
+body.skin-bissexual .card::before,body.skin-hetero .card::before,body.skin-lesbica .card::before,body.skin-uniao .card::before,
+body.skin-bissexual .mbox::before,body.skin-hetero .mbox::before,body.skin-lesbica .mbox::before,body.skin-uniao .mbox::before,
+body.skin-bissexual .mcard::before,body.skin-hetero .mcard::before,body.skin-lesbica .mcard::before,body.skin-uniao .mcard::before{
+  content:"";position:absolute;left:16px;right:16px;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--stripe);opacity:.95}
+body.skin-bissexual .seg button.on,body.skin-hetero .seg button.on,body.skin-lesbica .seg button.on,body.skin-uniao .seg button.on,
+body.skin-bissexual .dseg button.on,body.skin-hetero .dseg button.on,body.skin-lesbica .dseg button.on,body.skin-uniao .dseg button.on,
+body.skin-bissexual .pill.on,body.skin-hetero .pill.on,body.skin-lesbica .pill.on,body.skin-uniao .pill.on,
+body.skin-bissexual .pills.plain .pill.on,body.skin-hetero .pills.plain .pill.on,body.skin-lesbica .pills.plain .pill.on,body.skin-uniao .pills.plain .pill.on,
+body.skin-bissexual .chips button.on,body.skin-hetero .chips button.on,body.skin-lesbica .chips button.on,body.skin-uniao .chips button.on,
+body.skin-bissexual .accchip.on,body.skin-hetero .accchip.on,body.skin-lesbica .accchip.on,body.skin-uniao .accchip.on,
+body.skin-bissexual .btn.primary,body.skin-hetero .btn.primary,body.skin-lesbica .btn.primary,body.skin-uniao .btn.primary,
+body.skin-bissexual.desk .tabbar button.snew,body.skin-hetero.desk .tabbar button.snew,body.skin-lesbica.desk .tabbar button.snew,body.skin-uniao.desk .tabbar button.snew{
+  background:var(--btn)!important;color:var(--btn-ink)!important;text-shadow:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px var(--hbar-sh)!important}
+body.skin-bissexual .fab,body.skin-hetero .fab,body.skin-lesbica .fab,body.skin-uniao .fab{background:var(--btn)!important;color:var(--btn-ink);border:2px solid rgba(255,255,255,.75);box-shadow:0 10px 26px var(--hbar-sh)!important}
+body.skin-bissexual .cal .wd,body.skin-hetero .cal .wd,body.skin-lesbica .cal .wd,body.skin-uniao .cal .wd{background:var(--hbar);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+body.skin-bissexual .cal .d.today b,body.skin-hetero .cal .d.today b,body.skin-lesbica .cal .d.today b,body.skin-uniao .cal .d.today b{background:var(--btn);color:var(--btn-ink)}
+body.skin-bissexual .switch input:checked+i,body.skin-hetero .switch input:checked+i,body.skin-lesbica .switch input:checked+i,body.skin-uniao .switch input:checked+i{background:var(--btn)}
+body.skin-bissexual .switch input:checked+i::after,body.skin-lesbica .switch input:checked+i::after,body.skin-uniao .switch input:checked+i::after{background:#fff}
+body.skin-bissexual .mbar,body.skin-bissexual .hello,body.skin-lesbica .mbar,body.skin-lesbica .hello,body.skin-uniao .mbar,body.skin-uniao .hello{text-shadow:0 1px 3px rgba(0,0,0,.35)}
+@media (max-width:899px){
+  body.skin-bissexual .tabbar::before,body.skin-hetero .tabbar::before,body.skin-lesbica .tabbar::before,body.skin-uniao .tabbar::before{content:"";position:absolute;left:18px;right:18px;top:-1px;height:3px;border-radius:3px;background:var(--stripe)}
+}
+
+/* Bissexual — rosa (#D60270), roxo (#9B4F96), azul (#0038A8) */
+body.skin-bissexual{--bg:#150f22;--bg2:#110c1c;--card:#21183a;--card2:#2b2149;--line:rgba(255,255,255,.1);--text:#f7f2ff;--muted:#b9aed6;
+  --accent:#d17acb;--accent-soft:rgba(209,122,203,.16);--blob1:#d60270;--blob2:#0038a8;--blob3:#9b4f96;
+  --stripe:linear-gradient(90deg,#d60270 0 40%,#9b4f96 40% 60%,#0038a8 60% 100%);
+  --hbar:linear-gradient(180deg,#d60270 0%,#d60270 34%,#9b4f96 52%,#0038a8 70%,#0038a8 100%);--hbar-sh:rgba(155,79,150,.4);
+  --btn:linear-gradient(120deg,#d60270,#9b4f96 55%,#0038a8);--btn-ink:#fff}
+body.skin-bissexual.light{--bg:#fbf6fd;--bg2:#f6eefb;--card:#fff;--card2:#f7f0fb;--line:rgba(110,50,130,.14);--text:#2a1838;--muted:#7b6890;--accent:#9b4f96;--accent-soft:rgba(155,79,150,.12)}
+
+/* Hétero — preto e branco */
+body.skin-hetero{--bg:#0d0d0d;--bg2:#080808;--card:#1a1a1a;--card2:#242424;--line:rgba(255,255,255,.12);--text:#ffffff;--muted:#a8a8a8;
+  --accent:#ffffff;--accent-soft:rgba(255,255,255,.12);--blob1:#6b6b6b;--blob2:#3a3a3a;--blob3:#8a8a8a;
+  --stripe:repeating-linear-gradient(90deg,#fff 0 12%,#000 12% 25%);
+  --hbar:linear-gradient(180deg,#000 0%,#000 70%,#fff 70%,#fff 76%,#000 76%,#000 82%,#fff 82%,#fff 88%,#000 88%);--hbar-sh:rgba(0,0,0,.45);
+  --btn:linear-gradient(180deg,#ffffff,#d9d9d9);--btn-ink:#000}
+body.skin-hetero.light{--bg:#f5f5f5;--bg2:#eeeeee;--card:#ffffff;--card2:#f3f3f3;--line:rgba(0,0,0,.1);--text:#111111;--muted:#6b6b6b;
+  --accent:#111111;--accent-soft:rgba(0,0,0,.07);--btn:linear-gradient(180deg,#2b2b2b,#000);--btn-ink:#fff;
+  --stripe:repeating-linear-gradient(90deg,#000 0 12%,#cfcfcf 12% 25%)}
+body.skin-hetero .switch input:checked+i::after{background:#888}
+body.skin-hetero .big{color:var(--text)}
+
+/* Lésbica — laranja escuro, laranja, laranja claro, branco, rosa, rosa escuro */
+body.skin-lesbica{--bg:#1c1012;--bg2:#170d0f;--card:#2b1a1e;--card2:#362127;--line:rgba(255,255,255,.1);--text:#fff5f2;--muted:#d2b4b4;
+  --accent:#ff9a56;--accent-soft:rgba(255,154,86,.16);--blob1:#ef7627;--blob2:#d162a4;--blob3:#a30262;
+  --stripe:linear-gradient(90deg,#d52d00 0 17%,#ef7627 17% 33%,#ff9a56 33% 50%,#ffffff 50% 57%,#d162a4 57% 74%,#b55690 74% 87%,#a30262 87% 100%);
+  --hbar:linear-gradient(180deg,#d52d00 0%,#ef7627 22%,#ff9a56 40%,#e88fb8 58%,#d162a4 70%,#b55690 84%,#a30262 100%);--hbar-sh:rgba(213,45,0,.35);
+  --btn:linear-gradient(120deg,#d52d00,#ef7627 30%,#d162a4 70%,#a30262);--btn-ink:#fff}
+body.skin-lesbica.light{--bg:#fff7f3;--bg2:#fdeee8;--card:#fff;--card2:#fdf1ee;--line:rgba(160,60,40,.14);--text:#3a1712;--muted:#8c6560;--accent:#d14f1a;--accent-soft:rgba(213,77,26,.1)}
+
+/* União dos Povos — Planeta Terra: azul oceano e verde das matas, mapa-múndi suave */
+body.skin-uniao{--bg:#07192b;--bg2:#051422;--card:#0f2740;--card2:#16324f;--line:rgba(160,220,255,.13);--text:#eef8ff;--muted:#a3c2d6;
+  --accent:#38bdf8;--accent-soft:rgba(56,189,248,.15);--green:#4ade80;--green-d:#22c55e;--green-soft:rgba(74,222,128,.14);
+  --blob1:#0ea5e9;--blob2:#16a34a;--blob3:#0369a1;
+  --stripe:linear-gradient(90deg,#0369a1,#0ea5e9 35%,#22c55e 65%,#15803d);
+  --hbar:linear-gradient(135deg,#0369a1 0%,#0e7fbf 40%,#0f9f8a 72%,#15803d 100%);--hbar-sh:rgba(3,105,161,.4);
+  --btn:linear-gradient(120deg,#0284c7,#0ea5a0 60%,#16a34a);--btn-ink:#fff}
+body.skin-uniao.light{--bg:#f1f8fd;--bg2:#e7f3fb;--card:#fff;--card2:#eef7fc;--line:rgba(3,105,161,.14);--text:#0b2537;--muted:#557487;
+  --accent:#0369a1;--accent-soft:rgba(3,105,161,.1);--green:#15803d;--green-d:#15803d;--green-soft:rgba(21,128,61,.1)}
+/* mapa-múndi pontilhado e suave no fundo */
+body.skin-uniao #app::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.22;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Cg fill='%2338bdf8'%3E%3Cpath d='M18 22c8-6 22-8 32-4 6 3 4 9-2 12-5 3-6 9-11 12-6 3-9 9-14 7-4-2-3-8-6-12-4-5-5-11 1-15z'/%3E%3Cpath d='M44 56c5-2 10 1 12 6 2 6-1 12-3 18-2 5-6 6-8 1-2-6-5-11-5-17 0-4 1-7 4-8z'/%3E%3Cpath d='M88 20c6-4 14-4 18 0 3 3 0 7-4 8-4 2-8 1-11 4-3 2-6 0-6-4 0-3 1-6 3-8z'/%3E%3Cpath d='M92 38c7-3 15-1 18 5 3 7 0 14-3 20-3 7-8 10-11 5-3-6-6-11-7-18 0-5 0-10 3-12z'/%3E%3Cpath d='M112 18c12-6 30-6 44-2 10 3 16 8 12 14-3 5-11 4-15 9-4 4-10 5-15 2-6-3-10-1-15-4-5-4-15-2-16-9 0-4 2-8 5-10z'/%3E%3Cpath d='M150 62c6-3 14-2 17 3 2 4-1 8-6 9-5 1-10 0-12-4-1-3-1-6 1-8z'/%3E%3C/g%3E%3C/svg%3E") center 30%/120% auto no-repeat}
+body.skin-uniao.light #app::after{opacity:.14}
+/* globo discreto dentro da faixa do topo */
+@media (max-width:899px){
+  body.skin-uniao .mbar::before,body.skin-uniao .hello::before{content:"";position:absolute;right:-30px;top:calc(var(--safe-top) - 10px);width:150px;height:150px;opacity:.22;pointer-events:none;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='white' stroke-width='2'%3E%3Ccircle cx='50' cy='50' r='46'/%3E%3Cellipse cx='50' cy='50' rx='20' ry='46'/%3E%3Cellipse cx='50' cy='50' rx='38' ry='46'/%3E%3Cpath d='M4 50h92M10 28h80M10 72h80'/%3E%3C/svg%3E") center/contain no-repeat}
+}
