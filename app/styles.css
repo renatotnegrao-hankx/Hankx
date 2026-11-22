@@ -738,3 +738,101 @@ body.skin-windows #toast{border-radius:6px}
   body.skin-windows.desk .tabbar button.on::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;border-radius:3px;background:var(--accent)}
   body.skin-windows #modal .sheet{border-radius:8px!important}
 }
+
+/* ===== Tema Office — Microsoft 365 moderno, puxado para o Excel ===== */
+body.skin-office{
+  --font:"Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+  --radius:6px;--radius-s:4px;
+  --bg:#1f1f1f;--bg2:#1b1b1b;--card:#292929;--card2:#303030;--line:#3d3d3d;--text:#f3f3f3;--muted:#b3b3b3;
+  --accent:#4fb37a;--accent-soft:rgba(79,179,122,.15);--accent-ink:#0b2a17;--bar:#0e4d29;--bar2:#0a3a1f;
+  --green:#5ec27f;--green-d:#5ec27f;--green-soft:rgba(94,194,127,.14);--red:#f1707b;--red2:#f1707b;--red-soft:rgba(241,112,123,.12);--orange:#f2c14e;--blue:#6cb8f6;
+  --glass-a:97%;--glass-blur:none;--glass-brd:var(--line);--glass-hi:none;--glass-sh:0 1px 2px rgba(0,0,0,.25);
+  --blob1:transparent;--blob2:transparent;--blob3:transparent}
+body.skin-office.light{
+  --bg:#f3f3f3;--bg2:#eeeeee;--card:#ffffff;--card2:#f7f7f7;--line:#e1dfdd;--text:#242424;--muted:#616161;
+  --accent:#107c41;--accent-soft:rgba(16,124,65,.09);--accent-ink:#ffffff;--bar:#107c41;--bar2:#0e6b38;
+  --green:#107c41;--green-d:#107c41;--green-soft:rgba(16,124,65,.09);--red:#c50f1f;--red2:#c50f1f;--red-soft:rgba(197,15,31,.07);--orange:#bc4b09;--blue:#0f6cbd;
+  --glass-sh:0 1px 2px rgba(0,0,0,.06),0 0 1px rgba(0,0,0,.08)}
+body.skin-office #app::before{display:none}
+/* superfícies sólidas e cantos discretos */
+body.skin-office .card,body.skin-office .tx,body.skin-office .list,body.skin-office .cal,body.skin-office .catrow,body.skin-office .monthnav,body.skin-office .box,
+body.skin-office .alert,body.skin-office .rdbox,body.skin-office .opt,body.skin-office .kpi,body.skin-office .toolbar,body.skin-office .mcard,body.skin-office .mbox,
+body.skin-office .accchip,body.skin-office .code,body.skin-office .adv,body.skin-office .three .card{border-radius:6px!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--card)!important}
+body.skin-office .tx.receita,body.skin-office .tx.despesa{border-left:3px solid var(--green)!important}
+body.skin-office .tx.despesa{border-left-color:var(--red)!important}
+body.skin-office .rdbox.r{border-top:3px solid var(--green)!important}
+body.skin-office .rdbox.d{border-top:3px solid var(--red)!important}
+body.skin-office .alert{border-left:3px solid var(--orange)!important}
+/* abas no estilo Faixa de Opções (sublinhado) */
+body.skin-office .seg,body.skin-office .dseg{background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;box-shadow:none!important;padding:0}
+body.skin-office .seg button,body.skin-office .dseg button{border-radius:0!important;color:var(--muted);font-weight:600;position:relative}
+body.skin-office .seg button.on,body.skin-office .dseg button.on{background:transparent!important;color:var(--accent)!important;box-shadow:inset 0 -3px 0 var(--accent)!important}
+body.skin-office .seg.rd button.on.rec{background:transparent!important;color:var(--green)!important;box-shadow:inset 0 -3px 0 var(--green)!important}
+body.skin-office .seg.rd button.on.desp{background:transparent!important;color:var(--red)!important;box-shadow:inset 0 -3px 0 var(--red)!important}
+body.skin-office .pill{border-radius:4px;background:transparent}
+body.skin-office .pill.on,body.skin-office .pills.plain .pill.on{background:var(--accent-soft)!important;color:var(--accent)!important;border:1px solid var(--accent)!important;box-shadow:none!important}
+body.skin-office .accchip{border-radius:4px!important}
+body.skin-office .accchip.on,body.skin-office .chips button.on{background:var(--accent)!important;color:var(--accent-ink)!important;box-shadow:none!important;border-radius:4px!important}
+body.skin-office .btn,body.skin-office .dbtn,body.skin-office .in,body.skin-office .chipinfo,body.skin-office .duser,body.skin-office .dsearch,body.skin-office .sortbar{border-radius:4px!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+body.skin-office .in{background:var(--card)!important;border:1px solid var(--line);border-bottom:1px solid color-mix(in srgb,var(--text) 45%,transparent)}
+body.skin-office .in:focus{border-bottom:2px solid var(--accent)}
+body.skin-office .btn.primary,body.skin-office .dbtn.primary,body.skin-office.desk .snew{background:var(--accent)!important;color:var(--accent-ink)!important;box-shadow:none!important;border-radius:4px!important}
+body.skin-office .fab{border-radius:8px!important;background:var(--accent)!important;color:var(--accent-ink);border:0;box-shadow:0 6px 14px rgba(0,0,0,.25)!important;width:56px;height:56px}
+body.skin-office .big,body.skin-office .accent{color:var(--accent)}
+body.skin-office .ticon,body.skin-office .catrow .em,body.skin-office .mico,body.skin-office .mlogo{border-radius:4px}
+body.skin-office .switch input:checked+i{background:var(--accent)}
+body.skin-office .switch input:checked+i::after{background:#fff}
+body.skin-office .xclose{border-radius:4px!important;background:transparent!important}
+body.skin-office .xclose:hover{background:#c42b1c!important;color:#fff}
+body.skin-office #modal .sheet{background:var(--bg)!important;-webkit-backdrop-filter:none;backdrop-filter:none;border-radius:8px 8px 0 0!important}
+body.skin-office #modal .sheet h3{border-bottom:3px solid var(--accent);padding-bottom:8px;display:inline-block}
+/* calendário e tabelas como planilha */
+body.skin-office .cal{border:1px solid var(--line)!important}
+body.skin-office .cal .wd{background:var(--card2)!important;color:var(--muted);border-bottom:1px solid var(--line);font-size:12px}
+body.skin-office .cal .d{border-color:var(--line)}
+body.skin-office .cal .d.today{background:transparent;outline:2px solid var(--accent);outline-offset:-2px}
+body.skin-office .cal .d.today b{background:var(--accent);color:var(--accent-ink);border-radius:3px}
+body.skin-office .table th,body.skin-office .dtable thead th{background:var(--card2)!important;color:var(--muted);border-bottom:1px solid var(--line)}
+body.skin-office .table td,body.skin-office .dtable td{border:1px solid var(--line)}
+body.skin-office .dtable tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--card2) 60%,transparent)}
+body.skin-office .dtable tbody tr:hover td{background:var(--accent-soft)}
+body.skin-office .dtwrap{border-radius:4px}
+/* celular: barra de título verde e barra de abas sólida */
+@media (max-width:899px){
+  body.skin-office .hello{background:var(--bar)!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+    margin:calc(-1 * (var(--safe-top) + 14px)) -14px 14px;padding:calc(var(--safe-top) + 18px) 18px 18px}
+  body.skin-office .hello .muted,body.skin-office .hello b{color:#fff!important}
+  body.skin-office .hello svg.deco{opacity:.15}
+  body.skin-office .hello svg.deco *{stroke:#fff;fill:#fff}
+  body.skin-office .hello .avatar{border-color:rgba(255,255,255,.7);background-color:rgba(255,255,255,.15);color:#fff;border-radius:50%}
+  body.skin-office .tabbar{left:0!important;right:0;bottom:0!important;border-radius:0!important;max-width:none;padding:6px 0 calc(6px + var(--safe-bot))!important;
+    background:var(--card)!important;-webkit-backdrop-filter:none;backdrop-filter:none;border:0!important;border-top:1px solid var(--line)!important;box-shadow:none!important}
+  body.skin-office .tabbar button{border-radius:0;position:relative}
+  body.skin-office .tabbar button.on{background:transparent;color:var(--accent)}
+  body.skin-office .tabbar button.on::after{content:"";position:absolute;top:-6px;left:22%;right:22%;height:3px;background:var(--accent);border-radius:0 0 2px 2px}
+  body.skin-office .fab{bottom:calc(82px + var(--safe-bot))}
+  body.skin-office #main{padding-bottom:calc(100px + var(--safe-bot))}
+}
+/* notebook: barra de título verde e menu lateral como o "Arquivo" do Office */
+@media (min-width:900px){
+  body.skin-office.desk .tabbar{background:var(--bar2)!important;border-right:0!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+  body.skin-office.desk .tabbar .brand b,body.skin-office.desk .tabbar .brand small,body.skin-office.desk .tabbar button{color:#fff!important}
+  body.skin-office.desk .tabbar .brand small{opacity:.7}
+  body.skin-office.desk .tabbar button{border-radius:0;opacity:.88}
+  body.skin-office.desk .tabbar button:hover{background:rgba(255,255,255,.1)}
+  body.skin-office.desk .tabbar button.on{background:rgba(255,255,255,.16);opacity:1;box-shadow:inset 3px 0 0 #fff}
+  body.skin-office.desk .snew{background:#fff!important;color:var(--bar2)!important}
+  body.skin-office.desk .dtop{background:var(--bar)!important;-webkit-backdrop-filter:none;backdrop-filter:none;margin:0 -32px 18px;padding:14px 32px;border-bottom:0}
+  body.skin-office.desk .dtop .dtitle,body.skin-office.desk .dtop .crumb{color:#fff}
+  body.skin-office.desk .dtop .crumb{opacity:.8}
+  body.skin-office.desk .mpill{background:rgba(255,255,255,.14)!important;border:0!important;box-shadow:none!important;border-radius:4px!important}
+  body.skin-office.desk .mpill b,body.skin-office.desk .mpill button{color:#fff}
+  body.skin-office.desk .chipinfo,body.skin-office.desk .duser{background:rgba(255,255,255,.12)!important;border:0!important;color:#fff;box-shadow:none!important}
+  body.skin-office.desk .duser small{color:rgba(255,255,255,.75)}
+  body.skin-office.desk .chipinfo.orange,body.skin-office.desk .chipinfo.green,body.skin-office.desk .chipinfo.red{color:#fff}
+  body.skin-office.desk .toolbar{border-radius:0!important;border-left:0!important;border-right:0!important;border-top:0!important;box-shadow:none!important;background:var(--card)!important;margin:-18px -32px 18px;padding:8px 32px}
+  body.skin-office.desk .mcard .mic,body.skin-office.desk .kpi::before{border-radius:4px}
+}
+@media (min-width:900px){
+  body.skin-office.desk .tabbar button.snew,body.skin-office.desk .tabbar button.snew:hover{background:#ffffff!important;color:var(--bar2)!important;opacity:1;box-shadow:0 2px 6px rgba(0,0,0,.2)!important;border-radius:4px}
+}
