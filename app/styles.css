@@ -573,3 +573,106 @@ body.skin-moderno .table th{background:#f7f8fc}
 .tabbar .snew{display:none}
 @media (min-width:900px){ body.desk .tabbar .snew{display:flex} }
 body.skin-moderno .pills.plain .pill.on{background:var(--accent);color:#fff}
+
+/* =====================================================================
+   LIQUID GLASS (estilo iOS 26) — aplicado a todos os temas
+   ===================================================================== */
+body{
+  --glass:color-mix(in srgb,var(--card) var(--glass-a),transparent);
+  --glass-2:color-mix(in srgb,var(--card2) 55%,transparent);
+}
+:root{
+  --glass-a:62%;                                   /* opacidade do vidro */
+  --glass-brd:rgba(255,255,255,.13);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(255,255,255,.04);
+  --glass-sh:0 8px 28px rgba(0,0,0,.28);
+  --glass-blur:saturate(170%) blur(22px);
+  --blob1:var(--accent);--blob2:#22c55e;--blob3:#a855f7;
+}
+body.light{--glass-a:58%;--glass-brd:rgba(255,255,255,.75);--glass-hi:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.35);--glass-sh:0 8px 26px rgba(40,40,90,.10)}
+body.skin-feminino{--blob2:#f472b6;--blob3:#c084fc}
+body.skin-masculino{--blob2:#06b6d4;--blob3:#6366f1}
+body.skin-minimal{--blob1:#94a3b8;--blob2:#cbd5e1;--blob3:#64748b}
+body.skin-windows{--blob1:#3a6ea5;--blob2:#008080;--blob3:#5b8bd0}
+body.skin-moderno,body.skin-mobills{--blob1:#7b3ff2;--blob2:#c4b5fd;--blob3:#38bdf8}
+
+/* fundo com manchas de cor para o vidro "refratar" */
+#app{background:var(--bg)!important;isolation:isolate}
+#app::before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38% 30% at 12% 8%,color-mix(in srgb,var(--blob1) 38%,transparent),transparent 70%),
+    radial-gradient(34% 28% at 92% 22%,color-mix(in srgb,var(--blob3) 30%,transparent),transparent 70%),
+    radial-gradient(40% 32% at 70% 88%,color-mix(in srgb,var(--blob2) 24%,transparent),transparent 70%),
+    radial-gradient(30% 26% at 8% 70%,color-mix(in srgb,var(--blob1) 20%,transparent),transparent 70%);
+  filter:blur(10px)}
+body.light #app::before{opacity:.75}
+
+/* superfícies de vidro */
+.card,.tx,.list,.cal,.catrow,.monthnav,.seg,.sortbar,.accchip,.box,.code,.alert,.hello,.rdbox,.three .card,.opt,
+.kpi,.toolbar,.mcard,.mbox,.mbanner,.chipinfo,.duser,.mpill,.dsearch,.dseg,.adv,.stats3>div,.boxs,.inst:not(.paid){
+  background:var(--glass)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-brd)!important;
+  box-shadow:var(--glass-hi),var(--glass-sh)!important}
+.opt,.stats3>div,.boxs,.dseg,.dsearch{background:var(--glass-2)!important;box-shadow:var(--glass-hi)!important}
+.tx.receita{background:linear-gradient(135deg,color-mix(in srgb,var(--green) 9%,transparent),var(--glass))!important}
+.tx.despesa{background:linear-gradient(135deg,color-mix(in srgb,var(--red) 7%,transparent),var(--glass))!important}
+.rdbox.r{background:linear-gradient(135deg,color-mix(in srgb,var(--green) 16%,transparent),var(--glass))!important}
+.rdbox.d{background:linear-gradient(135deg,color-mix(in srgb,var(--red) 14%,transparent),var(--glass))!important}
+.alert{background:linear-gradient(135deg,color-mix(in srgb,var(--orange) 16%,transparent),var(--glass))!important}
+.in{background:var(--glass-2);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:var(--glass-brd);box-shadow:var(--glass-hi)}
+.in:focus{border-color:var(--accent)}
+
+/* botões ativos: "gota" de vidro colorida com brilho */
+.seg button.on,.dseg button.on,.pill.on,.chips button.on,.accchip.on,.btn.primary,.dbtn.primary,body.desk .snew{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 78%,#fff) 0%,var(--accent) 55%,color-mix(in srgb,var(--accent) 85%,#000) 100%)!important;
+  color:#fff!important;border-color:transparent!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 6px 16px color-mix(in srgb,var(--accent) 35%,transparent)!important}
+.seg.rd button.on.rec{background:linear-gradient(180deg,color-mix(in srgb,var(--green) 75%,#fff),var(--green))!important}
+.seg.rd button.on.desp{background:linear-gradient(180deg,color-mix(in srgb,var(--red) 75%,#fff),var(--red))!important}
+.seg,.dseg{border-radius:999px!important}.seg button,.dseg button{border-radius:999px!important}
+.btn{background:var(--glass-2);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);border-color:var(--glass-brd);box-shadow:var(--glass-hi)}
+.btn.danger{background:color-mix(in srgb,var(--red) 8%,transparent)}
+.xclose,.ib:active{background:var(--glass-2)!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+
+/* botão + flutuante de vidro */
+.fab{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 70%,#fff) 0%,var(--accent) 60%)!important;
+  -webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  border:1px solid rgba(255,255,255,.45);box-shadow:inset 0 1px 1px rgba(255,255,255,.6),0 12px 28px color-mix(in srgb,var(--accent) 45%,transparent)!important}
+
+/* janelas (modal) de vidro */
+#modal .bk{background:rgba(0,0,0,.32)!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#modal .sheet{background:color-mix(in srgb,var(--bg) 72%,transparent)!important;-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px);
+  border:1px solid var(--glass-brd)!important;box-shadow:var(--glass-hi),0 -10px 40px rgba(0,0,0,.25)}
+#toast{background:color-mix(in srgb,var(--text) 82%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+
+/* barra de abas: cápsula flutuante de vidro no celular */
+@media (max-width:899px){
+  .tabbar{left:12px!important;right:12px;bottom:calc(8px + var(--safe-bot))!important;transform:none!important;width:auto!important;
+    max-width:536px;margin:0 auto;border-radius:30px;padding:8px 4px!important;
+    background:color-mix(in srgb,var(--card) 55%,transparent)!important;
+    -webkit-backdrop-filter:saturate(180%) blur(26px);backdrop-filter:saturate(180%) blur(26px);
+    border:1px solid var(--glass-brd)!important;box-shadow:var(--glass-hi),0 10px 30px rgba(0,0,0,.25)!important}
+  body.light .tabbar{box-shadow:var(--glass-hi),0 10px 30px rgba(40,40,90,.15)!important}
+  .tabbar button{border-radius:22px;padding:4px 0}
+  .tabbar button.on{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+  .fab{bottom:calc(92px + var(--safe-bot))}
+  #main{padding-bottom:calc(112px + var(--safe-bot))}
+  #modal .sheet{border-radius:30px 30px 0 0}
+  body.skin-moderno .hello{background:linear-gradient(140deg,color-mix(in srgb,#8b5cf6 88%,transparent),color-mix(in srgb,#6d28d9 92%,transparent))!important;border:0!important;
+    box-shadow:inset 0 -1px 0 rgba(255,255,255,.25),0 10px 30px rgba(109,40,217,.35)!important}
+}
+/* notebook: menu lateral e topo de vidro */
+@media (min-width:900px){
+  body.desk .tabbar{background:color-mix(in srgb,var(--card) 50%,transparent)!important;-webkit-backdrop-filter:saturate(170%) blur(26px);backdrop-filter:saturate(170%) blur(26px);border-right:1px solid var(--glass-brd)!important}
+  body.desk .dtop{background:color-mix(in srgb,var(--bg) 40%,transparent)!important;-webkit-backdrop-filter:saturate(170%) blur(22px);backdrop-filter:saturate(170%) blur(22px)}
+  .dtwrap{border-color:var(--glass-brd)}
+  .dtable thead th{background:color-mix(in srgb,var(--card2) 70%,transparent)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  #modal .sheet{border-radius:28px}
+}
+/* Windows mantém cantos retos; quem preferir menos efeitos no sistema, vidro sólido */
+body.skin-windows .seg,body.skin-windows .dseg,body.skin-windows .seg button,body.skin-windows .dseg button{border-radius:0!important}
+@media (prefers-reduced-transparency:reduce){
+  .card,.tx,.list,.tabbar,.seg,#modal .sheet{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--card)!important}
+}
+body.skin-windows{--glass-a:84%}
