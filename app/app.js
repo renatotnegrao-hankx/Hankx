@@ -438,7 +438,7 @@ function scrGraficos() {
 }
 
 /* ---------- Ajustes ---------- */
-const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['encantado', '✨', 'Encantado', 'Céu estrelado e dourado'], ['moderno', '💜', 'Moderno', 'Estilo Mobills'], ['office', '📊', 'Office', 'Estilo Excel / 365']];
+const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['diversidade', '🌈', 'Diversidade', 'Cores do arco-íris'], ['moderno', '💜', 'Moderno', 'Estilo Mobills'], ['office', '📊', 'Office', 'Estilo Excel / 365']];
 function li(act, icon, title, sub, cls = '', extra = '') {
   return `<button class="li ${cls}" data-act="${act}" ${extra}>${I(icon)}<span class="tx2"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${cls ? '' : I('right')}</button>`;
 }
@@ -892,11 +892,18 @@ function scrTransacoesDesk() {
   <div class="card dcard"><div class="dch"><b>${list.length} lançamentos</b><span class="muted small">Clique numa linha para editar · clique em Data ou Valor para ordenar</span></div>${txTable(sortTx(list))}</div>`;
 }
 
+/* faixa colorida do topo no celular (cor do tema) */
+const MTITLES = { calendario: 'Calendário', transacoes: 'Transações', graficos: 'Gráficos', ajustes: 'Ajustes', perfil: 'Meu Perfil', contas: 'Contas', categorias: 'Categorias', dividas: 'Dívidas', emprestimos: 'Empréstimos', orientacao: 'Orientação', sync: 'Salvar no GitHub' };
+function mobBar() {
+  const k = V.tab === 'ajustes' && V.sub ? V.sub : V.tab;
+  if (k === 'inicio') return '';
+  return `<header class="mbar">${V.sub ? `<button class="mback" data-act="back" aria-label="Voltar">${I('left')}</button>` : ''}<div class="mbar-t">${esc(MTITLES[k] || '')}${V.sub ? '<small>Ajustes</small>' : ''}</div><div class="mbar-r"></div></header>`;
+}
 /* ======================= Render ======================= */
 function applyTheme() {
   const st = S.settings, b = document.body;
   if (st.skin === 'dos') st.skin = 'padrao';
-  if (st.skin === 'windows') st.skin = 'encantado'; // tema Windows substituído pelo Encantado
+  if (st.skin === 'windows' || st.skin === 'encantado') st.skin = 'diversidade'; // temas antigos substituídos
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
   const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'mobills') !== 'app';
   b.className = mob ? 'light skin-mobills' : st.skin === 'moderno' ? 'light skin-moderno' : (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
@@ -913,7 +920,8 @@ function render(keepScroll = true) {
   if (V.tab === 'ajustes' && V.sub) h = ({ perfil: scrPerfil, contas: scrContas, categorias: scrCategorias, dividas: scrDividas, emprestimos: scrEmprestimos, orientacao: scrOrientacao, sync: scrSync })[V.sub]();
   else h = ({ inicio: isDesk() ? scrInicioDesk : scrInicio, calendario: scrCalendario, transacoes: isDesk() ? scrTransacoesDesk : scrTransacoes, graficos: scrGraficos, ajustes: scrAjustes })[V.tab]();
   document.body.classList.toggle('desk', isDesk());
-  $('#main').innerHTML = isDesk() ? deskTop() + `<div class="scr">${h}</div>` : h;
+  $('#main').innerHTML = isDesk() ? deskTop() + `<div class="scr">${h}</div>` : mobBar() + `<div class="scr-m">${h}</div>`;
+  if (!isDesk()) { const r = $('#main .mbar-r'); if (r) $$('#main .scr-m .titlebar').forEach(tb => $$(':scope > .ib, :scope > img', tb).forEach(x => r.appendChild(x))); }
   $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png" alt=""><b>HANKX</b><small>Finanças</small></div><button class="snew" data-act="new-tx">${I('plus')} Novo lançamento</button>` + TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
   $('#fab').innerHTML = I('plus');
   $('#fab').classList.toggle('hide', !isLogged() || V.tab === 'ajustes' || V.tab === 'graficos');
