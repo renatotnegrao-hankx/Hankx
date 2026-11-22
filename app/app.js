@@ -597,7 +597,7 @@ function scrAjustes() {
   <img src="icons/logo.png" alt="HANKX" style="width:50px;height:50px;border-radius:13px"></div>
   <div class="split even"><div class="col">
   <div class="sect">APARÊNCIA</div>
-    <div class="card deskonly"><div class="muted" style="margin:0 0 10px">Visual no notebook</div><div class="opts" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px">${[['mobills', '💜', 'Estilo Mobills', 'Claro, roxo e cartões brancos'], ['app', '📱', 'Igual ao celular', 'Usa o tema e o perfil abaixo']].map(([v, e, l, s2]) => `<button class="opt ${(st.deskTheme || 'mobills') === v ? 'on' : ''}" data-act="desktheme" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s2}</small></button>`).join('')}</div></div>
+    <div class="card deskonly"><div class="muted" style="margin:0 0 10px">Visual no notebook</div><div class="opts" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px">${[['app', '🎨', 'Tema escolhido', 'Usa o tema e o perfil abaixo'], ['mobills', '💜', 'Estilo Mobills', 'Claro, roxo e cartões brancos']].map(([v, e, l, s2]) => `<button class="opt ${(st.deskTheme || 'app') === v ? 'on' : ''}" data-act="desktheme" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s2}</small></button>`).join('')}</div></div>
   <div class="card"><div class="muted" style="margin-bottom:10px">Tema</div>
     <div class="opts">${[['light', 'sun', 'Claro'], ['dark', 'moon', 'Escuro'], ['auto', 'phone', 'Auto']].map(([v, ic, l]) => `<button class="opt ${st.theme === v ? 'on' : ''}" data-act="theme" data-v="${v}"><span class="e accent" style="color:${st.theme === v ? 'var(--accent)' : 'var(--muted)'}">${I(ic)}</span><b>${l}</b></button>`).join('')}</div>
     <div class="muted" style="margin:16px 0 10px">Perfil de Interface</div>
@@ -1056,7 +1056,7 @@ function applyTheme() {
   if (st.skin === 'moderno') st.skin = 'ios';
   if (['bissexual', 'hetero', 'lesbica'].includes(st.skin)) st.skin = 'diversidade';
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
-  const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'mobills') !== 'app';
+  const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'app') === 'mobills';
   b.className = mob ? 'light skin-mobills' :  (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
   if (typeof isLogged === 'function') { b.classList.toggle('logged', isLogged()); b.classList.toggle('desk', isDesk()); }
   const meta = $('meta[name=theme-color]'); if (meta) meta.content = getComputedStyle(b).getPropertyValue('--bg2').trim() || '#12161f';
