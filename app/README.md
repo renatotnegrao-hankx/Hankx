@@ -22,12 +22,6 @@ No Android: abra no Chrome, toque nos três pontinhos e escolha **Instalar app**
 - A chave do GitHub fica só no aparelho; ela nunca é gravada no repositório.
 - Continua existindo o **Fazer backup** (.json) como cópia extra.
 
-## Planejamento financeiro (Ajustes → Planejamento financeiro)
-- **Saúde financeira (0 a 100)**: renda comprometida, reserva de emergência, parcelas de dívidas, contas atrasadas e saldo previsto. Aparece também no Início com os **próximos passos**.
-- **Orçamento do mês**: limite de gasto por categoria, com aviso aos 80% e ao passar. "Sugerir limites" usa a média dos últimos meses.
-- **Reserva e metas**: caixinhas com valor-alvo; "Guardar" pode lançar o valor como despesa para o saldo mostrar só o dinheiro livre.
-- **Plano para sair das dívidas**: métodos Bola de neve (menor dívida primeiro) ou Avalanche (maiores juros primeiro), com valor extra por mês e data prevista de quitação.
-
 ## Cancelar lançamento
 Abra o lançamento → **Cancelar lançamento**. Ele continua aparecendo riscado como CANCELADO, mas sai dos saldos,
 totais, gráficos e relatórios. Para desfazer: **Reativar lançamento**. Em Transações há o filtro **Cancelados**.
