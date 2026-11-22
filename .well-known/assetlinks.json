@@ -3,6 +3,6 @@
   "target": {
     "namespace": "android_app",
     "package_name": "br.com.hankx.financas",
-    "sha256_cert_fingerprints": ["COLE_AQUI_A_IMPRESSAO_DIGITAL_SHA256_DO_PLAY_CONSOLE"]
+    "sha256_cert_fingerprints": ["1E:CE:29:D0:52:8A:E4:AF:1A:AA:05:51:50:B1:0F:F6:B8:90:0E:01:37:48:4B:65:B6:EA:24:70:A0:FC:3A:D0"]
   }
 }]
