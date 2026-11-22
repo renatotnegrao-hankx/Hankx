@@ -1246,3 +1246,32 @@ body.skin-ios .ticon{border-radius:9px}
 .grk:nth-of-type(2) .pos{background:var(--accent);color:#fff}
 .grk-m{flex:1;min-width:0}
 .grk-h{display:flex;align-items:center;gap:8px;font-size:14px}
+
+/* ===== Aba Resumo (gráficos do celular) ===== */
+.gauge{position:relative;margin-top:-4px}
+.gauge .gv{position:absolute;left:0;right:0;bottom:2px;text-align:center}
+.gauge .gv b{display:block;font-size:30px;font-weight:800;line-height:1}
+.gauge .gv small{color:var(--muted);font-size:12px}
+.gmsg{margin:10px 0 2px;padding:8px 12px;border-left:3px solid var(--accent);background:var(--card2);border-radius:8px;font-size:13px;line-height:1.4}
+.gmsg.small{font-size:12px;border-left-color:var(--muted)}
+.pp{margin:6px 0 12px}
+.pp-h{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
+.pp-h span{font-weight:600}
+.sbar{display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--card2);gap:2px}
+.sbar i{display:block;height:100%;min-width:2px}
+.sleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:7px;font-size:12px;color:var(--muted)}
+.sleg span{display:inline-flex;align-items:center;gap:5px}
+.sleg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.sleg b{color:var(--text);font-size:12.5px}
+.sleg small{font-size:11.5px}
+.delta{font-weight:800;font-size:13px;white-space:nowrap}
+.delta.up{color:var(--red)}.delta.down{color:var(--green)}
+.gt.row-b span b{display:block}.gt.row-b span small{display:block}
+.cmp{padding:9px 0;border-top:1px solid var(--line)}
+.gt+.cmp{border-top:0}
+.cmp-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px;margin-bottom:5px}
+.cmp-h .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-b{display:grid;grid-template-columns:34px 1fr 70px;gap:8px;align-items:center;margin:3px 0}
+.cmp-b small{font-size:11.5px;color:var(--muted)}
+.cmp-b em{font-style:normal;font-size:12.5px;font-weight:700;text-align:right}
+body .seg button{min-width:0;overflow:hidden;text-overflow:ellipsis}

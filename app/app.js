@@ -137,7 +137,7 @@ const T0 = today();
 const V = {
   tab: 'inicio', sub: null, acc: 'all', mode: 'mensal', ym: T0.slice(0, 7), year: +T0.slice(0, 4),
   from: T0.slice(0, 8) + '01', to: T0, status: 'todos', type: 'todos', sort: 'data', q: '', searching: false,
-  calView: 'saldo', calDay: null, chart: 'projecao', projN: 6, projSel: null, tblMode: 'mes',
+  calView: 'saldo', calDay: null, chart: 'resumo', projN: 6, projSel: null, tblMode: 'mes',
   catType: 'despesa', catMode: 'mensal', rankMode: 'mes', open: {}, catTab: 'despesa', accTab: 'conta',
   loanTab: 'prazo', loan: { pv: '', pmt: '', i: '', n: '' }, homeType: 'todos'
 };
@@ -439,6 +439,76 @@ function scrGraficos() {
 }
 
 
+
+/* ---------- Aba Resumo (celular): análises rápidas do mês ---------- */
+function gauge(pct, color) {
+  const p = Math.max(0, Math.min(1, pct)), r = 80, cx = 100, cy = 96, L = Math.PI * r;
+  const arc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
+  const ang = Math.PI * (1 - p), nx = cx + (r - 22) * Math.cos(ang), ny = cy - (r - 22) * Math.sin(ang);
+  return `<svg viewBox="0 0 200 112" width="100%" style="max-width:260px;display:block;margin:0 auto">
+    <path d="${arc}" fill="none" stroke="var(--card2)" stroke-width="16" stroke-linecap="round"/>
+    <path d="M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r * Math.cos(Math.PI * 0.3)} ${cy - r * Math.sin(Math.PI * 0.3)}" fill="none" stroke="var(--green)" stroke-opacity=".22" stroke-width="16"/>
+    <path d="${arc}" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round" stroke-dasharray="${L * p} ${L}"/>
+    <circle cx="${cx + r * Math.cos(ang)}" cy="${cy - r * Math.sin(ang)}" r="9" fill="var(--card)" stroke="${color}" stroke-width="4"/>
+    <text x="${cx - r}" y="${cy + 14}" text-anchor="middle" font-size="9" fill="var(--muted)">0%</text><text x="${cx + r}" y="${cy + 14}" text-anchor="middle" font-size="9" fill="var(--muted)">100%</text></svg>`;
+}
+function splitBar(parts) {
+  const tot = parts.reduce((s2, p) => s2 + p.v, 0) || 1;
+  return `<div class="sbar">${parts.map(p => `<i style="width:${p.v / tot * 100}%;background:${p.c}"></i>`).join('')}</div>
+  <div class="sleg">${parts.map(p => `<span><i style="background:${p.c}"></i>${p.l}<b>${brl0(p.v)}</b><small>${Math.round(p.v / tot * 100)}%</small></span>`).join('')}</div>`;
+}
+function resumoMob() {
+  const [y, m] = V.ym.split('-').map(Number), n = dim(y, m - 1), a = `${V.ym}-01`, b = `${V.ym}-${pad(n)}`;
+  const L = txIn(a, b, { status: 'todos' });
+  const rec = sumType(L, 'receita'), desp = sumType(L, 'despesa');
+  const recP = sumType(L.filter(t => t.paid), 'receita'), despP = sumType(L.filter(t => t.paid), 'despesa');
+  const pct = rec > 0 ? desp / rec : (desp > 0 ? 1 : 0);
+  const gcol = pct < 0.7 ? 'var(--green)' : pct < 0.9 ? 'var(--orange)' : 'var(--red)';
+  const gmsg = rec <= 0 ? 'Sem receitas lançadas neste mês.' : pct < 0.7 ? 'Ótimo! Sua renda cobre as despesas com folga.' : pct < 0.9 ? 'Atenção: pouca folga entre o que entra e o que sai.' : pct <= 1 ? 'Alerta: quase toda a renda está comprometida.' : 'As despesas passam da sua renda neste mês.';
+  // fixas x variáveis
+  const D = L.filter(t => t.type === 'despesa');
+  const fixas = r2(D.filter(t => t.lote).reduce((s2, t) => s2 + +t.amount, 0)), varia = r2(desp - fixas);
+  // gasto acumulado por dia
+  let acc = 0; const cum = [];
+  for (let d = 1; d <= n; d++) { const k = `${V.ym}-${pad(d)}`; acc += D.filter(t => t.date === k).reduce((s2, t) => s2 + +t.amount, 0); cum.push(acc); }
+  const W = 360, H = 170, Lp = 10, Rp = 10, Tp = 22, Bp = 24, top = Math.max(rec, acc, 1) * 1.08;
+  const xx = i => Lp + i / (n - 1) * (W - Lp - Rp), yy = v => Tp + (1 - v / top) * (H - Tp - Bp);
+  let g = `<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--red)" stop-opacity=".3"/><stop offset="1" stop-color="var(--red)" stop-opacity="0"/></linearGradient></defs>`;
+  if (rec > 0) g += `<line x1="${Lp}" x2="${W - Rp}" y1="${yy(rec)}" y2="${yy(rec)}" stroke="var(--green)" stroke-width="2" stroke-dasharray="6 5"/><rect x="${Lp}" y="${yy(rec) - 19}" width="118" height="16" rx="8" fill="var(--green)"/><text x="${Lp + 59}" y="${yy(rec) - 7.5}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">Renda ${brl0(rec)}</text>`;
+  const isCur = V.ym === T0.slice(0, 7), td = +T0.slice(8);
+  if (isCur) g += `<line x1="${xx(td - 1)}" x2="${xx(td - 1)}" y1="${Tp - 6}" y2="${H - Bp}" stroke="var(--accent)" stroke-width="1.5"/><text x="${xx(td - 1)}" y="${Tp - 9}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--accent)">hoje</text>`;
+  const pts = cum.map((v, i) => `${xx(i)},${yy(v)}`).join(' ');
+  g += `<polygon points="${xx(0)},${yy(0)} ${pts} ${xx(n - 1)},${yy(0)}" fill="url(#cg)"/><polyline points="${pts}" fill="none" stroke="var(--red)" stroke-width="2.8" stroke-linejoin="round"/>`;
+  const lx = xx(n - 1), ly = yy(acc), lab = brl0(acc), tw = lab.length * 6.4 + 12;
+  g += `<circle cx="${lx}" cy="${ly}" r="4.5" fill="var(--card)" stroke="var(--red)" stroke-width="2.5"/><rect x="${lx - tw}" y="${ly + 7}" width="${tw}" height="17" rx="8.5" fill="var(--red)"/><text x="${lx - tw / 2}" y="${ly + 19}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">${lab}</text>`;
+  [1, 8, 15, 22, n].forEach(d => { g += `<text x="${xx(d - 1)}" y="${H - 7}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${d}</text>`; });
+  // mês anterior por categoria
+  const pym = ymAdd(V.ym, -1), [py, pm] = pym.split('-').map(Number);
+  const P = txIn(`${pym}-01`, `${pym}-${pad(dim(py, pm - 1))}`, { status: 'todos', type: 'despesa' });
+  const byc = (arr) => { const o = {}; for (const t of arr) o[t.categoryId || ''] = (o[t.categoryId || ''] || 0) + +t.amount; return o; };
+  const cA = byc(D), cB = byc(P), keys = [...new Set([...Object.keys(cA), ...Object.keys(cB)])];
+  const diffs = keys.map(k => ({ k, a: cA[k] || 0, b: cB[k] || 0, d: (cA[k] || 0) - (cB[k] || 0) })).filter(x => Math.abs(x.d) > 0.5).sort((x, z) => Math.abs(z.d) - Math.abs(x.d)).slice(0, 6);
+  const despPrev = r2(P.reduce((s2, t) => s2 + +t.amount, 0)), dv = r2(desp - despPrev);
+  // dívidas
+  const debts = S.debts.map(d => ({ d, st: debtStats(d) })).filter(x => x.st.n);
+  return `${periodNav('mensal')}
+  <div class="card gcard"><div class="gt"><b>Quanto da renda está comprometida</b><small>despesas do mês ÷ receitas do mês</small></div>
+    <div class="gauge">${gauge(pct, gcol)}<div class="gv"><b style="color:${gcol}">${rec > 0 ? Math.round(pct * 100) + '%' : '—'}</b><small>da renda</small></div></div>
+    <p class="gmsg" style="border-color:${gcol}">${gmsg} ${rec > 0 ? (rec - desp >= 0 ? `Sobram <b class="green">${brl0(rec - desp)}</b>.` : `Faltam <b class="red">${brl0(desp - rec)}</b>.`) : ''}</p></div>
+  <div class="card gcard"><div class="gt"><b>Pago x pendente</b><small>o que já aconteceu e o que ainda vai acontecer</small></div>
+    <div class="pp"><div class="pp-h"><span>Receitas</span><b class="green">${brl0(rec)}</b></div>${splitBar([{ v: recP, c: 'var(--green)', l: 'Recebido' }, { v: r2(rec - recP), c: 'color-mix(in srgb,var(--green) 30%,transparent)', l: 'A receber' }])}</div>
+    <div class="pp"><div class="pp-h"><span>Despesas</span><b class="red">${brl0(desp)}</b></div>${splitBar([{ v: despP, c: 'var(--red)', l: 'Pago' }, { v: r2(desp - despP), c: 'color-mix(in srgb,var(--red) 30%,transparent)', l: 'A pagar' }])}</div></div>
+  <div class="card gcard"><div class="gt"><b>Despesas fixas x variáveis</b><small>fixas = contas que se repetem ou parcelas</small></div>
+    ${desp > 0 ? splitBar([{ v: fixas, c: 'var(--accent)', l: 'Fixas' }, { v: varia, c: 'var(--orange)', l: 'Variáveis' }]) + `<p class="gmsg small">${fixas / desp > 0.6 ? 'A maior parte dos gastos é fixa: para economizar, renegocie contratos e parcelas.' : 'Boa parte dos gastos é variável: dá para economizar ajustando o dia a dia.'}</p>` : '<div class="empty">Sem despesas no mês.</div>'}</div>
+  <div class="card gcard"><div class="gt"><b>Gastos ao longo do mês</b><small>despesas somadas dia a dia, comparadas com a renda</small></div><svg viewBox="0 0 ${W} ${H}" width="100%" class="gline">${g}</svg></div>
+  <div class="card gcard"><div class="gt row-b"><span><b>Comparado a ${MESES[pm - 1].toLowerCase()}</b><small>despesas por categoria</small></span><span class="delta ${dv > 0 ? 'up' : 'down'}">${dv > 0 ? '▲' : '▼'} ${brl0(Math.abs(dv))}</span></div>
+    ${diffs.length ? diffs.map(x => { const c = cat(x.k), up = x.d > 0, mx2 = Math.max(x.a, x.b, 1); return `<div class="cmp"><div class="cmp-h"><span class="nm">${c ? c.icon + ' ' : ''}${esc(c?.name || 'Sem categoria')}</span><span class="delta ${up ? 'up' : 'down'}">${up ? '▲' : '▼'} ${brl0(Math.abs(x.d))}</span></div>
+      <div class="cmp-b"><small>${MES3[pm - 1]}</small><div class="gtrack"><i style="width:${x.b / mx2 * 100}%;background:var(--muted)"></i></div><em>${brl0(x.b)}</em></div>
+      <div class="cmp-b"><small>${MES3[m - 1]}</small><div class="gtrack"><i style="width:${x.a / mx2 * 100}%;background:${up ? 'var(--red)' : 'var(--green)'}"></i></div><em>${brl0(x.a)}</em></div></div>`; }).join('') : '<div class="empty">Sem diferenças entre os dois meses.</div>'}</div>
+  ${debts.length ? `<div class="card gcard"><div class="gt"><b>Quitação das dívidas</b><small>parcelas pagas de cada dívida</small></div>${debts.map(({ d, st }) => `<div class="cmp"><div class="cmp-h"><span class="nm">${esc(d.name)}</span><b>${st.paid}/${st.n}</b></div>
+    <div class="cmp-b"><small>${Math.round(st.paid / st.n * 100)}%</small><div class="gtrack"><i style="width:${st.paid / st.n * 100}%;background:var(--accent)"></i></div><em class="red">${brl0(st.rem)}</em></div></div>`).join('')}<p class="gmsg small">Valor em vermelho = quanto ainda falta pagar.</p></div>` : ''}`;
+}
+
 /* ---------- Gráficos no celular: mais claros e com rótulos visíveis ---------- */
 const brl0 = n => (n < -0.5 ? '-' : '') + 'R$ ' + Math.round(Math.abs(n)).toLocaleString('pt-BR');
 const mlab = ym => `${MES3[+ym.slice(5) - 1]}/${ym.slice(2, 4)}`;
@@ -472,7 +542,8 @@ function saldoLine(D) {
 }
 function scrGraficosMob() {
   let body = '';
-  if (V.chart === 'projecao') {
+  if (V.chart === 'resumo') body = resumoMob();
+  else if (V.chart === 'projecao') {
     const D = monthsData(T0.slice(0, 7), V.projN);
     const tr = r2(D.reduce((s2, d) => s2 + d.rec, 0)), td = r2(D.reduce((s2, d) => s2 + d.desp, 0)), last = D[D.length - 1];
     const mx = Math.max(1, ...D.flatMap(d => [d.rec, d.desp]));
@@ -512,7 +583,7 @@ function scrGraficosMob() {
     <div class="card gcard"><div class="gt row-b"><b>Onde você mais gastou</b><b class="red">${brl0(D.tot)}</b></div>${rank(D, 'var(--red)', 'red')}</div>
     <div class="card gcard"><div class="gt row-b"><b>De onde veio o dinheiro</b><b class="green">${brl0(R.tot)}</b></div>${rank(R, 'var(--green)', 'green')}</div>`;
   }
-  return `<h1>Gráficos</h1>${accChips()}${seg('chart', [['projecao', 'Projeção'], ['categoria', 'Categorias'], ['ranking', 'Ranking']], V.chart)}${body}`;
+  return `<h1>Gráficos</h1>${accChips()}${seg('chart', [['resumo', 'Resumo'], ['projecao', 'Projeção'], ['categoria', 'Categ.'], ['ranking', 'Ranking']], V.chart)}${body}`;
 }
 
 /* ---------- Ajustes ---------- */
