@@ -262,7 +262,7 @@ function scrInicio() {
     <div class="rd2"><div class="rdbox r"><span class="green">Receitas</span><b class="green">${brl(rec)}</b></div><div class="rdbox d"><span class="red">Despesas</span><b class="red">${brl(desp)}</b></div></div>
   </div>
   ${trialBanner()}
-  ${!syncOn() ? `<div class="alert" data-act="go" data-sub="sync" style="cursor:pointer"><div class="h">${I('info')} Seus dados estão só neste aparelho</div><span class="small">Toque aqui para ativar o salvamento no GitHub e não perder nada se apagar o app.</span></div>` : SYS.err ? `<div class="alert" data-act="go" data-sub="sync"><div class="h">${I('info')} GitHub</div><span class="small">${esc(SYS.err)}</span></div>` : ''}
+  ${CL.err ? `<div class="alert" data-act="go" data-sub="sync"><div class="h">${I('info')} Nuvem</div><span class="small">${esc(CL.err)}</span></div>` : ''}
   ${soon.length ? `<div class="alert"><div class="h">${I('bell')} Vencimentos próximos</div>${soon.slice(0, 6).map(t => `<div class="it" data-act="edit-tx" data-id="${t.id}"><span>${esc(t.desc || cat(t.categoryId)?.name || '')} <small class="${t.date < T0 ? 'red' : 'muted'}">&nbsp;${t.date < T0 ? 'atrasada ' : ''}${fmtD(t.date).slice(0, 5)}</small></span><b class="red">${brl(t.amount)}</b></div>`).join('')}${soon.length > 6 ? `<small class="muted">+ ${soon.length - 6} outros</small>` : ''}</div>` : ''}
   </div><div class="col">
   <div class="between"><h2>Próximos</h2><button class="ib" data-act="cycle-home">${I('filter')}${V.homeType !== 'todos' ? `<small class="accent">${V.homeType}</small>` : ''}</button></div>
@@ -622,11 +622,11 @@ function scrAjustes() {
   ${li('rep-excel', 'sheet', 'Exportar para Excel', 'Receitas e despesas por categoria e mês, com saldo do mês e acumulado (.xlsx)', 'c-green')}
   ${li('rep-csv', 'chart', 'Exportar Fluxo de Caixa Diário', 'Lista diária de entradas, saídas e saldo acumulado (.csv)', 'c-blue')}</div>
   <div class="sect">DADOS</div>
-  <div class="list"><button class="li" data-act="go" data-sub="sync">${I('ul')}<span class="tx2"><b>${CLOUD_ON ? 'Minha conta e nuvem' : 'Salvar no GitHub'}</b><small data-synclabel>${esc(syncLabel())}</small></span>${I('right')}</button>${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
+  <div class="list"><button class="li" data-act="go" data-sub="sync">${I('ul')}<span class="tx2"><b>${CLOUD_ON ? 'Minha conta e nuvem' : 'Dados deste aparelho'}</b><small data-synclabel>${esc(syncLabel())}</small></span>${I('right')}</button>${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
   <div class="sect">CONTA</div>
   <div class="list">${CLOUD_ON ? li('go', 'user', esc(CL.session?.user?.email || 'Minha conta'), 'Dados salvos na nuvem', '', 'data-sub="sync"') : ''}${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}${CLOUD_ON ? li('delete-account', 'trash', 'Excluir minha conta', 'Apaga a conta e todos os dados da nuvem', 'c-red') : ''}</div>
   </div></div>
-  <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · ${CLOUD_ON ? 'dados salvos na nuvem com segurança' : syncOn() ? 'dados salvos neste aparelho e no GitHub' : 'dados salvos só neste aparelho — ative o GitHub em Dados'}.</p>`;
+  <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · ${CLOUD_ON ? 'dados salvos na nuvem com segurança' : 'dados salvos só neste aparelho'}.</p>`;
 }
 function backHead(title, right = '') {
   return `<button class="back" data-act="back">${I('left')} Ajustes</button><div class="titlebar"><h1>${title}</h1>${right}</div>`;
@@ -1027,137 +1027,23 @@ function showLogin(msg = '') {
 function logout() { if (CLOUD_ON) return cloudLogout(); try { localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); } catch (e) {} V.tab = 'inicio'; V.sub = null; showLogin(); }
 
 
-/* ======================= Sincronização com GitHub ======================= */
-const SYNC_KEY = 'hankx-fin-sync';
-let SY = {};
-try { SY = JSON.parse(localStorage.getItem(SYNC_KEY) || '{}'); } catch (e) { SY = {}; }
-SY.repo ||= 'renatotnegrao-hankx/hankx-dados'; SY.path ||= 'financas.json';
-const SYS = { busy: false, ready: false, err: '', timer: null };
-const SYNC_EVERY = 30 * 60 * 1000; // envia ao GitHub no máximo a cada 30 minutos
-const saveSY = () => { try { localStorage.setItem(SYNC_KEY, JSON.stringify({ repo: SY.repo, path: SY.path, token: SY.token, sha: SY.sha, lastSync: SY.lastSync, dirty: SY.dirty })); } catch (e) {} };
-const syncOn = () => CLOUD_ON ? true : !!SY.token;
-function b64e(str) { const by = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < by.length; i += 0x8000) bin += String.fromCharCode(...by.subarray(i, i + 0x8000)); return btoa(bin); }
-const b64d = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, '')), c => c.charCodeAt(0)));
-function ghFetch(method, body, raw) {
-  return fetch(`https://api.github.com/repos/${SY.repo}/contents/${encodeURI(SY.path)}${method === 'GET' ? `?t=${Date.now()}` : ''}`, {
-    method, cache: 'no-store',
-    headers: { Authorization: `Bearer ${SY.token}`, Accept: raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json', ...(body ? { 'Content-Type': 'application/json' } : {}) },
-    body: body ? JSON.stringify(body) : undefined
-  });
-}
-function ghError(r) {
-  if (r.status === 401) return 'Chave do GitHub inválida ou expirada';
-  if (r.status === 403) return 'A chave não tem permissão de escrita (Contents: Read and write)';
-  if (r.status === 404) return 'Repositório não encontrado (confira o nome e se a chave dá acesso a ele)';
-  return 'Erro do GitHub (' + r.status + ')';
-}
-async function ghPull() {
-  const r = await ghFetch('GET');
-  if (r.status === 404) {
-    const rr = await fetch(`https://api.github.com/repos/${SY.repo}`, { headers: { Authorization: `Bearer ${SY.token}` }, cache: 'no-store' });
-    if (rr.ok) return { missing: true };
-    throw new Error(ghError(rr));
-  }
-  if (!r.ok) throw new Error(ghError(r));
-  const j = await r.json();
-  let text;
-  if (j.content && j.encoding === 'base64') text = b64d(j.content);
-  else { const r2 = await ghFetch('GET', null, true); if (!r2.ok) throw new Error(ghError(r2)); text = await r2.text(); }
-  return { sha: j.sha, data: JSON.parse(text) };
-}
-async function ghPush(retry = true) {
-  const body = { message: `Dados atualizados em ${new Date().toLocaleString('pt-BR')}`, content: b64e(JSON.stringify(S)) };
-  if (SY.sha) body.sha = SY.sha;
-  const r = await ghFetch('PUT', body);
-  if ((r.status === 409 || r.status === 422) && retry) {
-    const p = await ghPull();
-    SY.sha = p.sha;
-    if (p.data && (p.data.updatedAt || 0) > (S.updatedAt || 0)) { adoptRemote(p.data); return; }
-    return ghPush(false);
-  }
-  if (!r.ok) throw new Error(ghError(r));
-  const j = await r.json(); SY.sha = j.content.sha; SY.lastSync = Date.now(); SY.dirty = false; saveSY();
-}
-function adoptRemote(data) {
-  const keep = { ...S.settings };
-  S = data; for (const k of Object.keys(defaults())) if (S[k] === undefined) S[k] = defaults()[k];
-  if (!S.settings) S.settings = keep;
-  save(true); applyTheme(); V.acc = 'all'; SY.lastSync = Date.now(); SY.dirty = false; saveSY();
-}
-async function syncNow(opts = {}) {
-  if (CLOUD_ON) return cloudRefresh();
-  if (!syncOn() || SYS.busy) return;
-  SYS.busy = true; SYS.err = ''; refreshSyncUI();
-  try {
-    const p = await ghPull();
-    if (p.missing) { SY.sha = undefined; await ghPush(false); }
-    else {
-      SY.sha = p.sha;
-      const rt = p.data.updatedAt || 0, lt = S.updatedAt || 0;
-      if (opts.firstConnect && rt && lt && rt !== lt) {
-        SYS.busy = false;
-        const n = (p.data.transactions || []).length, nl = S.transactions.length;
-        const ch = await ask('Já existem dados no GitHub', `No GitHub: ${n} lançamentos (salvo em ${new Date(rt).toLocaleString('pt-BR')}). Neste aparelho: ${nl} lançamentos. Qual você quer manter?`, [['remote', 'Usar os dados do GitHub', 'primary'], ['local', 'Substituir pelos deste aparelho', 'danger']]);
-        SYS.busy = true;
-        if (ch === 'remote') adoptRemote(p.data); else if (ch === 'local') await ghPush(false); else { SYS.busy = false; refreshSyncUI(); return; }
-      } else if (rt > lt) adoptRemote(p.data);
-      else if (lt > rt) { SY.dirty = true; saveSY(); }
-      else { SY.lastSync = Date.now(); saveSY(); }
-    }
-    SYS.ready = true;
-  } catch (e) { SYS.err = e.message || 'Sem conexão com o GitHub'; }
-  SYS.busy = false; refreshSyncUI(); if (isLogged()) render();
-  maybePush();
-}
-function schedulePush() {
-  if (CLOUD_ON) return cloudSchedule();
-  if (!syncOn()) return;
-  SY.dirty = true; saveSY(); refreshSyncUI(); maybePush();
-}
-async function maybePush(force = false) {
-  if (!syncOn() || !SYS.ready || SYS.busy || !SY.dirty) return;
-  if (!force && Date.now() - (SY.lastSync || 0) < SYNC_EVERY) return;
-  SYS.busy = true; SYS.err = ''; refreshSyncUI();
-  try { await ghPush(); } catch (e) { SYS.err = e.message || 'Sem conexão — tentaremos de novo'; }
-  SYS.busy = false; refreshSyncUI();
-}
-setInterval(() => maybePush(), 60 * 1000);
+/* ======================= Sincronização (nuvem Supabase) ======================= */
+try { localStorage.removeItem('hankx-fin-sync'); } catch (e) { /* chave antiga do GitHub, não é mais usada */ }
+const syncOn = () => CLOUD_ON;
+function syncNow() { if (CLOUD_ON) return cloudRefresh(); }
+function schedulePush() { if (CLOUD_ON) return cloudSchedule(); }
 function syncLabel() {
-  if (CLOUD_ON) {
-    if (CL.busy) return 'Salvando na nuvem…';
-    if (CL.err) return '⚠️ ' + CL.err;
-    return CL.last ? 'Salvo na nuvem · ' + new Date(CL.last).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Conectado à nuvem';
-  }
-  if (!syncOn()) return 'Desligado — dados só neste aparelho';
-  if (SYS.busy) return 'Sincronizando…';
-  if (SYS.err) return '⚠️ ' + SYS.err;
-  const f = d => new Date(d).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-  if (SY.dirty && SY.lastSync) return 'Último envio ' + f(SY.lastSync) + ' · próximo ' + f(Math.max(Date.now(), SY.lastSync + SYNC_EVERY));
-  return SY.lastSync ? 'Salvo no GitHub · ' + f(SY.lastSync) : 'Conectado';
+  if (!CLOUD_ON) return 'Dados salvos só neste aparelho';
+  if (CL.busy) return 'Salvando na nuvem…';
+  if (CL.err) return '⚠️ ' + CL.err;
+  return CL.last ? 'Salvo na nuvem · ' + new Date(CL.last).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Conectado à nuvem';
 }
 function refreshSyncUI() { $$('[data-synclabel]').forEach(el => el.textContent = syncLabel()); }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && isLogged()) syncNow(); });
 window.addEventListener('online', () => isLogged() && syncNow());
 function scrSync() {
   if (CLOUD_ON) return scrConta();
-  return `${backHead('Salvar no GitHub')}
-  <div class="card"><div class="between"><b>Situação</b><span class="small ${SYS.err ? 'red' : syncOn() ? 'green' : 'muted'}" data-synclabel>${esc(syncLabel())}</span></div></div>
-  ${syncOn() ? `<button class="btn primary" data-act="sync-now" style="margin-bottom:12px">${I('ul')} Enviar para o GitHub agora</button>` : ''}
-  <p class="muted small">Com isso ligado, suas alterações são enviadas automaticamente <b>a cada 30 minutos</b> (enquanto o app estiver aberto ou quando você abri-lo de novo) para um repositório <b>privado</b> seu no GitHub. Se você apagar o app ou trocar de celular, é só entrar de novo e informar a mesma chave que tudo volta. O GitHub também guarda o histórico de todas as versões.</p>
-  <form id="syf" class="card" autocomplete="on">
-  <input type="text" name="username" value="github-hankx-financas" autocomplete="username" hidden>
-  <label class="f"><span>Repositório privado (usuário/nome)</span><input class="in" name="repo" value="${esc(SY.repo)}" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
-  <label class="f"><span>Chave de acesso do GitHub (token)</span><input class="in" name="token" type="password" value="${esc(SY.token || '')}" placeholder="github_pat_..." autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
-  <button class="btn primary">${syncOn() ? 'Salvar e sincronizar agora' : 'Conectar'}</button>
-  ${syncOn() ? '<button type="button" class="btn" data-act="sync-off" style="margin-top:10px">Desconectar deste aparelho</button>' : ''}
-  </form>
-  <div class="card small"><b>Como criar (uma vez só)</b>
-  <ol class="muted" style="padding-left:18px;margin:8px 0 0;line-height:1.5">
-  <li>No GitHub, crie um repositório <b>privado</b> chamado <b>hankx-dados</b> (<a class="accent" href="https://github.com/new" target="_blank">github.com/new</a> → marque <i>Private</i> → <i>Create repository</i>).</li>
-  <li>Abra <a class="accent" href="https://github.com/settings/personal-access-tokens/new" target="_blank">criar chave no GitHub</a> (Settings → Developer settings → Fine-grained tokens → Generate new token).</li>
-  <li>Dê um nome, escolha a validade (pode ser "No expiration"), em <i>Repository access</i> escolha <i>Only select repositories</i> → <b>hankx-dados</b>.</li>
-  <li>Em <i>Permissions</i> → <i>Repository permissions</i> → <b>Contents: Read and write</b>. Gere e copie a chave.</li>
-  <li>Cole a chave aqui e toque em Conectar. O iPhone oferece guardar a chave nas Senhas: aceite, assim depois é só tocar para preencher.</li></ol></div>`;
+  return `${backHead('Dados')}<div class="card"><p class="muted" style="margin:0">Seus dados estão salvos só neste aparelho. Use <b>Fazer backup</b> para guardar uma cópia.</p></div>`;
 }
 
 
@@ -1166,7 +1052,7 @@ const DESK_MQ = matchMedia('(min-width: 900px)');
 const isDesk = () => DESK_MQ.matches;
 DESK_MQ.addEventListener?.('change', () => { applyTheme(); if (isLogged()) render(false); });
 const TITLES = { inicio: ['Visão geral', 'Resumo financeiro do período'], calendario: ['Calendário', 'Saldo e movimentação dia a dia'], transacoes: ['Lançamentos', 'Todas as receitas e despesas'], graficos: ['Análises', 'Projeção, categorias e ranking'], ajustes: ['Ajustes', 'Aparência, cadastros, relatórios e dados'],
-  perfil: ['Meu Perfil', 'Ajustes'], contas: ['Contas e cartões', 'Ajustes'], categorias: ['Categorias', 'Ajustes'], dividas: ['Dívidas', 'Ajustes'], emprestimos: ['Empréstimos', 'Ferramentas'], orientacao: ['Orientação', 'Ferramentas'], sync: ['Salvar no GitHub', 'Dados'] };
+  perfil: ['Meu Perfil', 'Ajustes'], contas: ['Contas e cartões', 'Ajustes'], categorias: ['Categorias', 'Ajustes'], dividas: ['Dívidas', 'Ajustes'], emprestimos: ['Empréstimos', 'Ferramentas'], orientacao: ['Orientação', 'Ferramentas'], sync: ['Minha conta e nuvem', 'Dados'] };
 function deskTop() {
   const k = V.tab === 'ajustes' && V.sub ? V.sub : V.tab, [t, sub] = TITLES[k] || ['', ''];
   const p = S.profile, h = new Date().getHours();
@@ -1175,7 +1061,7 @@ function deskTop() {
   const mnav = monthTabs && (k === 'calendario' || V.mode === 'mensal') ? `<div class="mpill"><button data-act="nav" data-d="-1" data-m="m">${I('left')}</button><b>${MESES[+V.ym.slice(5) - 1]} ${V.ym.slice(0, 4)}</b><button data-act="nav" data-d="1" data-m="m">${I('right')}</button></div>` : '<span></span>';
   return `<header class="dtop"><div class="dtop-l">${k === 'inicio' ? `<div class="dtitle">${hi}</div><div class="crumb">Veja como estão suas finanças</div>` : `<div class="dtitle">${esc(t)}</div><div class="crumb">${esc(k === 'inicio' ? '' : sub)}</div>`}</div>
   ${mnav}
-  <div class="dtop-r"><span class="chipinfo ${syncOn() ? (SYS.err ? 'red' : 'green') : 'orange'}" data-act="go" data-sub="sync" title="Salvar no GitHub">${I('ul')}<span data-synclabel>${esc(syncLabel())}</span></span>
+  <div class="dtop-r"><span class="chipinfo ${syncOn() ? (CL.err ? 'red' : 'green') : 'orange'}" data-act="go" data-sub="sync" title="Minha conta e nuvem">${I('ul')}<span data-synclabel>${esc(syncLabel())}</span></span>
   <button class="duser" data-act="go" data-sub="perfil"><span class="avatar sm" style="${p.photo ? `background-image:url(${p.photo})` : ''}">${p.photo ? '' : esc((p.name || '?')[0].toUpperCase())}</span><span><b>${esc(p.name || 'Meu perfil')}</b><small>${esc(p.email || 'jnegrao')}</small></span></button></div></header>`;
 }
 function mcard(label, val, ic, cls, sub = '', act = '') {
@@ -1259,7 +1145,7 @@ function scrInicioDesk() {
     </div>
     <div class="mcol">
       ${trialBanner()}
-      ${!syncOn() ? `<div class="mbanner" data-act="go" data-sub="sync">${I('info')}<span><b>Seus dados estão só neste aparelho.</b> Clique para ativar o salvamento automático no GitHub.</span>${I('right')}</div>` : ''}
+      ${CL.err ? `<div class="mbanner" data-act="go" data-sub="sync">${I('info')}<span><b>${esc(CL.err)}</b></span>${I('right')}</div>` : ''}
       <div class="mbox"><div class="mh"><b>Balanço mensal</b><button class="lnk" data-act="tab" data-v="graficos">Ver relatórios</button></div>${bal}</div>
       <div class="mbox"><div class="mh"><b>Contas a pagar</b><span class="badge late">${soon.length}</span></div>${pend(soon, 'd')}</div>
       <div class="mbox"><div class="mh"><b>Contas a receber</b><span class="badge ok">${soonR.length}</span></div>${pend(soonR, 'r')}</div>
@@ -1283,7 +1169,7 @@ function scrTransacoesDesk() {
 }
 
 /* faixa colorida do topo no celular (cor do tema) */
-const MTITLES = { calendario: 'Calendário', transacoes: 'Transações', graficos: 'Gráficos', ajustes: 'Ajustes', perfil: 'Meu Perfil', contas: 'Contas', categorias: 'Categorias', dividas: 'Dívidas', emprestimos: 'Empréstimos', orientacao: 'Orientação', sync: 'Salvar no GitHub' };
+const MTITLES = { calendario: 'Calendário', transacoes: 'Transações', graficos: 'Gráficos', ajustes: 'Ajustes', perfil: 'Meu Perfil', contas: 'Contas', categorias: 'Categorias', dividas: 'Dívidas', emprestimos: 'Empréstimos', orientacao: 'Orientação', sync: 'Minha conta' };
 function mobBar() {
   const k = V.tab === 'ajustes' && V.sub ? V.sub : V.tab;
   if (k === 'inicio') return '';
@@ -1767,8 +1653,6 @@ document.addEventListener('click', async e => {
     }
     case 'loan-go': loanGo(); break;
     case 'cloud-save': await cloudPush(); toast(CL.err || 'Salvo na nuvem'); render(); break;
-    case 'sync-now': SY.dirty = true; await maybePush(true); toast(SYS.err || 'Enviado para o GitHub'); render(); break;
-    case 'sync-off': { const r = await ask('Desconectar o GitHub deste aparelho?', 'Seus dados continuam guardados no GitHub. Este aparelho só para de enviar alterações.', [['y', 'Desconectar', 'danger']]); if (r) { SY.token = ''; SY.sha = undefined; SY.lastSync = undefined; SYS.ready = false; saveSY(); render(); } break; }
     case 'logout': { const r = await ask('Sair do app?', 'Seus lançamentos continuam salvos neste aparelho.', [['y', 'Sair', 'danger']]); if (r) logout(); break; }
     case 'rep-caixa': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repCaixa(); break;
     case 'rep-pdf': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repPdf(); break;
@@ -1788,23 +1672,12 @@ document.addEventListener('click', async e => {
       inp.click(); break;
     }
     case 'clear': {
-      const r = await ask('Limpar dados?', 'Apaga todos os lançamentos e dívidas e zera o saldo inicial das contas' + (syncOn() ? ', também no GitHub' : '') + '. Contas, categorias, perfil e tema são mantidos. Faça um backup antes.', [['y', 'Apagar tudo', 'danger']]);
+      const r = await ask('Limpar dados?', 'Apaga todos os lançamentos e dívidas e zera o saldo inicial das contas' + (syncOn() ? ', também na nuvem' : '') + '. Contas, categorias, perfil e tema são mantidos. Faça um backup antes.', [['y', 'Apagar tudo', 'danger']]);
       if (!r) return; S.transactions = []; S.debts = []; S.accounts.forEach(a => a.initial = 0); save(); render(); toast('Dados apagados'); break;
     }
   }
 });
-document.addEventListener('submit', async e => {
-  if (e.target.id !== 'syf') return;
-  e.preventDefault(); const f = e.target;
-  const repo = f.repo.value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
-  const token = f.token.value.trim();
-  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return toast('Repositório no formato usuário/nome');
-  if (!token) return toast('Cole a chave do GitHub');
-  const first = SY.token !== token || SY.repo !== repo || !SY.lastSync;
-  SY.repo = repo; SY.token = token; if (first) { SY.sha = undefined; SY.lastSync = undefined; } saveSY();
-  await syncNow({ firstConnect: first });
-  toast(SYS.err ? SYS.err : 'Conectado ao GitHub');
-});
+
 document.addEventListener('change', async e => {
   const el = e.target;
   if (el.dataset.chg) { V[el.dataset.chg] = el.value; render(); }
