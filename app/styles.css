@@ -1130,3 +1130,72 @@ body.skin-material .summary+.hr{background:var(--g4);height:3px;border-radius:3p
   body.skin-material .mpill,body.skin-material .chipinfo,body.skin-material .duser{background:var(--card2)!important;border:0!important;box-shadow:none!important;border-radius:100px!important}
   body.skin-material .dtable thead th{background:var(--card2)!important}
 }
+
+/* ===== Tema iOS — visual nativo do iPhone ===== */
+body.skin-ios{
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Arial,sans-serif;--radius:12px;--radius-s:10px;
+  --bg:#000000;--bg2:#000000;--card:#1c1c1e;--card2:#2c2c2e;--line:rgba(84,84,88,.55);--text:#ffffff;--muted:#8e8e93;
+  --accent:#0a84ff;--accent-soft:rgba(10,132,255,.16);--green:#30d158;--green-d:#30d158;--green-soft:rgba(48,209,88,.16);
+  --red:#ff453a;--red2:#ff453a;--red-soft:rgba(255,69,58,.16);--orange:#ff9f0a;--blue:#0a84ff;
+  --segtrack:rgba(118,118,128,.24);--segon:#636366;--segink:#ffffff;
+  --blob1:#0a84ff;--blob2:#5e5ce6;--blob3:#64d2ff;--glass-a:70%;
+  --hbar:linear-gradient(160deg,#2d95ff 0%,#0a7aff 50%,#0060df 100%);--hbar-sh:rgba(10,132,255,.35)}
+body.skin-ios.light{
+  --bg:#f2f2f7;--bg2:#f2f2f7;--card:#ffffff;--card2:#f2f2f7;--line:rgba(60,60,67,.13);--text:#000000;--muted:#8a8a8e;
+  --accent:#007aff;--accent-soft:rgba(0,122,255,.1);--green:#34c759;--green-d:#28a745;--green-soft:rgba(52,199,89,.13);
+  --red:#ff3b30;--red2:#ff3b30;--red-soft:rgba(255,59,48,.1);--orange:#ff9500;--blue:#007aff;
+  --segtrack:rgba(118,118,128,.12);--segon:#ffffff;--segink:#000000;
+  --hbar:linear-gradient(160deg,#3a9bff 0%,#007aff 50%,#0062d6 100%);--hbar-sh:rgba(0,122,255,.3)}
+body.skin-ios.light #app::before{opacity:.35}
+body.skin-ios h1,body.skin-ios .mbar-t{letter-spacing:.2px}
+body.skin-ios .big{color:var(--text)}
+/* listas agrupadas como os Ajustes do iPhone */
+body.skin-ios .card,body.skin-ios .list,body.skin-ios .tx,body.skin-ios .catrow,body.skin-ios .box,body.skin-ios .monthnav,body.skin-ios .cal,
+body.skin-ios .three .card,body.skin-ios .alert,body.skin-ios .code,body.skin-ios .adv{border-radius:12px!important}
+body.skin-ios .li{padding:12px 16px}
+body.skin-ios .li .ico:first-child{color:#fff!important;background:var(--accent);border-radius:7px;padding:4px;width:28px;height:28px;box-sizing:border-box}
+body.skin-ios .li.c-green .ico:first-child{background:var(--green)}
+body.skin-ios .li.c-red .ico:first-child{background:var(--red)}
+body.skin-ios .li .tx2 b{color:var(--text)!important}
+body.skin-ios .sect{text-transform:uppercase;font-weight:400;font-size:12.5px;letter-spacing:.2px;margin-left:18px}
+/* controle segmentado do iOS */
+body.skin-ios .seg,body.skin-ios .dseg,body.skin-ios .sortbar{background:var(--segtrack)!important;border:0!important;border-radius:9px!important;padding:2px!important;box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+body.skin-ios .seg button,body.skin-ios .dseg button,body.skin-ios .sortbar button{border-radius:7px!important;color:var(--text)!important;font-weight:500;padding:7px 6px}
+body.skin-ios .seg button.on,body.skin-ios .dseg button.on,body.skin-ios .sortbar button.on,
+body.skin-ios .seg.rd button.on.rec,body.skin-ios .seg.rd button.on.desp{background:var(--segon)!important;color:var(--segink)!important;font-weight:600;
+  box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)!important}
+body.skin-ios .seg.rd button.on.rec{color:var(--green)!important}
+body.skin-ios .seg.rd button.on.desp{color:var(--red)!important}
+body.skin-ios .pill{border-radius:20px!important;background:transparent;border:0}
+body.skin-ios .pill.on,body.skin-ios .pills.plain .pill.on{background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
+body.skin-ios .accchip{border-radius:12px!important}
+body.skin-ios .accchip.on,body.skin-ios .chips button.on{background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
+/* botões do iOS */
+body.skin-ios .btn{border-radius:12px!important;font-weight:600;color:var(--accent)}
+body.skin-ios .btn.primary,body.skin-ios .dbtn.primary,body.skin-ios.desk .tabbar button.snew{background:var(--accent)!important;color:#fff!important;box-shadow:none!important;border-radius:12px!important}
+body.skin-ios .btn.danger{color:var(--red)}
+body.skin-ios .fab{background:var(--accent)!important;color:#fff;border:0;box-shadow:0 8px 22px rgba(0,122,255,.38)!important}
+body.skin-ios .in{border-radius:10px!important;background:var(--card)!important;border:0;box-shadow:none}
+body.skin-ios #modal .sheet .in{background:var(--card)!important}
+body.skin-ios #modal .sheet{background:var(--bg)!important;border-radius:12px 12px 0 0!important}
+body.skin-ios #modal .grab{width:36px;height:5px;background:rgba(127,127,127,.4)}
+body.skin-ios .xclose{border-radius:50%!important;background:var(--segtrack)!important;color:var(--muted)}
+/* interruptor verde do iOS */
+body.skin-ios .switch{width:51px;height:31px}
+body.skin-ios .switch i{background:var(--segtrack);border-radius:16px}
+body.skin-ios .switch i::after{width:27px;height:27px;left:2px;top:2px;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15),0 3px 1px rgba(0,0,0,.06)}
+body.skin-ios .switch input:checked+i{background:var(--green)}
+body.skin-ios .switch input:checked+i::after{left:22px;background:#fff}
+/* calendário e anel */
+body.skin-ios .cal .wd{background:var(--card)!important;color:var(--muted);font-size:12px;font-weight:600;border-bottom:1px solid var(--line)}
+body.skin-ios .cal .d.today{background:transparent}
+body.skin-ios .cal .d.today b{background:var(--red);color:#fff}
+body.skin-ios .ring circle:nth-child(2){stroke:var(--accent)}
+body.skin-ios .tx.receita,body.skin-ios .tx.despesa{background:var(--glass)!important}
+body.skin-ios .ticon{border-radius:9px}
+@media (max-width:899px){
+  body.skin-ios .tabbar button.on{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+}
+@media (min-width:900px){
+  body.skin-ios.desk .tabbar button.on{background:var(--accent)!important;color:#fff!important}
+}

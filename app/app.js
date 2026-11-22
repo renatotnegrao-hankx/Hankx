@@ -438,7 +438,7 @@ function scrGraficos() {
 }
 
 /* ---------- Ajustes ---------- */
-const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['diversidade', '🌈', 'Diversidade', 'Cores do arco-íris'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['moderno', '💜', 'Moderno', 'Estilo Mobills'], ['office', '📊', 'Office', 'Estilo Excel / 365'], ['material', '🔵', 'Material', 'Material You (Android)']];
+const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['diversidade', '🌈', 'Diversidade', 'Cores do arco-íris'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['ios', '📱', 'iOS', 'Visual do iPhone'], ['office', '📊', 'Office', 'Estilo Excel / 365'], ['material', '🔵', 'Material', 'Material You (Android)']];
 function li(act, icon, title, sub, cls = '', extra = '') {
   return `<button class="li ${cls}" data-act="${act}" ${extra}>${I(icon)}<span class="tx2"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${cls ? '' : I('right')}</button>`;
 }
@@ -904,10 +904,11 @@ function applyTheme() {
   const st = S.settings, b = document.body;
   if (st.skin === 'dos') st.skin = 'padrao';
   if (['windows', 'encantado'].includes(st.skin)) st.skin = 'padrao'; // temas antigos removidos
+  if (st.skin === 'moderno') st.skin = 'ios';
   if (['bissexual', 'hetero', 'lesbica'].includes(st.skin)) st.skin = 'diversidade';
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
   const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'mobills') !== 'app';
-  b.className = mob ? 'light skin-mobills' : st.skin === 'moderno' ? 'light skin-moderno' : (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
+  b.className = mob ? 'light skin-mobills' :  (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
   if (typeof isLogged === 'function') { b.classList.toggle('logged', isLogged()); b.classList.toggle('desk', isDesk()); }
   const meta = $('meta[name=theme-color]'); if (meta) meta.content = getComputedStyle(b).getPropertyValue('--bg2').trim() || '#12161f';
 }
