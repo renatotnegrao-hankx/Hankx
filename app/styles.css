@@ -1305,3 +1305,15 @@ body:not(.logged) .tabbar,body:not(.logged) .fab{display:none!important}
   body.desk.skin-office .dtop .topnew{color:var(--bar2)!important}
   body.desk.skin-office .dtop .topnew .ico{color:var(--bar2)}
 }
+
+/* ===== Notebook: botão + flutuante (círculo azul, + branco) no lugar dos botões de texto ===== */
+@media (min-width:900px){
+  body.desk .tabbar .snew,body.desk .dtop .topnew{display:none!important}
+  body.desk .fab:not(.hide){display:flex!important}
+  body.desk .fab{position:fixed;right:40px;bottom:36px;width:66px;height:66px;border-radius:50%!important;
+    background:#1677ff!important;color:#fff!important;border:0!important;
+    box-shadow:0 12px 28px rgba(22,119,255,.45),0 2px 6px rgba(0,0,0,.2)!important;transition:transform .15s,box-shadow .15s;z-index:25}
+  body.desk .fab:hover{transform:scale(1.07);box-shadow:0 16px 34px rgba(22,119,255,.55),0 2px 6px rgba(0,0,0,.2)!important}
+  body.desk .fab::after{display:none}
+  body.desk .fab .ico{width:32px;height:32px;color:#fff!important;filter:none!important}
+}
