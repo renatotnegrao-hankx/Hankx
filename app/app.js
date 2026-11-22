@@ -601,7 +601,7 @@ function li(act, icon, title, sub, cls = '', extra = '') {
 function scrAjustes() {
   const st = S.settings;
   return `<div class="titlebar"><div><h1 style="margin-bottom:4px">Ajustes</h1><div class="muted" style="font-size:14px">${esc(S.profile.email || 'Seus dados ficam salvos neste aparelho')}</div></div>
-  <img src="icons/logo.png" alt="Hankx" style="width:50px;height:50px;border-radius:13px"></div>
+  <img src="icons/logo.png?v=4" alt="Hankx" style="width:50px;height:50px;border-radius:13px"></div>
   <div class="split even"><div class="col">
   <div class="sect">APARÊNCIA</div>
     <div class="card deskonly"><div class="muted" style="margin:0 0 10px">Visual no notebook</div><div class="opts" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px">${[['app', '🎨', 'Tema escolhido', 'Usa o tema e o perfil abaixo'], ['mobills', '💜', 'Estilo Mobills', 'Claro, roxo e cartões brancos']].map(([v, e, l, s2]) => `<button class="opt ${(st.deskTheme || 'app') === v ? 'on' : ''}" data-act="desktheme" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s2}</small></button>`).join('')}</div></div>
@@ -811,7 +811,7 @@ function paywall(reason = '') {
   const paid = isPaid(), d = trialDaysLeft();
   const perks = ['Gráficos completos: projeção, categorias e ranking', 'Relatórios em Excel, PDF e CSV', 'Controle de dívidas e simulador de empréstimos', 'Orientação do que pagar primeiro', 'Várias contas e cartões', 'Todos os temas e perfis de interface'];
   openModal(`<div class="pw">
-    <div class="pw-h"><img src="icons/logo.png" alt=""><div><b>Hankx Premium</b><small>${paid ? premiumLabel() : d ? `Seu teste grátis termina em ${d} dia${d > 1 ? 's' : ''}` : 'Seu teste grátis terminou'}</small></div></div>
+    <div class="pw-h"><img src="icons/logo.png?v=4" alt=""><div><b>Hankx Premium</b><small>${paid ? premiumLabel() : d ? `Seu teste grátis termina em ${d} dia${d > 1 ? 's' : ''}` : 'Seu teste grátis terminou'}</small></div></div>
     ${reason ? `<p class="pw-r">${I('lock')} <span><b>${esc(reason)}</b> faz parte do Premium.</span></p>` : ''}
     <ul class="pw-l">${perks.map(x => `<li>${I('check')}<span>${x}</span></li>`).join('')}</ul>
     ${paid ? `<p class="muted small">${isLifetime() || CL.profile.plan === 'cortesia' ? 'Seu acesso Premium já está garantido. Obrigado!' : CL.profile.provider === 'googleplay' ? 'Para cancelar ou mudar o plano: Play Store → Pagamentos e assinaturas → Assinaturas.' : 'Para cancelar: Mercado Pago → Assinaturas. O Premium continua até o fim do período pago.'}</p>`
@@ -953,7 +953,7 @@ function showAuth(mode = 'entrar', msg = '', ok = '') {
   $('#tabbar').innerHTML = ''; $('#fab').classList.add('hide'); document.body.classList.remove('logged');
   const T = { entrar: 'Entrar', criar: 'Criar conta', esqueci: 'Recuperar senha', nova: 'Criar nova senha' }[mode];
   $('#main').innerHTML = `<div class="loginwrap" style="min-height:82vh;display:flex;flex-direction:column;justify-content:center">
-  <div style="text-align:center;margin-bottom:22px"><img src="icons/logo.png" alt="Hankx" style="width:84px;height:84px;border-radius:22px"><h1 style="margin:14px 0 4px">Hankx</h1><p class="muted" style="margin:0">${mode === 'criar' ? '7 dias de Premium grátis, sem cartão' : 'Seu dinheiro organizado em todos os aparelhos'}</p></div>
+  <div style="text-align:center;margin-bottom:22px"><img src="icons/logo.png?v=4" alt="Hankx" style="width:84px;height:84px;border-radius:22px"><h1 style="margin:14px 0 4px">Hankx</h1><p class="muted" style="margin:0">${mode === 'criar' ? '7 dias de Premium grátis, sem cartão' : 'Seu dinheiro organizado em todos os aparelhos'}</p></div>
   ${mode === 'entrar' || mode === 'criar' ? `<div class="seg" style="margin-bottom:12px"><button class="${mode === 'entrar' ? 'on' : ''}" data-auth="entrar">Entrar</button><button class="${mode === 'criar' ? 'on' : ''}" data-auth="criar">Criar conta</button></div>` : ''}
   <form id="authf" class="card" autocomplete="on"><h3 style="margin:0 0 12px">${T}</h3>
   ${mode === 'criar' ? `<label class="f"><span>Seu nome</span><input class="in" name="name" autocomplete="name" required></label>` : ''}
@@ -1029,7 +1029,7 @@ function showLogin(msg = '') {
   if (CLOUD_ON) return showAuth('entrar', msg);
   $('#tabbar').innerHTML = ''; $('#fab').classList.add('hide');
   $('#main').innerHTML = `<div class="loginwrap" style="min-height:80vh;display:flex;flex-direction:column;justify-content:center">
-  <div style="text-align:center;margin-bottom:28px"><img src="icons/logo.png" alt="Hankx" style="width:96px;height:96px;border-radius:24px"><h1 style="margin:16px 0 4px">Hankx</h1><p class="muted" style="margin:0">Entre para acessar</p></div>
+  <div style="text-align:center;margin-bottom:28px"><img src="icons/logo.png?v=4" alt="Hankx" style="width:96px;height:96px;border-radius:24px"><h1 style="margin:16px 0 4px">Hankx</h1><p class="muted" style="margin:0">Entre para acessar</p></div>
   <form id="loginf" class="card" autocomplete="on">
   <label class="f"><span>Login</span><input class="in" name="user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required></label>
   <label class="f"><span>Senha</span><input class="in" name="pass" type="password" inputmode="numeric" autocomplete="current-password" required></label>
@@ -1294,7 +1294,7 @@ function render(keepScroll = true) {
   document.body.classList.toggle('desk', isDesk());
   $('#main').innerHTML = isDesk() ? deskTop() + `<div class="scr">${h}</div>` : mobBar() + `<div class="scr-m">${h}</div>`;
   if (!isDesk()) { const r = $('#main .mbar-r'); if (r) $$('#main .scr-m .titlebar').forEach(tb => $$(':scope > .ib, :scope > img', tb).forEach(x => r.appendChild(x))); }
-  $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png" alt=""><b>Hankx</b></div><button class="snew" data-act="new-tx">${I('plus')} Novo lançamento</button>` + TABS.map(([k, ic, l]) => {
+  $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png?v=4" alt=""><b>Hankx</b></div><button class="snew" data-act="new-tx">${I('plus')} Novo lançamento</button>` + TABS.map(([k, ic, l]) => {
     const isX = V.tab === 'ajustes' && DX.some(d => d[0] === V.sub);
     const b = `<button class="${V.tab === k && !(k === 'ajustes' && isX) ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`;
     return k === 'ajustes' ? `<div class="dxl">FERRAMENTAS</div>` + DX.map(([s, i2, l2]) => `<button class="dx ${V.tab === 'ajustes' && V.sub === s ? 'on' : ''}" data-act="go" data-sub="${s}">${I(i2)}<span>${l2}</span></button>`).join('') + b : b; }).join('');
