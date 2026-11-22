@@ -1386,3 +1386,7 @@ body:not(.logged) .tabbar,body:not(.logged) .fab{display:none!important}
 .pw-plans.three .pw-p strong small{font-size:11px}
 .pw-plans.three .pw-tag{font-size:9px;padding:2px 6px;top:-9px}
 .pw-plans.three .pw-p>small{font-size:11px;display:block;line-height:1.25}
+
+/* itens extras do menu lateral (só no computador) */
+.tabbar .dx,.tabbar .dxl{display:none}
+@media (min-width:900px){ body.desk .tabbar .dx{display:flex} body.desk .tabbar .dxl{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);padding:14px 14px 4px} }

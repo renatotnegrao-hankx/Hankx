@@ -1281,6 +1281,7 @@ function applyTheme() {
   st.skin = skin0;
   const meta = $('meta[name=theme-color]'); if (meta) meta.content = getComputedStyle(b).getPropertyValue('--bg2').trim() || '#12161f';
 }
+const DX = [['orientacao', 'spark', 'Orientação'], ['emprestimos', 'calc', 'Empréstimos'], ['dividas', 'card', 'Dívidas'], ['contas', 'dollar', 'Contas'], ['categorias', 'shield', 'Categorias']]; // só no computador
 const TABS = [['inicio', 'home', 'Início'], ['calendario', 'cal', 'Calendário'], ['transacoes', 'list', 'Transações'], ['graficos', 'pie', 'Gráficos'], ['ajustes', 'gear', 'Ajustes']];
 function render(keepScroll = true) {
   document.body.classList.toggle('logged', isLogged());
@@ -1293,7 +1294,10 @@ function render(keepScroll = true) {
   document.body.classList.toggle('desk', isDesk());
   $('#main').innerHTML = isDesk() ? deskTop() + `<div class="scr">${h}</div>` : mobBar() + `<div class="scr-m">${h}</div>`;
   if (!isDesk()) { const r = $('#main .mbar-r'); if (r) $$('#main .scr-m .titlebar').forEach(tb => $$(':scope > .ib, :scope > img', tb).forEach(x => r.appendChild(x))); }
-  $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png" alt=""><b>Hankx</b></div><button class="snew" data-act="new-tx">${I('plus')} Novo lançamento</button>` + TABS.map(([k, ic, l]) => `<button class="${V.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`).join('');
+  $('#tabbar').innerHTML = `<div class="brand"><img src="icons/logo.png" alt=""><b>Hankx</b></div><button class="snew" data-act="new-tx">${I('plus')} Novo lançamento</button>` + TABS.map(([k, ic, l]) => {
+    const isX = V.tab === 'ajustes' && DX.some(d => d[0] === V.sub);
+    const b = `<button class="${V.tab === k && !(k === 'ajustes' && isX) ? 'on' : ''}" data-act="tab" data-v="${k}">${I(ic)}<span>${l}</span></button>`;
+    return k === 'ajustes' ? `<div class="dxl">FERRAMENTAS</div>` + DX.map(([s, i2, l2]) => `<button class="dx ${V.tab === 'ajustes' && V.sub === s ? 'on' : ''}" data-act="go" data-sub="${s}">${I(i2)}<span>${l2}</span></button>`).join('') + b : b; }).join('');
   $('#fab').innerHTML = I('plus');
   $('#fab').classList.toggle('hide', !isLogged() || V.tab === 'ajustes' || V.tab === 'graficos');
   if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
