@@ -884,15 +884,24 @@ async function cloudAfterLogin() {
       save(true); CL.ready = true; await cloudPush();
     }
     CL.err = '';
-  } catch (e) { CL.err = 'Sem conexão com a nuvem — salvando no aparelho'; }
+  } catch (e) { console.error('nuvem', e); CL.err = cloudErr(e); }
   CL.ready = true;
+}
+function cloudErr(e) {
+  const m = String(e?.message || e || ''), c = e?.code || '';
+  if (c === '42501' || /permission denied/i.test(m)) return 'Sem permissão no banco (rode o SQL de permissões)';
+  if (c === 'PGRST205' || c === '42P01' || /does not exist|could not find the table/i.test(m)) return 'Tabela não encontrada no banco (rode o schema.sql)';
+  if (/row-level security/i.test(m)) return 'Bloqueado pela segurança do banco (regras RLS)';
+  if (/JWT|token|apikey|api key/i.test(m)) return 'Login expirado: saia e entre de novo';
+  if (/fetch|network|Failed/i.test(m)) return 'Sem conexão — tentaremos de novo';
+  return 'Erro ao salvar: ' + m.slice(0, 90);
 }
 async function cloudPush() {
   if (!CLOUD_ON || !uidOf()) return;
   CL.busy = true; refreshSyncUI();
   const { error } = await sb.from('user_data').upsert({ user_id: uidOf(), data: S, updated_at: new Date().toISOString() });
   CL.busy = false;
-  if (error) { CL.err = 'Sem conexão — tentaremos de novo'; CL.dirty = true; setTimeout(() => CL.dirty && cloudPush(), 30000); }
+  if (error) { console.error('nuvem', error); CL.err = cloudErr(error); CL.dirty = true; setTimeout(() => CL.dirty && cloudPush(), 30000); }
   else { CL.err = ''; CL.last = Date.now(); CL.dirty = false; }
   refreshSyncUI();
 }

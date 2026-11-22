@@ -58,3 +58,9 @@ begin
 end $$;
 revoke all on function public.delete_my_account() from public, anon;
 grant execute on function public.delete_my_account() to authenticated;
+
+-- 6) Permissões para o app ler e gravar (necessário em projetos novos do Supabase)
+grant usage on schema public to anon, authenticated;
+grant select, insert, update on public.user_data to authenticated;
+grant select on public.profiles to authenticated;
+grant update (name) on public.profiles to authenticated;
