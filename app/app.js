@@ -438,7 +438,7 @@ function scrGraficos() {
 }
 
 /* ---------- Ajustes ---------- */
-const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['diversidade', '🌈', 'Diversidade', 'Cores do arco-íris'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['moderno', '💜', 'Moderno', 'Estilo Mobills'], ['office', '📊', 'Office', 'Estilo Excel / 365']];
+const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['diversidade', '🌈', 'Diversidade', 'Cores do arco-íris'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['moderno', '💜', 'Moderno', 'Estilo Mobills'], ['office', '📊', 'Office', 'Estilo Excel / 365'], ['material', '🔵', 'Material', 'Material You (Android)']];
 function li(act, icon, title, sub, cls = '', extra = '') {
   return `<button class="li ${cls}" data-act="${act}" ${extra}>${I(icon)}<span class="tx2"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${cls ? '' : I('right')}</button>`;
 }
