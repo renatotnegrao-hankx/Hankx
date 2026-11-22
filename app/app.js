@@ -112,9 +112,14 @@ function defaults() {
     debts: []
   };
 }
-let S;
+let S, STORE = KEY;
+function normalize() {
+  const d = defaults();
+  for (const k of Object.keys(d)) if (S[k] === undefined || S[k] === null) S[k] = d[k];
+  if (!S.accounts.length) S.accounts = d.accounts;
+}
 function load() {
-  try { const raw = localStorage.getItem(KEY); S = raw ? JSON.parse(raw) : defaults(); } catch (e) { S = defaults(); }
+  try { const raw = localStorage.getItem(STORE); S = raw ? JSON.parse(raw) : defaults(); } catch (e) { S = defaults(); }
   const d = defaults();
   for (const k of Object.keys(d)) if (S[k] === undefined) S[k] = d[k];
   if (!S.accounts.length) S.accounts = d.accounts;
@@ -123,7 +128,7 @@ function load() {
 function save(fromRemote = false) {
   if (!fromRemote) S.updatedAt = Date.now();
   if (!fromRemote) schedulePush();
-  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast('Não foi possível salvar (memória cheia?)'); }
+  try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) { toast('Não foi possível salvar (memória cheia?)'); }
 }
 
 const cat = id => S.categories.find(c => c.id === id);
@@ -256,6 +261,7 @@ function scrInicio() {
     <div style="text-align:right"><div class="lbl">Saldo do dia</div><b class="${dia >= 0 ? 'green' : 'red'}" style="font-size:15px">${brl(dia)}</b></div></div>
     <div class="rd2"><div class="rdbox r"><span class="green">Receitas</span><b class="green">${brl(rec)}</b></div><div class="rdbox d"><span class="red">Despesas</span><b class="red">${brl(desp)}</b></div></div>
   </div>
+  ${trialBanner()}
   ${!syncOn() ? `<div class="alert" data-act="go" data-sub="sync" style="cursor:pointer"><div class="h">${I('info')} Seus dados estão só neste aparelho</div><span class="small">Toque aqui para ativar o salvamento no GitHub e não perder nada se apagar o app.</span></div>` : SYS.err ? `<div class="alert" data-act="go" data-sub="sync"><div class="h">${I('info')} GitHub</div><span class="small">${esc(SYS.err)}</span></div>` : ''}
   ${soon.length ? `<div class="alert"><div class="h">${I('bell')} Vencimentos próximos</div>${soon.slice(0, 6).map(t => `<div class="it" data-act="edit-tx" data-id="${t.id}"><span>${esc(t.desc || cat(t.categoryId)?.name || '')} <small class="${t.date < T0 ? 'red' : 'muted'}">&nbsp;${t.date < T0 ? 'atrasada ' : ''}${fmtD(t.date).slice(0, 5)}</small></span><b class="red">${brl(t.amount)}</b></div>`).join('')}${soon.length > 6 ? `<small class="muted">+ ${soon.length - 6} outros</small>` : ''}</div>` : ''}
   </div><div class="col">
@@ -405,6 +411,7 @@ function donut(arr, tot) {
 }
 function scrGraficos() {
   if (!isDesk()) return scrGraficosMob();
+  if (!isPremium()) return lockedCard('Gráficos completos', 'Projeção de 6 a 24 meses, categorias e ranking dos seus gastos.');
   let body = '';
   if (V.chart === 'projecao') {
     const D = monthsData(T0.slice(0, 7), V.projN);
@@ -603,7 +610,7 @@ function scrAjustes() {
     <div class="muted" style="margin:16px 0 10px">Perfil de Interface</div>
     <div class="opts">${SKINS.map(([v, e, l, s]) => `<button class="opt ${st.skin === v ? 'on' : ''}" data-act="skin" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s}</small></button>`).join('')}</div></div>
   <div class="sect">PERFIL</div>
-  <div class="list">${li('go', 'user', 'Meu Perfil', '', '', 'data-sub="perfil"')}</div>
+  <div class="list">${li('go', 'user', 'Meu Perfil', '', '', 'data-sub="perfil"')}${CLOUD_ON ? li('premium', 'star', 'HANKX Premium', premiumLabel()) : ''}</div>
   <div class="sect">FERRAMENTAS</div>
   <div class="list">${li('go', 'spark', 'Orientação', 'O que pagar primeiro', '', 'data-sub="orientacao"')}${li('go', 'calc', 'Empréstimos', 'Simular parcelas e gerar lançamentos', '', 'data-sub="emprestimos"')}</div>
   <div class="sect">GESTÃO</div>
@@ -615,11 +622,11 @@ function scrAjustes() {
   ${li('rep-excel', 'sheet', 'Exportar para Excel', 'Receitas e despesas por categoria e mês, com saldo do mês e acumulado (.xlsx)', 'c-green')}
   ${li('rep-csv', 'chart', 'Exportar Fluxo de Caixa Diário', 'Lista diária de entradas, saídas e saldo acumulado (.csv)', 'c-blue')}</div>
   <div class="sect">DADOS</div>
-  <div class="list"><button class="li" data-act="go" data-sub="sync">${I('ul')}<span class="tx2"><b>Salvar no GitHub</b><small data-synclabel>${esc(syncLabel())}</small></span>${I('right')}</button>${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
+  <div class="list"><button class="li" data-act="go" data-sub="sync">${I('ul')}<span class="tx2"><b>${CLOUD_ON ? 'Minha conta e nuvem' : 'Salvar no GitHub'}</b><small data-synclabel>${esc(syncLabel())}</small></span>${I('right')}</button>${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
   <div class="sect">CONTA</div>
-  <div class="list">${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}</div>
+  <div class="list">${CLOUD_ON ? li('go', 'user', esc(CL.session?.user?.email || 'Minha conta'), 'Dados salvos na nuvem', '', 'data-sub="sync"') : ''}${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}${CLOUD_ON ? li('delete-account', 'trash', 'Excluir minha conta', 'Apaga a conta e todos os dados da nuvem', 'c-red') : ''}</div>
   </div></div>
-  <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · ${syncOn() ? 'dados salvos neste aparelho e no GitHub' : 'dados salvos só neste aparelho — ative o GitHub em Dados'}.</p>`;
+  <p class="muted small" style="text-align:center;margin-top:24px">HANKX Finanças · ${CLOUD_ON ? 'dados salvos na nuvem com segurança' : syncOn() ? 'dados salvos neste aparelho e no GitHub' : 'dados salvos só neste aparelho — ative o GitHub em Dados'} · <a class="muted" href="../privacidade.html">Privacidade</a> · <a class="muted" href="../termos.html">Termos</a>.</p>`;
 }
 function backHead(title, right = '') {
   return `<button class="back" data-act="back">${I('left')} Ajustes</button><div class="titlebar"><h1>${title}</h1>${right}</div>`;
@@ -764,6 +771,234 @@ function scrOrientacao() {
 }
 
 
+
+/* ======================= Nuvem (Supabase): contas, dados e Premium ======================= */
+const CFG = window.HANKX_CONFIG || {};
+const CLOUD_ON = !!(CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase);
+const sb = CLOUD_ON ? window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }) : null;
+const CL = { session: null, profile: null, busy: false, err: '', timer: null, ready: false, last: 0, dirty: false, recovery: false };
+const IS_TWA = (() => { try { if (document.referrer.startsWith('android-app://')) sessionStorage.setItem('hankx-twa', '1'); return sessionStorage.getItem('hankx-twa') === '1'; } catch (e) { return false; } })();
+const uidOf = () => CL.session?.user?.id;
+function isPremium() {
+  if (!CLOUD_ON) return true;
+  const p = CL.profile; if (!p) return true;
+  const now = Date.now();
+  return (p.premium_until && Date.parse(p.premium_until) > now) || (p.trial_ends_at && Date.parse(p.trial_ends_at) > now);
+}
+const isPaid = () => { const p = CL.profile; return !!(p && p.premium_until && Date.parse(p.premium_until) > Date.now()); };
+const trialDaysLeft = () => { const p = CL.profile; return p && p.trial_ends_at ? Math.max(0, Math.ceil((Date.parse(p.trial_ends_at) - Date.now()) / 864e5)) : 0; };
+function premiumLabel() {
+  if (isPaid()) return `Ativo até ${fmtD(CL.profile.premium_until.slice(0, 10))}${CL.profile.plan ? ' · plano ' + CL.profile.plan : ''}`;
+  const d = trialDaysLeft();
+  return d ? `Teste grátis: ${d} dia${d > 1 ? 's' : ''} restante${d > 1 ? 's' : ''}` : 'Teste terminado — assine para liberar tudo';
+}
+function trialBanner() {
+  if (!CLOUD_ON || !CL.profile || isPaid()) return '';
+  const d = trialDaysLeft();
+  return `<div class="pbanner ${d ? '' : 'end'}" data-act="premium">${I('star')}<span><b>${d ? `Teste Premium: ${d} dia${d > 1 ? 's' : ''} restante${d > 1 ? 's' : ''}` : 'Seu teste Premium terminou'}</b><small>${d ? 'Aproveite tudo liberado. Assine para não perder.' : 'Assine para voltar a usar gráficos, relatórios, dívidas e temas.'}</small></span><em>Assinar</em></div>`;
+}
+function needPremium(feature) { if (isPremium()) return false; paywall(feature); return true; }
+function lockedCard(title, desc) {
+  return `<div class="card" style="text-align:center;padding:40px 20px;max-width:560px;margin:30px auto">${I('lock')}<h2 style="margin:12px 0 6px">${title}</h2><p class="muted">${desc}</p><button class="btn primary" data-act="premium" style="max-width:320px;margin:16px auto 0">Conhecer o Premium</button></div>`;
+}
+function paywall(reason = '') {
+  const paid = isPaid(), d = trialDaysLeft();
+  const perks = ['Gráficos completos: projeção, categorias e ranking', 'Relatórios em Excel, PDF e CSV', 'Controle de dívidas e simulador de empréstimos', 'Orientação do que pagar primeiro', 'Várias contas e cartões', 'Todos os temas e perfis de interface'];
+  openModal(`<div class="pw">
+    <div class="pw-h"><img src="icons/logo.png" alt=""><div><b>HANKX Premium</b><small>${paid ? `Ativo até ${fmtD(CL.profile.premium_until.slice(0, 10))}` : d ? `Seu teste grátis termina em ${d} dia${d > 1 ? 's' : ''}` : 'Seu teste grátis terminou'}</small></div></div>
+    ${reason ? `<p class="pw-r">${I('lock')} <span><b>${esc(reason)}</b> faz parte do Premium.</span></p>` : ''}
+    <ul class="pw-l">${perks.map(x => `<li>${I('check')}<span>${x}</span></li>`).join('')}</ul>
+    ${paid ? `<p class="muted small">${CL.profile.provider === 'googleplay' ? 'Para cancelar ou mudar o plano: Play Store → Pagamentos e assinaturas → Assinaturas.' : 'Para cancelar: Mercado Pago → Assinaturas. O Premium continua até o fim do período pago.'}</p>`
+      : `<div class="pw-plans"><button type="button" class="pw-p on" data-plan="anual"><span class="pw-tag">mais vantajoso</span><b>Anual</b><strong>R$ 89,90<small>/ano</small></strong><small>equivale a R$ 7,49 por mês</small></button>
+      <button type="button" class="pw-p" data-plan="mensal"><b>Mensal</b><strong>R$ 9,90<small>/mês</small></strong><small>cancele quando quiser</small></button></div>
+      <button class="btn primary" id="pwgo">Assinar Premium</button>
+      <p class="muted small" style="text-align:center;margin:10px 0 0">${IS_TWA ? 'Pagamento seguro pelo Google Play. Renovação automática; cancele quando quiser na Play Store.' : 'Pagamento seguro por Pix ou cartão via Mercado Pago. Renovação automática; cancele quando quiser.'}</p>`}
+  </div>`);
+  let plan = 'anual';
+  $$('.pw-p').forEach(b => b.addEventListener('click', () => { plan = b.dataset.plan; $$('.pw-p').forEach(x => x.classList.toggle('on', x === b)); }));
+  $('#pwgo')?.addEventListener('click', () => subscribe(plan));
+}
+async function subscribe(plan) {
+  if (!CLOUD_ON) return toast('A assinatura fica disponível depois que a nuvem for configurada.');
+  const btn = $('#pwgo'); btn.disabled = true; btn.textContent = 'Abrindo pagamento…';
+  try {
+    if ('getDigitalGoodsService' in window) return await playBuy(plan);
+    if (IS_TWA) throw new Error('Atualize o app pela Play Store para assinar.');
+    const { data, error } = await sb.functions.invoke('mp-subscribe', { body: { plan } });
+    if (error || !data?.url) throw new Error(data?.error || 'Não foi possível abrir o pagamento agora. Tente de novo.');
+    location.href = data.url;
+  } catch (e) { toast(e.message); btn.disabled = false; btn.textContent = 'Assinar Premium'; }
+}
+async function playBuy(plan) {
+  await window.getDigitalGoodsService('https://play.google.com/billing');
+  const sku = (CFG.playSkus || {})[plan];
+  const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }], { total: { label: 'Total', amount: { currency: 'BRL', value: '0' } } });
+  const res = await req.show();
+  const { data, error } = await sb.functions.invoke('play-verify', { body: { purchaseToken: res.details.purchaseToken } });
+  await res.complete(error || !data?.active ? 'fail' : 'success');
+  if (error || !data?.active) throw new Error('Não foi possível confirmar a compra. Tente de novo em instantes.');
+  await cloudLoadProfile(); closeModal(); applyTheme(); render(); toast('Premium ativado! 🎉');
+}
+async function playRestore() {
+  try {
+    if (!('getDigitalGoodsService' in window)) return;
+    const service = await window.getDigitalGoodsService('https://play.google.com/billing');
+    const list = await service.listPurchases();
+    for (const p of list) await sb.functions.invoke('play-verify', { body: { purchaseToken: p.purchaseToken } });
+    if (list.length) { await cloudLoadProfile(); applyTheme(); render(); }
+  } catch (e) { /* sem compras */ }
+}
+async function waitPayment() {
+  history.replaceState(null, '', location.pathname);
+  toast('Confirmando seu pagamento…');
+  for (let i = 0; i < 8; i++) {
+    await new Promise(r => setTimeout(r, 4000));
+    await cloudLoadProfile();
+    if (isPaid()) { applyTheme(); render(); return toast('Premium ativado! Obrigado 🎉'); }
+  }
+  toast('Pagamento recebido. O Premium é liberado assim que o Mercado Pago confirmar.');
+}
+async function cloudLoadProfile() {
+  try { const { data } = await sb.from('profiles').select('*').eq('id', uidOf()).maybeSingle(); if (data) CL.profile = data; } catch (e) { /* offline */ }
+}
+async function cloudAfterLogin() {
+  STORE = KEY + ':' + uidOf(); load(); applyTheme();
+  await cloudLoadProfile();
+  try {
+    const { data, error } = await sb.from('user_data').select('data,updated_at').eq('user_id', uidOf()).maybeSingle();
+    if (error) throw error;
+    const remote = data?.data;
+    if (remote && remote.transactions) {
+      if ((remote.updatedAt || 0) > (S.updatedAt || 0)) { S = remote; normalize(); save(true); applyTheme(); }
+      else if ((S.updatedAt || 0) > (remote.updatedAt || 0)) { CL.ready = true; await cloudPush(); }
+    } else {
+      let legacy = null; try { legacy = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { /* nada */ }
+      if (legacy && legacy.transactions && legacy.transactions.length && !S.transactions.length) {
+        const r = await ask('Levar seus dados para a conta?', `Encontramos ${legacy.transactions.length} lançamentos salvos neste aparelho. Quer guardar na sua conta?`, [['y', 'Sim, levar meus dados', 'primary'], ['n', 'Não, começar do zero']]);
+        if (r === 'y') { S = legacy; normalize(); }
+      }
+      S.profile.email ||= CL.session.user.email;
+      if (!S.profile.name && CL.profile?.name) S.profile.name = CL.profile.name;
+      save(true); CL.ready = true; await cloudPush();
+    }
+    CL.err = '';
+  } catch (e) { CL.err = 'Sem conexão com a nuvem — salvando no aparelho'; }
+  CL.ready = true;
+  if (IS_TWA) playRestore();
+}
+async function cloudPush() {
+  if (!CLOUD_ON || !uidOf()) return;
+  CL.busy = true; refreshSyncUI();
+  const { error } = await sb.from('user_data').upsert({ user_id: uidOf(), data: S, updated_at: new Date().toISOString() });
+  CL.busy = false;
+  if (error) { CL.err = 'Sem conexão — tentaremos de novo'; CL.dirty = true; setTimeout(() => CL.dirty && cloudPush(), 30000); }
+  else { CL.err = ''; CL.last = Date.now(); CL.dirty = false; }
+  refreshSyncUI();
+}
+function cloudSchedule() { if (!CL.ready || !uidOf()) return; CL.dirty = true; clearTimeout(CL.timer); CL.timer = setTimeout(cloudPush, 2500); }
+async function cloudRefresh() {
+  if (!uidOf() || !CL.ready) return;
+  if (CL.dirty) await cloudPush();
+  await cloudLoadProfile();
+  try {
+    const { data } = await sb.from('user_data').select('data').eq('user_id', uidOf()).maybeSingle();
+    if (data?.data && (data.data.updatedAt || 0) > (S.updatedAt || 0)) { S = data.data; normalize(); save(true); }
+  } catch (e) { /* offline */ }
+  applyTheme(); if (!$('#modal .sheet')) render();
+}
+async function cloudLogout() {
+  if (CL.dirty) await cloudPush();
+  try { await sb.auth.signOut(); } catch (e) { /* offline */ }
+  CL.session = null; CL.profile = null; CL.ready = false; STORE = KEY; load(); V.tab = 'inicio'; V.sub = null; applyTheme(); showAuth('entrar');
+}
+async function deleteAccount() {
+  const r = await ask('Excluir sua conta?', 'Isso apaga sua conta e TODOS os seus dados da nuvem, para sempre. Assinaturas ativas devem ser canceladas no Mercado Pago ou na Play Store.', [['y', 'Continuar', 'danger']]);
+  if (!r) return;
+  const r2 = await ask('Tem certeza?', 'Não é possível desfazer. Faça um backup antes se quiser guardar uma cópia.', [['y', 'Excluir definitivamente', 'danger']]);
+  if (!r2) return;
+  const { error } = await sb.rpc('delete_my_account');
+  if (error) return toast('Não foi possível excluir agora: ' + error.message);
+  try { localStorage.removeItem(STORE); } catch (e) { /* nada */ }
+  CL.dirty = false; await cloudLogout(); toast('Conta excluída.');
+}
+function authErr(m) {
+  m = String(m || '');
+  if (/invalid login/i.test(m)) return 'E-mail ou senha incorretos.';
+  if (/not confirmed/i.test(m)) return 'Confirme seu e-mail pelo link que enviamos antes de entrar.';
+  if (/already registered|already exists/i.test(m)) return 'Este e-mail já tem conta. Use "Entrar".';
+  if (/password should be|at least/i.test(m)) return 'A senha precisa ter pelo menos 6 caracteres.';
+  if (/rate limit|too many/i.test(m)) return 'Muitas tentativas. Aguarde um minuto e tente de novo.';
+  if (/fetch|network/i.test(m)) return 'Sem conexão com a internet.';
+  return m;
+}
+function showAuth(mode = 'entrar', msg = '', ok = '') {
+  $('#tabbar').innerHTML = ''; $('#fab').classList.add('hide'); document.body.classList.remove('logged');
+  const T = { entrar: 'Entrar', criar: 'Criar conta grátis', esqueci: 'Recuperar senha', nova: 'Criar nova senha' }[mode];
+  $('#main').innerHTML = `<div class="loginwrap" style="min-height:82vh;display:flex;flex-direction:column;justify-content:center">
+  <div style="text-align:center;margin-bottom:22px"><img src="icons/logo.png" alt="HANKX" style="width:84px;height:84px;border-radius:22px"><h1 style="margin:14px 0 4px">HANKX Finanças</h1><p class="muted" style="margin:0">${mode === 'criar' ? '7 dias de Premium grátis, sem cartão' : 'Seu dinheiro organizado'}</p></div>
+  ${mode === 'entrar' || mode === 'criar' ? `<div class="seg" style="margin-bottom:12px"><button class="${mode === 'entrar' ? 'on' : ''}" data-auth="entrar">Entrar</button><button class="${mode === 'criar' ? 'on' : ''}" data-auth="criar">Criar conta</button></div>` : ''}
+  <form id="authf" class="card" autocomplete="on"><h3 style="margin:0 0 12px">${T}</h3>
+  ${mode === 'criar' ? `<label class="f"><span>Seu nome</span><input class="in" name="name" autocomplete="name" required></label>` : ''}
+  ${mode !== 'nova' ? `<label class="f"><span>E-mail</span><input class="in" name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>` : ''}
+  ${mode !== 'esqueci' ? `<label class="f"><span>${mode === 'nova' ? 'Nova senha' : 'Senha'}</span><input class="in" name="pass" type="password" minlength="6" autocomplete="${mode === 'entrar' ? 'current-password' : 'new-password'}" required></label>` : ''}
+  ${msg ? `<p class="red" style="margin:0 0 12px">${esc(msg)}</p>` : ''}${ok ? `<p class="green" style="margin:0 0 12px">${esc(ok)}</p>` : ''}
+  <button class="btn primary">${{ entrar: 'Entrar', criar: 'Criar conta e começar', esqueci: 'Enviar link por e-mail', nova: 'Salvar nova senha' }[mode]}</button>
+  ${mode === 'entrar' ? `<button type="button" class="lnk" data-auth="esqueci" style="display:block;margin:12px auto 0">Esqueci minha senha</button>` : ''}
+  ${mode === 'esqueci' ? `<button type="button" class="lnk" data-auth="entrar" style="display:block;margin:12px auto 0">Voltar para entrar</button>` : ''}
+  ${mode === 'criar' ? `<p class="muted small" style="margin:12px 0 0">Ao criar a conta você concorda com os <a href="../termos.html" class="accent">Termos de uso</a> e a <a href="../privacidade.html" class="accent">Política de privacidade</a>.</p>` : ''}
+  </form>
+  <p style="text-align:center;margin-top:16px"><a href="../" class="muted small">← Conhecer o HANKX Finanças</a></p></div>`;
+  $$('[data-auth]').forEach(b => b.addEventListener('click', () => showAuth(b.dataset.auth)));
+  $('#authf').addEventListener('submit', async e => {
+    e.preventDefault(); const f = e.target, btn = f.querySelector('.btn.primary'); btn.disabled = true; btn.textContent = 'Aguarde…';
+    const email = f.email?.value.trim().toLowerCase(), pass = f.pass?.value;
+    const back = location.origin + location.pathname;
+    try {
+      if (mode === 'entrar') {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password: pass }); if (error) throw error;
+        CL.session = data.session; await cloudAfterLogin(); render(false);
+      } else if (mode === 'criar') {
+        const { data, error } = await sb.auth.signUp({ email, password: pass, options: { data: { name: f.name.value.trim() }, emailRedirectTo: back } }); if (error) throw error;
+        if (!data.session) return showAuth('entrar', '', `Quase lá! Enviamos um link de confirmação para ${email}. Abra o e-mail, confirme e depois entre aqui.`);
+        CL.session = data.session; S.profile.name = f.name.value.trim(); await cloudAfterLogin(); render(false); toast('Conta criada! Seus 7 dias de Premium começaram 🎉');
+      } else if (mode === 'esqueci') {
+        const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: back }); if (error) throw error;
+        showAuth('esqueci', '', 'Se existir uma conta com esse e-mail, enviamos um link para criar uma nova senha.');
+      } else if (mode === 'nova') {
+        const { error } = await sb.auth.updateUser({ password: pass }); if (error) throw error;
+        CL.recovery = false; history.replaceState(null, '', location.pathname); await cloudAfterLogin(); render(false); toast('Senha alterada!');
+      }
+    } catch (err) { showAuth(mode, authErr(err.message)); }
+  });
+}
+function scrConta() {
+  const u = CL.session?.user;
+  return `${backHead('Minha conta')}
+  <div class="card"><div class="between"><span class="muted">E-mail</span><b>${esc(u?.email || '')}</b></div><div class="hr"></div>
+  <div class="between"><span class="muted">Plano</span><b>${isPaid() ? 'Premium' : trialDaysLeft() ? 'Teste Premium' : 'Grátis'}</b></div><div class="hr"></div>
+  <div class="between"><span class="muted">Situação</span><span class="small">${esc(premiumLabel())}</span></div><div class="hr"></div>
+  <div class="between"><span class="muted">Nuvem</span><span class="small" data-synclabel>${esc(syncLabel())}</span></div></div>
+  <button class="btn primary" data-act="premium">${isPaid() ? 'Ver minha assinatura' : 'Assinar Premium'}</button>
+  <button class="btn" data-act="cloud-save" style="margin-top:10px">Salvar na nuvem agora</button>
+  <p class="muted small" style="margin-top:14px">Seus dados ficam guardados com segurança na nuvem e aparecem em qualquer aparelho em que você entrar com este e-mail.</p>`;
+}
+async function boot() {
+  load(); applyTheme();
+  if (!CLOUD_ON) { render(false); if (isLogged()) syncNow(); return; }
+  sb.auth.onAuthStateChange((ev, session) => {
+    if (ev === 'PASSWORD_RECOVERY') { CL.recovery = true; CL.session = session; showAuth('nova'); }
+    else if (ev === 'SIGNED_OUT') CL.session = null;
+    else if (session) CL.session = session;
+  });
+  $('#main').innerHTML = '<div class="empty" style="padding-top:40vh">Carregando…</div>';
+  const { data: { session } } = await sb.auth.getSession();
+  CL.session = session;
+  if (CL.recovery || /type=recovery/.test(location.hash)) { CL.recovery = true; return showAuth('nova'); }
+  if (session) await cloudAfterLogin();
+  applyTheme(); render(false);
+  if (session && /[?&]pago=1/.test(location.search)) waitPayment();
+}
+
 /* ======================= Login ======================= */
 const AUTH_HASH = 'ee0b71d412bd5fc24c7b60efc3a5263de132b2857783cc7efe8a12857c688252';
 const AUTH_KEY = 'hankx-fin-auth';
@@ -771,8 +1006,9 @@ async function sha256(t) {
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
   return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
-const isLogged = () => { try { return localStorage.getItem(AUTH_KEY) === AUTH_HASH || sessionStorage.getItem(AUTH_KEY) === AUTH_HASH; } catch (e) { return false; } };
+const isLogged = () => { if (CLOUD_ON) return !!CL.session; try { return localStorage.getItem(AUTH_KEY) === AUTH_HASH || sessionStorage.getItem(AUTH_KEY) === AUTH_HASH; } catch (e) { return false; } };
 function showLogin(msg = '') {
+  if (CLOUD_ON) return showAuth('entrar', msg);
   $('#tabbar').innerHTML = ''; $('#fab').classList.add('hide');
   $('#main').innerHTML = `<div class="loginwrap" style="min-height:80vh;display:flex;flex-direction:column;justify-content:center">
   <div style="text-align:center;margin-bottom:28px"><img src="icons/logo.png" alt="HANKX" style="width:96px;height:96px;border-radius:24px"><h1 style="margin:16px 0 4px">HANKX Finanças</h1><p class="muted" style="margin:0">Entre para acessar</p></div>
@@ -792,7 +1028,7 @@ function showLogin(msg = '') {
     render(false); syncNow();
   });
 }
-function logout() { try { localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); } catch (e) {} V.tab = 'inicio'; V.sub = null; showLogin(); }
+function logout() { if (CLOUD_ON) return cloudLogout(); try { localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); } catch (e) {} V.tab = 'inicio'; V.sub = null; showLogin(); }
 
 
 /* ======================= Sincronização com GitHub ======================= */
@@ -803,7 +1039,7 @@ SY.repo ||= 'renatotnegrao-hankx/hankx-dados'; SY.path ||= 'financas.json';
 const SYS = { busy: false, ready: false, err: '', timer: null };
 const SYNC_EVERY = 30 * 60 * 1000; // envia ao GitHub no máximo a cada 30 minutos
 const saveSY = () => { try { localStorage.setItem(SYNC_KEY, JSON.stringify({ repo: SY.repo, path: SY.path, token: SY.token, sha: SY.sha, lastSync: SY.lastSync, dirty: SY.dirty })); } catch (e) {} };
-const syncOn = () => !!SY.token;
+const syncOn = () => CLOUD_ON ? true : !!SY.token;
 function b64e(str) { const by = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < by.length; i += 0x8000) bin += String.fromCharCode(...by.subarray(i, i + 0x8000)); return btoa(bin); }
 const b64d = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, '')), c => c.charCodeAt(0)));
 function ghFetch(method, body, raw) {
@@ -853,6 +1089,7 @@ function adoptRemote(data) {
   save(true); applyTheme(); V.acc = 'all'; SY.lastSync = Date.now(); SY.dirty = false; saveSY();
 }
 async function syncNow(opts = {}) {
+  if (CLOUD_ON) return cloudRefresh();
   if (!syncOn() || SYS.busy) return;
   SYS.busy = true; SYS.err = ''; refreshSyncUI();
   try {
@@ -877,6 +1114,7 @@ async function syncNow(opts = {}) {
   maybePush();
 }
 function schedulePush() {
+  if (CLOUD_ON) return cloudSchedule();
   if (!syncOn()) return;
   SY.dirty = true; saveSY(); refreshSyncUI(); maybePush();
 }
@@ -889,6 +1127,11 @@ async function maybePush(force = false) {
 }
 setInterval(() => maybePush(), 60 * 1000);
 function syncLabel() {
+  if (CLOUD_ON) {
+    if (CL.busy) return 'Salvando na nuvem…';
+    if (CL.err) return '⚠️ ' + CL.err;
+    return CL.last ? 'Salvo na nuvem · ' + new Date(CL.last).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Conectado à nuvem';
+  }
   if (!syncOn()) return 'Desligado — dados só neste aparelho';
   if (SYS.busy) return 'Sincronizando…';
   if (SYS.err) return '⚠️ ' + SYS.err;
@@ -900,6 +1143,7 @@ function refreshSyncUI() { $$('[data-synclabel]').forEach(el => el.textContent =
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && isLogged()) syncNow(); });
 window.addEventListener('online', () => isLogged() && syncNow());
 function scrSync() {
+  if (CLOUD_ON) return scrConta();
   return `${backHead('Salvar no GitHub')}
   <div class="card"><div class="between"><b>Situação</b><span class="small ${SYS.err ? 'red' : syncOn() ? 'green' : 'muted'}" data-synclabel>${esc(syncLabel())}</span></div></div>
   ${syncOn() ? `<button class="btn primary" data-act="sync-now" style="margin-bottom:12px">${I('ul')} Enviar para o GitHub agora</button>` : ''}
@@ -1018,6 +1262,7 @@ function scrInicioDesk() {
         <div class="mfoot"><span>Total em aberto</span><b class="red">${brl(r2(debtOpen + cardOpen))}</b></div></div>` : ''}
     </div>
     <div class="mcol">
+      ${trialBanner()}
       ${!syncOn() ? `<div class="mbanner" data-act="go" data-sub="sync">${I('info')}<span><b>Seus dados estão só neste aparelho.</b> Clique para ativar o salvamento automático no GitHub.</span>${I('right')}</div>` : ''}
       <div class="mbox"><div class="mh"><b>Balanço mensal</b><button class="lnk" data-act="tab" data-v="graficos">Ver relatórios</button></div>${bal}</div>
       <div class="mbox"><div class="mh"><b>Contas a pagar</b><span class="badge late">${soon.length}</span></div>${pend(soon, 'd')}</div>
@@ -1057,8 +1302,10 @@ function applyTheme() {
   if (['bissexual', 'hetero', 'lesbica'].includes(st.skin)) st.skin = 'diversidade';
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
   const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'mobills') !== 'app';
+  const skin0 = st.skin; if (!isPremium()) st.skin = 'padrao';
   b.className = mob ? 'light skin-mobills' :  (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
   if (typeof isLogged === 'function') { b.classList.toggle('logged', isLogged()); b.classList.toggle('desk', isDesk()); }
+  st.skin = skin0;
   const meta = $('meta[name=theme-color]'); if (meta) meta.content = getComputedStyle(b).getPropertyValue('--bg2').trim() || '#12161f';
 }
 const TABS = [['inicio', 'home', 'Início'], ['calendario', 'cal', 'Calendário'], ['transacoes', 'list', 'Transações'], ['graficos', 'pie', 'Gráficos'], ['ajustes', 'gear', 'Ajustes']];
@@ -1471,10 +1718,13 @@ document.addEventListener('click', async e => {
   switch (act) {
     case 'close-modal': if (ask._res) { const r = ask._res; ask._res = null; r(null); } else closeModal(); break;
     case 'tab': V.tab = el.dataset.v; V.sub = null; V.calDay = null; V.projSel = null; render(false); break;
-    case 'go': V.tab = 'ajustes'; V.sub = el.dataset.sub; render(false); break;
+    case 'go': { const sub = el.dataset.sub, lock = { dividas: 'Controle de dívidas', emprestimos: 'Simulador de empréstimos', orientacao: 'Orientação de pagamentos' }[sub];
+      if (lock && needPremium(lock)) break; V.tab = 'ajustes'; V.sub = sub; render(false); break; }
+    case 'premium': paywall(); break;
+    case 'delete-account': deleteAccount(); break;
     case 'back': V.sub = null; render(false); break;
     case 'acc': V.acc = id; render(); break;
-    case 'set': { const k = el.dataset.k; let v = el.dataset.v; if (k === 'projN') v = +v; V[k] = v; if (k === 'projN') V.projSel = null; if (k === 'mode' && v === 'periodo') { const [a, b] = range('mensal'); V.from = a; V.to = b; } render(); break; }
+    case 'set': { const k = el.dataset.k; let v = el.dataset.v; if (k === 'chart' && v !== 'resumo' && needPremium('Gráficos completos')) break; if (k === 'projN') v = +v; V[k] = v; if (k === 'projN') V.projSel = null; if (k === 'mode' && v === 'periodo') { const [a, b] = range('mensal'); V.from = a; V.to = b; } render(); break; }
     case 'nav': { const d = +el.dataset.d; if (el.dataset.m === 'm') V.ym = ymAdd(V.ym, d); else V.year += d; V.calDay = null; render(); break; }
     case 'nav-today': V.ym = T0.slice(0, 7); V.year = +T0.slice(0, 4); V.calDay = null; render(); break;
     case 'new-tx': txForm(); break;
@@ -1490,10 +1740,10 @@ document.addEventListener('click', async e => {
     case 'toggle-open': V.open[el.dataset.k] = !V.open[el.dataset.k]; render(); break;
     case 'theme': S.settings.theme = el.dataset.v; save(); applyTheme(); render(); break;
     case 'desktheme': S.settings.deskTheme = el.dataset.v; save(); applyTheme(); render(); break;
-    case 'skin': S.settings.skin = el.dataset.v; save(); applyTheme(); render(); break;
+    case 'skin': if (el.dataset.v !== 'padrao' && needPremium('Temas e perfis de interface')) break; S.settings.skin = el.dataset.v; save(); applyTheme(); render(); break;
     case 'save-profile': readProfileForm(); save(); toast('Perfil salvo'); render(); break;
     case 'del-photo': S.profile.photo = ''; save(); render(); break;
-    case 'acc-edit': accForm(id); break;
+    case 'acc-edit': if (!id && S.accounts.length >= 1 && needPremium('Várias contas e cartões')) break; accForm(id); break;
     case 'acc-default': S.accounts.forEach(a => a.isDefault = a.id === id); save(); render(); break;
     case 'acc-del': {
       const a = acc(id), n = S.transactions.filter(t => t.accountId === id).length;
@@ -1520,13 +1770,14 @@ document.addEventListener('click', async e => {
       const t = S.transactions.find(x => x.id === i.txId); if (t) t.paid = i.paid; save(); render(); break;
     }
     case 'loan-go': loanGo(); break;
+    case 'cloud-save': await cloudPush(); toast(CL.err || 'Salvo na nuvem'); render(); break;
     case 'sync-now': SY.dirty = true; await maybePush(true); toast(SYS.err || 'Enviado para o GitHub'); render(); break;
     case 'sync-off': { const r = await ask('Desconectar o GitHub deste aparelho?', 'Seus dados continuam guardados no GitHub. Este aparelho só para de enviar alterações.', [['y', 'Desconectar', 'danger']]); if (r) { SY.token = ''; SY.sha = undefined; SY.lastSync = undefined; SYS.ready = false; saveSY(); render(); } break; }
     case 'logout': { const r = await ask('Sair do app?', 'Seus lançamentos continuam salvos neste aparelho.', [['y', 'Sair', 'danger']]); if (r) logout(); break; }
-    case 'rep-caixa': repCaixa(); break;
-    case 'rep-pdf': repPdf(); break;
-    case 'rep-excel': repExcel(); break;
-    case 'rep-csv': repCsv(); break;
+    case 'rep-caixa': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repCaixa(); break;
+    case 'rep-pdf': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repPdf(); break;
+    case 'rep-excel': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repExcel(); break;
+    case 'rep-csv': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repCsv(); break;
     case 'backup': saveFile(new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' }), `hankx-backup-${T0}.json`); toast('Backup gerado'); break;
     case 'restore': {
       const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json';
@@ -1573,5 +1824,5 @@ document.addEventListener('input', e => {
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (S.settings.theme === 'auto') { applyTheme(); render(); } });
 
 /* ======================= Início ======================= */
-load(); applyTheme(); render(false); if (isLogged()) syncNow();
+boot();
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});

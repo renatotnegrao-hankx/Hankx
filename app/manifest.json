@@ -1,18 +1,67 @@
 {
-  "id": "./",
+  "id": "/app/",
   "name": "HANKX Finanças",
   "short_name": "HANKX",
-  "description": "Controle financeiro pessoal: lançamentos, calendário, gráficos, dívidas e empréstimos.",
+  "description": "Organize receitas, despesas, contas e dívidas. Calendário de saldo, gráficos e relatórios.",
   "lang": "pt-BR",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/app/",
+  "scope": "/app/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f141c",
   "theme_color": "#12161f",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": [
+    "finance",
+    "productivity"
+  ],
+  "screenshots": [
+    {
+      "src": "../img/tela-inicio.webp",
+      "sizes": "585x1266",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Início"
+    },
+    {
+      "src": "../img/tela-graficos.webp",
+      "sizes": "585x1266",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Resumo do mês"
+    },
+    {
+      "src": "../img/tela-calendario.webp",
+      "sizes": "585x1266",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Calendário"
+    },
+    {
+      "src": "../img/tela-notebook.webp",
+      "sizes": "1440x900",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Painel no computador"
+    }
   ]
 }
