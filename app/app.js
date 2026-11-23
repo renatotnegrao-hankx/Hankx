@@ -186,8 +186,15 @@ function sortTx(list, by = V.sort) {
 }
 
 /* ======================= Componentes ======================= */
+// logotipo do banco (carregado do site do banco; se não vier, ficam as iniciais)
+const logoUrl = d => `https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=128`;
+const accIni = n => (String(n || '?').replace(/[^\p{L}\p{N} ]/gu, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2) || '?').toLowerCase();
+function accLogo(a, cls = 'banklogo') {
+  if (!a) return `<span class="${cls}" style="background:#888">?</span>`;
+  return `<span class="${cls} ${a.logo ? 'haslogo' : ''}" style="background:${a.color};--bc:${a.color}">${esc(accIni(a.name))}${a.logo ? `<img src="${logoUrl(a.logo)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>`;
+}
 function accChips() {
-  const chips = S.accounts.map(a => `<button class="accchip ${V.acc === a.id ? 'on' : ''}" style="${V.acc === a.id ? `background:${a.color}` : ''}" data-act="acc" data-id="${a.id}">${esc(a.name.length > 11 ? a.name.split(' ')[0] : a.name)}</button>`).join('');
+  const chips = S.accounts.map(a => `<button class="accchip ${V.acc === a.id ? 'on' : ''}" style="${V.acc === a.id ? `background:${a.color}` : ''}" data-act="acc" data-id="${a.id}">${a.logo ? `<img class="chiplogo" src="${logoUrl(a.logo)}" alt="" onerror="this.remove()">` : ''}${esc(a.name.length > 11 ? a.name.split(' ')[0] : a.name)}</button>`).join('');
   return `<div class="accs"><button class="accchip ${V.acc === 'all' ? 'on' : ''}" style="${V.acc === 'all' ? 'background:var(--accent)' : ''}" data-act="acc" data-id="all">Todas</button>${chips}</div>`;
 }
 function seg(name, opts, cur, cls = '') {
@@ -670,7 +677,7 @@ function scrContas() {
   <div class="seg"><button class="${V.accTab === 'conta' ? 'on' : ''}" data-act="set" data-k="accTab" data-v="conta">${I('bank')} Contas</button><button class="${V.accTab === 'cartao' ? 'on' : ''}" data-act="set" data-k="accTab" data-v="cartao">${I('card')} Cartões</button></div>
   ${V.accTab === 'conta' ? `<div class="card between"><span class="muted" style="font-size:15px">Saldo total em caixa</span><b style="font-size:18px">${brl(total)}</b></div>` : ''}
   <div class="cardgrid">${contas.map(a => `<div class="card" style="${a.isDefault ? 'border-color:var(--accent)' : ''}"><div class="row" style="align-items:flex-start">
-    <div class="banklogo" style="background:${a.color}">${esc(a.name.split(' ')[0].slice(0, 6))}</div>
+    ${accLogo(a, 'banklogo')}
     <div style="flex:1;min-width:0"><div class="between"><b style="font-size:16px">${esc(a.name)}</b>${a.isDefault ? '<span class="badge done" style="padding:2px 10px;font-size:12px">Padrão</span>' : ''}</div>
     <div class="muted small">${esc(a.kind === 'cartao' ? `Cartão${a.dueDay ? ' · vence dia ' + a.dueDay : ''}${a.limit ? ' · limite ' + brl(+a.limit) : ''}` : a.type || 'Conta corrente')}</div>
     <div class="between"><b style="font-size:16px;margin-top:4px">${brl(a.kind === 'cartao' ? -LIVE().filter(t => t.accountId === a.id && !t.paid && t.type === 'despesa').reduce((s, t) => s + +t.amount, 0) : accBalance(a))}</b>
@@ -1150,7 +1157,7 @@ function txTable(list, o = {}) {
     return `<tr class="${t.type} ${t.canceled ? 'canceled' : ''} ${t.paid ? 'paid' : ''}" data-act="edit-tx" data-id="${t.id}">
     <td class="nw">${fmtD(t.date)}</td>
     <td><div class="dname">${esc(t.desc || c?.name || '')}${t.total > 1 ? ` <small class="muted">${t.idx}/${t.total}</small>` : ''}${t.lote ? ' ' + I('repeat') : ''}</div>${t.note ? `<small class="muted">${esc(t.note)}</small>` : ''}</td>
-    <td class="nw">${c ? `${c.icon} ${esc(c.name)}` : '<span class="muted">—</span>'}</td>${o.compact ? '' : `<td class="nw"><span class="adot" style="background:${a?.color || '#888'}"></span>${esc(a?.name || '—')}</td>`}
+    <td class="nw">${c ? `${c.icon} ${esc(c.name)}` : '<span class="muted">—</span>'}</td>${o.compact ? '' : `<td class="nw">${a?.logo ? `<img class="alogo" src="${logoUrl(a.logo)}" alt="" onerror="this.outerHTML='<span class=adot style=background:${a.color}></span>'">` : `<span class="adot" style="background:${a?.color || '#888'}"></span>`}${esc(a?.name || '—')}</td>`}
     <td>${txStatus(t)}</td><td class="r nw val">${t.type === 'receita' ? '+' : '−'} ${brl(t.amount)}</td>
     <td class="acts nw">${t.canceled ? `<button class="ib" title="Reativar" data-act="uncancel-tx" data-id="${t.id}">${I('repeat')}</button>` : `<button class="ib ${t.paid ? 'green' : ''}" title="${t.paid ? 'Marcar como pendente' : 'Marcar como pago'}" data-act="toggle-paid" data-id="${t.id}">${I(t.paid ? 'check' : 'circle')}</button>`}<button class="ib" title="Excluir" data-act="del-tx" data-id="${t.id}">${I('trash')}</button></td></tr>`; }).join('')}
   </tbody></table></div>`;
@@ -1184,12 +1191,12 @@ function scrInicioDesk() {
   <div class="mgrid">
     <div class="mcol">
       <div class="mbox"><div class="mh"><b>Contas</b><button class="lnk" data-act="go" data-sub="contas">Gerenciar contas</button></div>
-        ${contas.map(x => `<div class="mrow"><span class="mlogo" style="background:${x.color}">${esc(x.name.slice(0, 2).toLowerCase())}</span><span class="grow"><b>${esc(x.name)}</b><small class="muted">${esc(x.type || 'Conta corrente')}</small></span><b class="${accBalance(x) < 0 ? 'red' : ''}">${brl(accBalance(x))}</b></div>`).join('')}
+        ${contas.map(x => `<div class="mrow">${accLogo(x, 'mlogo')}<span class="grow"><b>${esc(x.name)}</b><small class="muted">${esc(x.type || 'Conta corrente')}</small></span><b class="${accBalance(x) < 0 ? 'red' : ''}">${brl(accBalance(x))}</b></div>`).join('')}
         <div class="mfoot"><span>Total</span><b>${brl(r2(contas.reduce((s2, x) => s2 + accBalance(x), 0)))}</b></div></div>
       <div class="mbox"><div class="mh"><b>Despesas por categoria</b><span class="muted small">${brl(tot)}</span></div>
         ${arr.length ? `<div class="mini-donut">${donut(arr, tot)}<div class="catlist">${arr.slice(0, 6).map((x, i) => `<div class="it"><span class="dot" style="background:${PALETTE[i % PALETTE.length]}"></span><span class="nm">${cat(x.id)?.icon || ''} ${esc(cat(x.id)?.name || 'Sem categoria')}</span><b>${brl(x.total)}</b><small class="muted" style="width:34px;text-align:right">${Math.round(x.total / tot * 100)}%</small></div>`).join('')}</div></div>` : `<div class="mempty">${I('pie')}<span>Sem despesas no período</span></div>`}</div>
       ${cards.length || debtOpen ? `<div class="mbox"><div class="mh"><b>Cartões e dívidas</b><button class="lnk" data-act="go" data-sub="dividas">Ver dívidas</button></div>
-        ${cards.map(c => `<div class="mrow"><span class="mlogo" style="background:${c.color}">${I('card')}</span><span class="grow"><b>${esc(c.name)}</b><small class="muted">${c.dueDay ? 'Vence dia ' + esc(c.dueDay) : 'Cartão de crédito'}</small></span><b class="red">${brl(LIVE().filter(t => t.accountId === c.id && !t.paid && t.type === 'despesa').reduce((s2, t) => s2 + +t.amount, 0))}</b></div>`).join('')}
+        ${cards.map(c => `<div class="mrow">${c.logo ? accLogo(c, 'mlogo') : `<span class="mlogo" style="background:${c.color}">${I('card')}</span>`}<span class="grow"><b>${esc(c.name)}</b><small class="muted">${c.dueDay ? 'Vence dia ' + esc(c.dueDay) : 'Cartão de crédito'}</small></span><b class="red">${brl(LIVE().filter(t => t.accountId === c.id && !t.paid && t.type === 'despesa').reduce((s2, t) => s2 + +t.amount, 0))}</b></div>`).join('')}
         ${S.debts.map(d => { const st = debtStats(d); return st.rem > 0 ? `<div class="mrow"><span class="mico d">${I('dollar')}</span><span class="grow"><b>${esc(d.name)}</b><small class="muted">${st.paid}/${st.n} parcelas pagas</small><span class="meter"><i style="width:${Math.round(st.paid / st.n * 100)}%"></i></span></span><b class="red">${brl(st.rem)}</b></div>` : ''; }).join('')}
         <div class="mfoot"><span>Total em aberto</span><b class="red">${brl(r2(debtOpen + cardOpen))}</b></div></div>` : ''}
     </div>
@@ -1483,7 +1490,12 @@ const COLORS = ['#ec7000', '#cc092f', '#820ad1', '#005ca9', '#00a868', '#ffcc00'
 function accForm(id) {
   const a = id ? acc(id) : { name: '', kind: V.accTab, type: 'Conta corrente', initial: 0, color: COLORS[S.accounts.length % COLORS.length], dueDay: '', limit: '' };
   const isCard = a.kind === 'cartao';
+  const bc0 = S.settings.bankCountry || 'BR', B = window.BANKS || {};
   openModal(`<h3>${id ? 'Editar' : 'Nova'} ${isCard ? 'cartão' : 'conta'}</h3><form id="af">
+  <div class="bankpick"><button type="button" class="bankbtn" id="bkbtn"><span id="bkprev">${accLogo(a.name || a.logo ? a : { name: '?', color: 'var(--card2)' }, 'banklogo')}</span><span class="grow"><b id="bkname">${a.logo ? esc(a.bankName || a.name) : 'Escolher banco'}</b><small class="muted">Busque por país ou pelo nome</small></span>${I('down')}</button>
+  <div id="bkpanel" class="bkpanel" style="display:${a.logo || id ? 'none' : 'block'}"><div class="bkrow"><select class="in" id="bkc">${Object.entries(B).map(([k, v]) => `<option value="${k}" ${k === bc0 ? 'selected' : ''}>${v[0]}</option>`).join('')}<option value="ALL">🌎 Todos os países</option></select><input class="in" id="bkq" placeholder="Buscar banco..." autocomplete="off"></div>
+  <div class="bklist" id="bkl"></div></div></div>
+  <input type="hidden" name="logo" value="${esc(a.logo || '')}"><input type="hidden" name="bankName" value="${esc(a.bankName || '')}">
   <label class="f"><span>Nome ${isCard ? 'do cartão' : 'do banco/conta'}</span><input class="in" name="name" value="${esc(a.name)}" required placeholder="${isCard ? 'Ex.: Nubank' : 'Ex.: Itaú'}"></label>
   ${isCard ? `<div class="row"><label class="f" style="flex:1"><span>Dia de vencimento</span><input class="in" name="dueDay" inputmode="numeric" value="${esc(a.dueDay || '')}"></label><label class="f" style="flex:1"><span>Limite</span><input class="in" name="limit" inputmode="decimal" value="${a.limit ? num2(a.limit) : ''}"></label></div>`
       : `<label class="f"><span>Tipo</span><select class="in" name="type">${['Conta corrente', 'Poupança', 'Carteira', 'Investimento', 'Conta salário'].map(x => `<option ${a.type === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
@@ -1492,10 +1504,33 @@ function accForm(id) {
   <div class="muted" style="margin-bottom:8px">Cor</div><div class="colors">${COLORS.map(c => `<button type="button" data-c="${c}" class="${a.color === c ? 'on' : ''}" style="background:${c}"></button>`).join('')}</div>
   <input type="hidden" name="color" value="${a.color}"><button class="btn primary">Salvar</button></form>`);
   const f = $('#af');
-  f.addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (b) { f.color.value = b.dataset.c; $$('.colors button', f).forEach(x => x.classList.toggle('on', x === b)); } });
+  const listBanks = () => {
+    const c = $('#bkc').value, q = $('#bkq').value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const all = c === 'ALL' ? Object.values(B).flatMap(v => v[1]) : (B[c]?.[1] || []);
+    const seen = new Set(), L = all.filter(x => !seen.has(x[1]) && seen.add(x[1]) && (!q || x[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q)));
+    $('#bkl').innerHTML = L.map(([n, d, col]) => `<button type="button" class="bkit ${f.logo.value === d ? 'on' : ''}" data-bk="${d}" data-n="${esc(n)}" data-col="${col}">${accLogo({ name: n, logo: d, color: col }, 'banklogo sm')}<span>${esc(n)}</span></button>`).join('')
+      + `<button type="button" class="bkit" data-bk="" data-n="">${accLogo({ name: '+', color: 'var(--muted)' }, 'banklogo sm')}<span>Outro (sem logotipo)</span></button>`;
+  };
+  listBanks();
+  $('#bkc').addEventListener('change', () => { S.settings.bankCountry = $('#bkc').value === 'ALL' ? S.settings.bankCountry : $('#bkc').value; listBanks(); });
+  $('#bkq').addEventListener('input', listBanks);
+  f.addEventListener('click', e => {
+    const b = e.target.closest('[data-c]'); if (b) { f.color.value = b.dataset.c; $$('.colors button', f).forEach(x => x.classList.toggle('on', x === b)); }
+    if (e.target.closest('#bkbtn')) { const p = $('#bkpanel'); p.style.display = p.style.display === 'none' ? 'block' : 'none'; if (p.style.display === 'block') $('#bkq').focus(); }
+    const k = e.target.closest('[data-bk]');
+    if (k) {
+      const prevBank = f.bankName.value, n = k.dataset.n, d = k.dataset.bk;
+      f.logo.value = d; f.bankName.value = n;
+      if (n && (!f.name.value.trim() || f.name.value.trim() === prevBank)) f.name.value = n;
+      if (k.dataset.col) { f.color.value = k.dataset.col; $$('.colors button', f).forEach(x => x.classList.toggle('on', x.dataset.c === k.dataset.col)); }
+      $('#bkprev').innerHTML = accLogo({ name: f.name.value || n || '?', logo: d, color: f.color.value }, 'banklogo');
+      $('#bkname').textContent = n || 'Outro banco'; $('#bkpanel').style.display = 'none';
+      if (!d) f.name.focus();
+    }
+  });
   f.addEventListener('submit', e => {
     e.preventDefault();
-    const o = { name: f.name.value.trim(), color: f.color.value, kind: a.kind || 'conta' };
+    const o = { name: f.name.value.trim(), color: f.color.value, kind: a.kind || 'conta', logo: f.logo.value, bankName: f.bankName.value };
     if (isCard) { o.dueDay = f.dueDay.value; o.limit = parseMoney(f.limit.value); o.initial = 0; } else { o.type = f.type.value; o.initial = r2(parseMoney(f.initial.value)); }
     if (id) Object.assign(a, o); else S.accounts.push({ id: 'acc_' + uid(), isDefault: false, ...o });
     if (!S.accounts.some(x => x.isDefault)) S.accounts[0].isDefault = true;
