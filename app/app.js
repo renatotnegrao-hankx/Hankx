@@ -824,8 +824,8 @@ function trialBanner() {
   const d = trialDaysLeft();
   return `<div class="pbanner ${d ? '' : 'end'}" data-act="premium">${I('star')}<span><b>${d ? `Teste Premium: ${d} dia${d > 1 ? 's' : ''} restante${d > 1 ? 's' : ''}` : 'Seu teste Premium terminou'}</b><small>${d ? 'Aproveite tudo liberado. Assine para não perder.' : 'Assine para voltar a usar gráficos, relatórios, dívidas e temas.'}</small></span><em>Assinar</em></div>`;
 }
-// plano grátis: até 10 receitas e 20 despesas por mês
-const FREE_LIM = { receita: 10, despesa: 20 };
+// plano grátis: até 2 receitas e 5 despesas por mês
+const FREE_LIM = { receita: 2, despesa: 5 };
 function overFreeLimit(news) {
   if (isPremium()) return null;
   const add = {};
@@ -843,7 +843,7 @@ function lockedCard(title, desc) {
 }
 function paywall(reason = '') {
   const paid = isPaid(), d = trialDaysLeft();
-  const perks = ['Lançamentos ilimitados (no grátis: 10 receitas e 20 despesas por mês)', 'Gráficos completos: projeção, categorias e ranking', 'Relatórios em Excel, PDF e CSV', 'Controle de dívidas e simulador de empréstimos', 'Orientação do que pagar primeiro', 'Várias contas e cartões', 'Todos os temas e perfis de interface'];
+  const perks = ['Lançamentos ilimitados (no grátis: 2 receitas e 5 despesas por mês)', 'Gráficos completos: projeção, categorias e ranking', 'Relatórios em Excel, PDF e CSV', 'Controle de dívidas e simulador de empréstimos', 'Orientação do que pagar primeiro', 'Várias contas e cartões', 'Todos os temas e perfis de interface'];
   openModal(`<div class="pw">
     <div class="pw-h"><img src="icons/logo.png?v=4" alt=""><div><b>Hankx Premium</b><small>${paid ? premiumLabel() : d ? `Seu teste grátis termina em ${d} dia${d > 1 ? 's' : ''}` : 'Seu teste grátis terminou'}</small></div></div>
     ${reason ? `<p class="pw-r">${I('lock')} <span><b>${esc(reason)}</b> faz parte do Premium.</span></p>` : ''}
