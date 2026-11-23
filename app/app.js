@@ -608,7 +608,7 @@ function scrGraficosMob() {
 }
 
 /* ---------- Ajustes ---------- */
-const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['magico', '✨', 'Mágico', 'Azul royal, roxo e dourado'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['ios', '📱', 'iOS', 'Visual do iPhone'], ['office', '📊', 'Office', 'Estilo Excel / 365'], ['material', '🔵', 'Material', 'Material You (Android)']];
+const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['magico', '✨', 'Mágico', 'Azul royal, roxo e dourado'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['estiloso', '💜', 'Estiloso', 'Claro, roxo e cartões brancos'], ['ios', '📱', 'Elegante', 'Limpo e arredondado'], ['office', '📊', 'Executivo', 'Sóbrio, estilo planilha'], ['material', '🔵', 'Moderno', 'Cores suaves e formas amplas']];
 function li(act, icon, title, sub, cls = '', extra = '') {
   return `<button class="li ${cls}" data-act="${act}" ${extra}>${I(icon)}<span class="tx2"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${cls ? '' : I('right')}</button>`;
 }
@@ -618,7 +618,6 @@ function scrAjustes() {
   <img src="icons/logo.png?v=4" alt="Hankx" style="width:50px;height:50px;border-radius:13px"></div>
   <div class="split even"><div class="col">
   <div class="sect">APARÊNCIA</div>
-    <div class="card deskonly"><div class="muted" style="margin:0 0 10px">Visual no notebook</div><div class="opts" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px">${[['app', '🎨', 'Tema escolhido', 'Usa o tema e o perfil abaixo'], ['mobills', '💜', 'Estilo Mobills', 'Claro, roxo e cartões brancos']].map(([v, e, l, s2]) => `<button class="opt ${(st.deskTheme || 'app') === v ? 'on' : ''}" data-act="desktheme" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s2}</small></button>`).join('')}</div></div>
   <div class="card"><div class="muted" style="margin-bottom:10px">Tema</div>
     <div class="opts">${[['light', 'sun', 'Claro'], ['dark', 'moon', 'Escuro'], ['auto', 'phone', 'Auto']].map(([v, ic, l]) => `<button class="opt ${st.theme === v ? 'on' : ''}" data-act="theme" data-v="${v}"><span class="e accent" style="color:${st.theme === v ? 'var(--accent)' : 'var(--muted)'}">${I(ic)}</span><b>${l}</b></button>`).join('')}</div>
     <div class="muted" style="margin:16px 0 10px">Perfil de Interface</div>
@@ -632,7 +631,7 @@ function scrAjustes() {
   <div class="list">${li('go', 'dollar', 'Contas', '', '', 'data-sub="contas"')}${li('go', 'shield', 'Categorias', '', '', 'data-sub="categorias"')}${li('go', 'card', 'Dívidas', '', '', 'data-sub="dividas"')}</div>
   </div><div class="col">
   <div class="sect">RELATÓRIOS</div>
-  <div class="list">${li('rep-caixa', 'sheet', 'Planilha Controle de Caixa', 'Modelo Cash Control: descrições nas linhas, meses nas colunas, receitas, despesas e saldos (.xlsx)', 'c-green')}
+  <div class="list">${li('rep-caixa', 'sheet', 'Planilha Controle de Caixa', 'Modelo de controle de caixa: descrições nas linhas, meses nas colunas, receitas, despesas e saldos (.xlsx)', 'c-green')}
   ${li('rep-pdf', 'file', 'Planilha Controle de Caixa em PDF', 'Mesmo modelo da planilha, pronto para imprimir (.pdf)', 'c-red')}
   ${li('rep-excel', 'sheet', 'Exportar para Excel', 'Receitas e despesas por categoria e mês, com saldo do mês e acumulado (.xlsx)', 'c-green')}
   ${li('rep-csv', 'chart', 'Exportar Fluxo de Caixa Diário', 'Lista diária de entradas, saídas e saldo acumulado (.csv)', 'c-blue')}</div>
@@ -1301,8 +1300,9 @@ function applyTheme() {
   if (['windows', 'encantado'].includes(st.skin)) st.skin = 'padrao'; // temas antigos removidos
   if (st.skin === 'moderno') st.skin = 'ios';
   if (['bissexual', 'hetero', 'lesbica', 'diversidade', 'alegria'].includes(st.skin)) st.skin = 'magico';
+  if (st.deskTheme === 'mobills') { st.skin = 'estiloso'; st.deskTheme = 'app'; } // antigo "visual no notebook"
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
-  const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'app') === 'mobills';
+  const mob = st.skin === 'estiloso' && isPremium();
   const skin0 = st.skin; if (!isPremium()) st.skin = 'padrao';
   b.className = mob ? 'light skin-mobills' :  (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
   if (typeof isLogged === 'function') { b.classList.toggle('logged', isLogged()); b.classList.toggle('desk', isDesk()); }
