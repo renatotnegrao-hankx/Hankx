@@ -269,6 +269,7 @@ function scrInicio() {
         <div class="lbl">Saldo acumulado ${I('trend', 'green')}</div><div class="big">${brl(acum)}</div>
         <div class="small muted" style="margin-top:4px">Saldo da conta: <b style="color:var(--text)">${brl(conta)}</b></div>
       </div>
+      ${(() => { const A = V.acc !== 'all' && acc(V.acc); if (!A) return ''; return `<div class="accinfo"><b>${esc(A.kind === 'cartao' ? 'Cartão' : A.type || 'Conta corrente')}</b>${A.agency ? `<span>Ag. ${esc(A.agency)}</span>` : ''}${A.number ? `<span>${A.kind === 'cartao' ? 'Final' : 'Conta'} ${esc(A.number)}</span>` : ''}</div>`; })()}
     </div>
     <div class="hr" style="margin:14px 0 10px"></div>
     <div class="between"><div><div class="lbl">Saldo do período</div><b class="${per >= 0 ? 'green' : 'red'}" style="font-size:15px">${brl(per)}</b></div>
@@ -625,10 +626,10 @@ function scrAjustes() {
   <img src="icons/logo.png?v=4" alt="Hankx" style="width:50px;height:50px;border-radius:13px"></div>
   <div class="split even"><div class="col">
   <div class="sect">APARÊNCIA</div>
-  <div class="card"><div class="muted" style="margin-bottom:10px">Tema</div>
-    <div class="opts">${[['light', 'sun', 'Claro'], ['dark', 'moon', 'Escuro'], ['auto', 'phone', 'Auto']].map(([v, ic, l]) => `<button class="opt ${st.theme === v ? 'on' : ''}" data-act="theme" data-v="${v}"><span class="e accent" style="color:${st.theme === v ? 'var(--accent)' : 'var(--muted)'}">${I(ic)}</span><b>${l}</b></button>`).join('')}</div>
+  <div class="card"><div class="muted" style="margin-bottom:10px">Tema <small class="tdev">${isDesk() ? '💻 vale só para o computador' : '📱 vale só para o celular'}</small></div>
+    <div class="opts">${[['light', 'sun', 'Claro'], ['dark', 'moon', 'Escuro'], ['auto', 'phone', 'Auto']].map(([v, ic, l]) => `<button class="opt ${st[TK()[1]] === v ? 'on' : ''}" data-act="theme" data-v="${v}"><span class="e accent" style="color:${st.theme === v ? 'var(--accent)' : 'var(--muted)'}">${I(ic)}</span><b>${l}</b></button>`).join('')}</div>
     <div class="muted" style="margin:16px 0 10px">Perfil de Interface</div>
-    <div class="opts">${SKINS.map(([v, e, l, s]) => `<button class="opt ${st.skin === v ? 'on' : ''}" data-act="skin" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s}</small></button>`).join('')}</div></div>
+    <div class="opts">${SKINS.map(([v, e, l, s]) => `<button class="opt ${st[TK()[0]] === v ? 'on' : ''}" data-act="skin" data-v="${v}"><span class="e">${e}</span><b>${l}</b><small>${s}</small></button>`).join('')}</div></div>
   <div class="sect">PERFIL</div>
   <div class="list">${li('go', 'user', 'Meu Perfil', '', '', 'data-sub="perfil"')}${CLOUD_ON ? li('premium', 'star', 'Hankx Premium', premiumLabel()) : ''}</div>
   ${isAdmin() ? `<div class="sect">ADMINISTRADOR</div><div class="list">${li('go', 'shield', 'Painel do administrador', 'Usuários, assinantes, receita e acessos de cortesia', '', 'data-sub="admin"')}</div>` : ''}
@@ -1301,19 +1302,23 @@ async function adminUser(id) {
 }
 
 /* ======================= Render ======================= */
+const TK = () => (typeof isDesk === 'function' && isDesk()) ? ['skinD', 'themeD'] : ['skin', 'theme']; // tema do celular x do computador
 function applyTheme() {
-  const st = S.settings, b = document.body;
+  const st0 = S.settings, b = document.body;
+  if (st0.skinD === undefined) { st0.skinD = st0.skin || 'padrao'; st0.themeD = st0.theme || 'dark'; }
+  const [kS, kT] = TK();
+  const st = { skin: st0[kS], theme: st0[kT], deskTheme: st0.deskTheme };
   if (st.skin === 'dos') st.skin = 'padrao';
   if (['windows', 'encantado'].includes(st.skin)) st.skin = 'padrao'; // temas antigos removidos
   if (st.skin === 'moderno') st.skin = 'ios';
   if (['bissexual', 'hetero', 'lesbica', 'diversidade', 'alegria'].includes(st.skin)) st.skin = 'magico';
-  if (st.deskTheme === 'mobills') { st.skin = 'estiloso'; st.deskTheme = 'app'; } // antigo "visual no notebook"
+  if (st.deskTheme === 'mobills') { st0.skinD = 'estiloso'; st0.deskTheme = 'app'; if (kS === 'skinD') st.skin = 'estiloso'; } // antigo "visual no notebook"
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
   const mob = st.skin === 'estiloso' && isPremium();
   const skin0 = st.skin; if (!isPremium()) st.skin = 'padrao';
   b.className = mob ? 'light skin-mobills' :  (dark || st.skin === 'dos' ? '' : 'light ') + 'skin-' + st.skin;
   if (typeof isLogged === 'function') { b.classList.toggle('logged', isLogged()); b.classList.toggle('desk', isDesk()); }
-  st.skin = skin0;
+  st.skin = skin0; st0[kS] = st.skin;
   const meta = $('meta[name=theme-color]'); if (meta) meta.content = getComputedStyle(b).getPropertyValue('--bg2').trim() || '#12161f';
 }
 const DX = [['orientacao', 'spark', 'Orientação'], ['emprestimos', 'calc', 'Empréstimos'], ['dividas', 'card', 'Dívidas'], ['contas', 'dollar', 'Contas'], ['categorias', 'shield', 'Categorias']]; // só no computador
@@ -1499,6 +1504,7 @@ function accForm(id) {
   <label class="f"><span>Nome ${isCard ? 'do cartão' : 'do banco/conta'}</span><input class="in" name="name" value="${esc(a.name)}" required placeholder="${isCard ? 'Ex.: Nubank' : 'Ex.: Itaú'}"></label>
   ${isCard ? `<div class="row"><label class="f" style="flex:1"><span>Dia de vencimento</span><input class="in" name="dueDay" inputmode="numeric" value="${esc(a.dueDay || '')}"></label><label class="f" style="flex:1"><span>Limite</span><input class="in" name="limit" inputmode="decimal" value="${a.limit ? num2(a.limit) : ''}"></label></div>`
       : `<label class="f"><span>Tipo</span><select class="in" name="type">${['Conta corrente', 'Poupança', 'Carteira', 'Investimento', 'Conta salário'].map(x => `<option ${a.type === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+  <div class="row"><label class="f" style="flex:1"><span>Agência</span><input class="in" name="agency" inputmode="numeric" value="${esc(a.agency || '')}" placeholder="Opcional"></label><label class="f" style="flex:1.3"><span>Número da conta</span><input class="in" name="number" value="${esc(a.number || '')}" placeholder="Opcional"></label></div>
   <label class="f"><span>Saldo inicial</span><input class="in" name="initial" inputmode="decimal" value="${num2(a.initial || 0)}"></label>
   <p class="muted small" style="margin-top:-8px">O saldo da conta = saldo inicial + lançamentos pagos/recebidos + pendentes já vencidos.</p>`}
   <div class="muted" style="margin-bottom:8px">Cor</div><div class="colors">${COLORS.map(c => `<button type="button" data-c="${c}" class="${a.color === c ? 'on' : ''}" style="background:${c}"></button>`).join('')}</div>
@@ -1531,7 +1537,7 @@ function accForm(id) {
   f.addEventListener('submit', e => {
     e.preventDefault();
     const o = { name: f.name.value.trim(), color: f.color.value, kind: a.kind || 'conta', logo: f.logo.value, bankName: f.bankName.value };
-    if (isCard) { o.dueDay = f.dueDay.value; o.limit = parseMoney(f.limit.value); o.initial = 0; } else { o.type = f.type.value; o.initial = r2(parseMoney(f.initial.value)); }
+    if (isCard) { o.dueDay = f.dueDay.value; o.limit = parseMoney(f.limit.value); o.initial = 0; } else { o.type = f.type.value; o.initial = r2(parseMoney(f.initial.value)); o.agency = f.agency.value.trim(); o.number = f.number.value.trim(); }
     if (id) Object.assign(a, o); else S.accounts.push({ id: 'acc_' + uid(), isDefault: false, ...o });
     if (!S.accounts.some(x => x.isDefault)) S.accounts[0].isDefault = true;
     save(); closeModal(); render();
@@ -1781,9 +1787,9 @@ document.addEventListener('click', async e => {
     case 'calday': V.calDay = V.calDay === el.dataset.d ? null : el.dataset.d; render(); break;
     case 'projsel': { const i = +el.dataset.i, k = el.dataset.key || 'projSel'; V[k] = V[k] === i ? null : i; render(); break; }
     case 'toggle-open': V.open[el.dataset.k] = !V.open[el.dataset.k]; render(); break;
-    case 'theme': S.settings.theme = el.dataset.v; save(); applyTheme(); render(); break;
+    case 'theme': S.settings[TK()[1]] = el.dataset.v; save(); applyTheme(); render(); break;
     case 'desktheme': S.settings.deskTheme = el.dataset.v; save(); applyTheme(); render(); break;
-    case 'skin': if (el.dataset.v !== 'padrao' && needPremium('Temas e perfis de interface')) break; S.settings.skin = el.dataset.v; save(); applyTheme(); render(); break;
+    case 'skin': if (el.dataset.v !== 'padrao' && needPremium('Temas e perfis de interface')) break; S.settings[TK()[0]] = el.dataset.v; save(); applyTheme(); render(); break;
     case 'save-profile': readProfileForm(); save(); toast('Perfil salvo'); render(); break;
     case 'del-photo': S.profile.photo = ''; save(); render(); break;
     case 'acc-edit': if (!id && S.accounts.length >= 1 && needPremium('Várias contas e cartões')) break; accForm(id); break;
@@ -1854,7 +1860,7 @@ document.addEventListener('input', e => {
   if (el.dataset.loan) { V.loan[el.dataset.loan] = el.value; $('#loanres').innerHTML = loanResult(); }
   if (el.id === 'pCep' && el.value.replace(/\D/g, '').length === 8) cepLookup(el.value);
 });
-matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (S.settings.theme === 'auto') { applyTheme(); render(); } });
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (S.settings[TK()[1]] === 'auto') { applyTheme(); render(); } });
 
 /* ======================= Início ======================= */
 boot();

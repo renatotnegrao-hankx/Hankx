@@ -1452,3 +1452,12 @@ body.skin-mobills{--bg:#f4f5fa;--bg2:#f4f5fa;--card:#ffffff;--card2:#f5f6fb;--li
 /* celular: conta com logotipo mostra só o logo */
 .chiplogo.only{width:28px;height:28px;border-radius:8px;margin:0}
 .accchip:has(.chiplogo.only){padding:0 10px;min-width:52px}
+
+.tdev{font-size:11.5px;margin-left:6px;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+/* dados da conta selecionada no card principal (celular) */
+.summary{position:relative}
+.accinfo{margin-left:auto;align-self:flex-start;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right;font-size:11.5px;color:var(--muted);line-height:1.25;max-width:34%;padding-top:2px}
+.accinfo b{color:var(--text);font-size:12px}
+.accinfo span{white-space:nowrap}
+.summary:has(.accinfo){grid-template-columns:80px minmax(0,1fr) auto}
+.summary:has(.accinfo) .big{font-size:clamp(20px,6vw,26px)}
