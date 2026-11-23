@@ -802,7 +802,7 @@ const CL = { session: null, profile: null, busy: false, err: '', timer: null, re
 const IS_TWA = (() => { try { if (document.referrer.startsWith('android-app://')) sessionStorage.setItem('hankx-twa', '1'); return sessionStorage.getItem('hankx-twa') === '1'; } catch (e) { return false; } })();
 const uidOf = () => CL.session?.user?.id;
 function isPremium() {
-  if (!CLOUD_ON || isAdmin() || CL.demo) return true;
+  if (!CLOUD_ON || isAdmin()) return true;
   const p = CL.profile; if (!p) return true;
   const now = Date.now();
   return (p.premium_until && Date.parse(p.premium_until) > now) || (p.trial_ends_at && Date.parse(p.trial_ends_at) > now);
@@ -819,7 +819,6 @@ function premiumLabel() {
   return d ? `Teste grátis: ${d} dia${d > 1 ? 's' : ''} restante${d > 1 ? 's' : ''}` : 'Teste terminado — assine para liberar tudo';
 }
 function trialBanner() {
-  if (CL.demo) return demoBanner();
   if (isAdmin()) return '';
   if (!CLOUD_ON || !CL.profile || isPaid()) return '';
   const d = trialDaysLeft();
@@ -861,7 +860,6 @@ function paywall(reason = '') {
   $('#pwgo')?.addEventListener('click', () => subscribe(plan));
 }
 async function subscribe(plan) {
-  if (CL.demo) return toast('Na demonstração não há cobrança. Crie sua conta para assinar.');
   if (!CLOUD_ON) return toast('A assinatura fica disponível depois que a nuvem for configurada.');
   const btn = $('#pwgo'); btn.disabled = true; btn.textContent = 'Abrindo pagamento…';
   try {
@@ -903,7 +901,6 @@ async function waitPayment() {
   toast('Pagamento recebido. O Premium é liberado assim que o Mercado Pago confirmar.');
 }
 async function cloudLoadProfile() {
-  if (CL.demo) return;
   try { const r = await sb.rpc('is_admin'); CL.admin = r.data === true; } catch (e) { CL.admin = false; }
   try { const { data } = await sb.from('profiles').select('*').eq('id', uidOf()).maybeSingle(); if (data) CL.profile = data; } catch (e) { /* offline */ }
 }
@@ -930,6 +927,7 @@ async function cloudAfterLogin() {
     CL.err = '';
   } catch (e) { console.error('nuvem', e); CL.err = cloudErr(e); }
   CL.ready = true;
+  if (isDemoAcc() && !S.transactions.length) { S = demoData(); save(); }
   if (IS_TWA) playRestore();
 }
 function cloudErr(e) {
@@ -942,7 +940,7 @@ function cloudErr(e) {
   return 'Erro ao salvar: ' + m.slice(0, 90);
 }
 async function cloudPush() {
-  if (!CLOUD_ON || !uidOf() || CL.demo) return;
+  if (!CLOUD_ON || !uidOf()) return;
   CL.busy = true; refreshSyncUI();
   const { error } = await sb.from('user_data').upsert({ user_id: uidOf(), data: S, updated_at: new Date().toISOString() });
   CL.busy = false;
@@ -950,9 +948,9 @@ async function cloudPush() {
   else { CL.err = ''; CL.last = Date.now(); CL.dirty = false; }
   refreshSyncUI();
 }
-function cloudSchedule() { if (CL.demo || !CL.ready || !uidOf()) return; CL.dirty = true; clearTimeout(CL.timer); CL.timer = setTimeout(cloudPush, 2500); }
+function cloudSchedule() { if (!CL.ready || !uidOf()) return; CL.dirty = true; clearTimeout(CL.timer); CL.timer = setTimeout(cloudPush, 2500); }
 async function cloudRefresh() {
-  if (CL.demo || !uidOf() || !CL.ready) return;
+  if (!uidOf() || !CL.ready) return;
   if (CL.dirty) await cloudPush();
   await cloudLoadProfile();
   try {
@@ -962,13 +960,11 @@ async function cloudRefresh() {
   applyTheme(); if (!$('#modal .sheet')) render();
 }
 async function cloudLogout() {
-  if (CL.demo) return endDemo();
   if (CL.dirty) await cloudPush();
   try { await sb.auth.signOut(); } catch (e) { /* offline */ }
   CL.session = null; CL.profile = null; CL.admin = false; CL.ready = false; STORE = KEY; load(); V.tab = 'inicio'; V.sub = null; applyTheme(); showAuth('entrar');
 }
 async function deleteAccount() {
-  if (CL.demo) return toast('Na demonstração não dá para excluir conta.');
   const r = await ask('Excluir sua conta?', 'Isso apaga sua conta e TODOS os seus dados da nuvem, para sempre. Se quiser guardar uma cópia, faça um backup antes (Ajustes → Fazer backup).', [['y', 'Quero continuar', 'danger']]);
   if (!r) return;
   openModal(`<h3>Confirme a exclusão</h3>
@@ -1018,15 +1014,12 @@ function showAuth(mode = 'entrar', msg = '', ok = '') {
   ${mode === 'esqueci' ? `<button type="button" class="lnk" data-auth="entrar" style="display:block;margin:12px auto 0">Voltar para entrar</button>` : ''}
   ${mode === 'criar' ? `<p class="muted small" style="margin:12px 0 0">Ao criar a conta você concorda com os <a href="../termos.html" class="accent">Termos de uso</a> e a <a href="../privacidade.html" class="accent">Política de privacidade</a>.</p>` : ''}
   </form>
-  ${mode === 'entrar' ? `<button type="button" class="btn demo-btn" id="demogo">👀 Ver demonstração</button><p class="muted small" style="text-align:center;margin:6px 0 0">ou entre com <b>demo@demo.com</b> e senha <b>123456</b></p>` : ''}
   <p style="text-align:center;margin-top:16px"><a href="../" class="muted small">← Conhecer o Hankx</a></p></div>`;
-  $('#demogo')?.addEventListener('click', () => startDemo(true));
   $$('[data-auth]').forEach(b => b.addEventListener('click', () => showAuth(b.dataset.auth)));
   $('#authf').addEventListener('submit', async e => {
     e.preventDefault(); const f = e.target, btn = f.querySelector('.btn.primary'); btn.disabled = true; btn.textContent = 'Aguarde…';
     const email = f.email?.value.trim().toLowerCase(), pass = f.pass?.value;
     const back = location.origin + location.pathname;
-    if (mode === 'entrar' && email === DEMO_EMAIL && pass === DEMO_PASS) return startDemo(true);
     try {
       if (mode === 'entrar') {
         const { data, error } = await sb.auth.signInWithPassword({ email, password: pass }); if (error) throw error;
@@ -1055,6 +1048,7 @@ function scrConta() {
   ${isAdmin() ? '' : `<button class="btn primary" data-act="premium">${isPaid() ? 'Ver meu plano' : 'Assinar Premium'}</button>`}
   <button class="btn" data-act="cloud-save" style="margin-top:10px">Salvar na nuvem agora</button>
   <p class="muted small" style="margin-top:14px">Seus dados ficam guardados com segurança na nuvem e aparecem em qualquer aparelho (celular ou computador) em que você entrar com este e-mail.</p>
+  ${isDemoAcc() ? `<button class="btn" data-act="demo-reset" style="margin-top:10px">🔄 Recarregar dados de demonstração</button>` : ''}
   <div class="dzone"><b>Zona de perigo</b><p class="muted small">Excluir a conta apaga para sempre todos os seus lançamentos, contas e configurações. Não dá para desfazer.</p>
   <button class="lnk red" data-act="delete-account">Excluir minha conta…</button></div>`;
 }
@@ -1066,8 +1060,7 @@ async function boot() {
     else if (ev === 'SIGNED_OUT') CL.session = null;
     else if (session) CL.session = session;
   });
-  let wantDemo = false; try { wantDemo = sessionStorage.getItem('hankx-demo') === '1' || /[?&]demo=1/.test(location.search); } catch (e) { /* nada */ }
-  if (wantDemo) return startDemo(!/[?&]demo=1/.test(location.search) ? false : true);
+  try { sessionStorage.removeItem('hankx-demo'); localStorage.removeItem(KEY + ':demo'); } catch (e) { /* nada */ } // modo demo antigo removido
   $('#main').innerHTML = '<div class="empty" style="padding-top:40vh">Carregando…</div>';
   const { data: { session } } = await sb.auth.getSession();
   CL.session = session;
@@ -1079,11 +1072,12 @@ async function boot() {
 
 
 /* ======================= Modo demonstração ======================= */
-// demo@demo.com / 123456 — dados fictícios, só neste aparelho, nada vai para a nuvem
-const DEMO_EMAIL = 'demo@demo.com', DEMO_PASS = '123456';
+// conta de demonstração: recebe dados fictícios (salvos na nuvem dessa conta)
+const DEMO_EMAIL = 'admin@kidsbill.com.br';
+const isDemoAcc = () => (CL.session?.user?.email || '').toLowerCase() === DEMO_EMAIL;
 function demoData() {
   const d = defaults(), C = n => (d.categories.find(c => c.name === n) || d.categories[0]).id;
-  d.profile = { name: 'Ana Demonstração', email: DEMO_EMAIL, birth: '', cep: '', city: 'São Paulo', uf: 'SP', photo: '' };
+  d.profile = { name: 'Ana Demonstração', email: CL.session?.user?.email || DEMO_EMAIL, birth: '', cep: '', city: 'São Paulo', uf: 'SP', photo: '' };
   d.settings = { theme: 'light', skin: 'padrao', themeD: 'light', skinD: 'padrao' };
   const nu = 'acc_demo_nu', it = 'acc_demo_it', cc = 'acc_demo_cc';
   d.accounts = [
@@ -1131,24 +1125,6 @@ function demoData() {
   d.transactions = T; d.updatedAt = Date.now();
   return d;
 }
-function startDemo(fresh = true) {
-  CL.demo = true; CL.admin = false; CL.ready = false;
-  CL.session = { user: { id: 'demo', email: DEMO_EMAIL } };
-  CL.profile = { id: 'demo', name: 'Ana Demonstração', plan: 'vitalicio', provider: 'demo', premium_until: '9999-12-31T00:00:00Z', trial_ends_at: null };
-  try { sessionStorage.setItem('hankx-demo', '1'); } catch (e) { /* nada */ }
-  STORE = KEY + ':demo';
-  let raw = null; try { raw = fresh ? null : localStorage.getItem(STORE); } catch (e) { /* nada */ }
-  if (raw) load(); else { S = demoData(); try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) { /* nada */ } }
-  V.tab = 'inicio'; V.sub = null; V.acc = 'all';
-  applyTheme(); render(false);
-  if (fresh) toast('Modo demonstração: os dados são fictícios 👋');
-}
-function endDemo() {
-  CL.demo = false; CL.session = null; CL.profile = null; CL.ready = false;
-  try { sessionStorage.removeItem('hankx-demo'); localStorage.removeItem(KEY + ':demo'); } catch (e) { /* nada */ }
-  STORE = KEY; load(); V.tab = 'inicio'; V.sub = null; applyTheme(); showAuth('entrar');
-}
-const demoBanner = () => CL.demo ? `<div class="demobar"><span>👋 <b>Demonstração</b> · dados fictícios, nada é salvo</span><button data-act="demo-exit">Criar minha conta</button></div>` : '';
 
 /* ======================= Login ======================= */
 const AUTH_HASH = 'ee0b71d412bd5fc24c7b60efc3a5263de132b2857783cc7efe8a12857c688252';
@@ -1927,7 +1903,7 @@ document.addEventListener('click', async e => {
     case 'admin-reload': AD.stats = null; adminLoad(); break;
     case 'admin-user': adminUser(id); break;
     case 'cloud-save': await cloudPush(); toast(CL.err || 'Salvo na nuvem'); render(); break;
-    case 'demo-exit': { endDemo(); showAuth('criar'); break; }
+    case 'demo-reset': { const r = await ask('Recarregar a demonstração?', 'Apaga os dados desta conta e coloca de novo os dados fictícios de exemplo.', [['y', 'Recarregar', 'danger']]); if (r) { S = demoData(); save(); applyTheme(); V.tab = 'inicio'; V.sub = null; render(false); toast('Dados de demonstração carregados'); } break; }
     case 'logout': { const r = await ask('Sair do app?', 'Seus lançamentos continuam salvos neste aparelho.', [['y', 'Sair', 'danger']]); if (r) logout(); break; }
     case 'rep-caixa': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repCaixa(); break;
     case 'rep-pdf': if (needPremium('Relatórios em Excel, PDF e CSV')) break; repPdf(); break;
