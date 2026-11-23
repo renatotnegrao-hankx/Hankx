@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="app/icons/apple-touch-icon.png?v=4">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=4">
+<link rel="stylesheet" href="site.css?v=5">
 </head>
 <body>
 
@@ -165,51 +165,67 @@
 <section id="precos"><div class="wrap center">
   <span class="eyebrow">Preços</span>
   <h2>Comece grátis. Assine se fizer diferença.</h2>
-  <p class="sub">Toda conta nova ganha 7 dias de Premium completo. Depois, continue no plano grátis ou assine.</p>
+  <p class="sub">Toda conta nova ganha 7 dias de Premium completo, sem cartão. Depois, continue no plano Grátis ou escolha como prefere pagar o Premium.</p>
   <div class="plans">
-    <div class="plan">
-      <h3>Grátis</h3>
+    <div class="plan free">
+      <div class="ph"><h3>Grátis</h3><p class="for">Para começar a organizar</p></div>
       <div class="price">R$ 0</div>
       <div class="alt">para sempre</div>
+      <a class="btn" href="app/">Criar conta grátis</a>
+      <p class="lh">Inclui:</p>
       <ul>
-        <li>Lançamentos ilimitados e recorrentes</li>
+        <li><b>10 receitas e 20 despesas</b> por mês</li>
+        <li>1 conta bancária</li>
         <li>Calendário de saldo diário</li>
         <li>Resumo do mês</li>
-        <li>1 conta bancária</li>
-        <li>Dados na nuvem</li>
-        <li class="off">Recursos Premium</li>
+        <li>Celular e computador, na nuvem</li>
+        <li class="off">Gráficos completos e relatórios</li>
+        <li class="off">Dívidas e empréstimos</li>
       </ul>
-      <a class="btn" href="app/">Criar conta grátis</a>
     </div>
     <div class="plan">
-      <h3>Mensal</h3>
+      <div class="ph"><h3>Premium Mensal</h3><p class="for">Flexível, sem compromisso</p></div>
       <div class="price">R$ 9,90 <small>/mês</small></div>
-      <div class="alt">cancele quando quiser</div>
-      <ul><li>Tudo do Premium</li><li>Renovação automática</li><li>Ideal para experimentar</li></ul>
+      <div class="alt">cobrado todo mês · cancele quando quiser</div>
       <a class="btn" href="app/">Assinar mensal</a>
+      <p class="lh">Tudo do Premium:</p>
+      <ul><li><b>Lançamentos ilimitados</b></li><li>Contas e cartões ilimitados</li><li>Gráficos completos e projeção</li><li>Relatórios em Excel, PDF e CSV</li><li>Dívidas, empréstimos e orientação</li><li>Todos os temas</li></ul>
     </div>
     <div class="plan pro">
       <span class="tag">MAIS VANTAJOSO</span>
-      <h3>Anual</h3>
+      <div class="ph"><h3>Premium Anual</h3><p class="for">Para quem quer economizar</p></div>
       <div class="price">R$ 89,90 <small>/ano</small></div>
-      <div class="alt">sai por <b>R$ 7,49 por mês</b> (24% mais barato)</div>
-      <ul><li>Tudo do Premium</li><li>Quase 3 meses de graça</li><li>Renovação automática</li></ul>
+      <div class="alt">= <b>R$ 7,49 por mês</b> · economize R$ 28,90</div>
       <a class="btn primary" href="app/">Assinar anual</a>
+      <p class="lh">Tudo do Premium:</p>
+      <ul><li><b>Lançamentos ilimitados</b></li><li>Contas e cartões ilimitados</li><li>Gráficos completos e projeção</li><li>Relatórios em Excel, PDF e CSV</li><li>Dívidas, empréstimos e orientação</li><li>Todos os temas</li></ul>
     </div>
     <div class="plan life">
       <span class="tag gold">PAGUE UMA VEZ</span>
-      <h3>Vitalício</h3>
+      <div class="ph"><h3>Premium Vitalício</h3><p class="for">Nunca mais pague mensalidade</p></div>
       <div class="price">R$ 199,90</div>
-      <div class="alt">pagamento único, <b>acesso para sempre</b></div>
-      <ul><li>Tudo do Premium</li><li>Sem mensalidade</li><li>Todas as novidades futuras</li></ul>
+      <div class="alt">pagamento único · <b>acesso para sempre</b></div>
       <a class="btn" href="app/">Comprar vitalício</a>
+      <p class="lh">Tudo do Premium, mais:</p>
+      <ul><li><b>Lançamentos ilimitados</b></li><li>Contas e cartões ilimitados</li><li>Gráficos completos e projeção</li><li>Relatórios em Excel, PDF e CSV</li><li>Dívidas, empréstimos e orientação</li><li>Todos os temas</li><li><b>Todas as novidades futuras</b></li></ul>
     </div>
   </div>
-  <div class="incl">
-    <b>O Premium inclui:</b>
-    <span>Gráficos completos</span><span>Relatórios em Excel, PDF e CSV</span><span>Controle de dívidas</span><span>Simulador de empréstimos</span><span>O que pagar primeiro</span><span>Várias contas e cartões</span><span>Todos os temas</span>
+
+  <h3 class="cmp-t">Grátis x Premium</h3>
+  <div class="cmp plans-cmp">
+    <div class="cmp-row head"><span>Recurso</span><span>Grátis</span><span class="hx">Premium</span></div>
+    <div class="cmp-row"><span>Receitas por mês</span><span>até 10</span><span class="hx">Ilimitadas</span></div>
+    <div class="cmp-row"><span>Despesas por mês</span><span>até 20</span><span class="hx">Ilimitadas</span></div>
+    <div class="cmp-row"><span>Contas e cartões</span><span>1 conta</span><span class="hx">Ilimitados</span></div>
+    <div class="cmp-row"><span>Contas que se repetem e parcelas</span><span>✓</span><span class="hx">✓</span></div>
+    <div class="cmp-row"><span>Calendário de saldo e resumo do mês</span><span>✓</span><span class="hx">✓</span></div>
+    <div class="cmp-row"><span>Gráficos completos e projeção</span><span>—</span><span class="hx">✓</span></div>
+    <div class="cmp-row"><span>Relatórios em Excel, PDF e CSV</span><span>—</span><span class="hx">✓</span></div>
+    <div class="cmp-row"><span>Dívidas, empréstimos e o que pagar primeiro</span><span>—</span><span class="hx">✓</span></div>
+    <div class="cmp-row"><span>Temas e perfis de interface</span><span>Padrão</span><span class="hx">Todos</span></div>
+    <div class="cmp-row"><span>Celular e computador, na nuvem</span><span>✓</span><span class="hx">✓</span></div>
   </div>
-  <p class="note" style="margin-top:20px">Pagamento por Pix ou cartão (Mercado Pago) no site, ou pelo Google Play no app Android.</p>
+  <p class="note" style="margin-top:20px">Pagamento por Pix ou cartão (Mercado Pago) no site, ou pelo Google Play no app Android. Mensal e anual renovam automaticamente.</p>
 </div></section>
 
 <section id="perguntas" style="background:var(--bg2)"><div class="wrap center">

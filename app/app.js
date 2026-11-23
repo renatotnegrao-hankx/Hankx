@@ -824,13 +824,26 @@ function trialBanner() {
   const d = trialDaysLeft();
   return `<div class="pbanner ${d ? '' : 'end'}" data-act="premium">${I('star')}<span><b>${d ? `Teste Premium: ${d} dia${d > 1 ? 's' : ''} restante${d > 1 ? 's' : ''}` : 'Seu teste Premium terminou'}</b><small>${d ? 'Aproveite tudo liberado. Assine para não perder.' : 'Assine para voltar a usar gráficos, relatórios, dívidas e temas.'}</small></span><em>Assinar</em></div>`;
 }
+// plano grátis: até 10 receitas e 20 despesas por mês
+const FREE_LIM = { receita: 10, despesa: 20 };
+function overFreeLimit(news) {
+  if (isPremium()) return null;
+  const add = {};
+  for (const t of news) { const k = t.type + '|' + t.date.slice(0, 7); add[k] = (add[k] || 0) + 1; }
+  for (const [k, n] of Object.entries(add)) {
+    const [ty, ym] = k.split('|');
+    const have = S.transactions.filter(t => !t.canceled && t.type === ty && t.date.slice(0, 7) === ym).length;
+    if (have + n > FREE_LIM[ty]) return { ty, ym };
+  }
+  return null;
+}
 function needPremium(feature) { if (isPremium()) return false; paywall(feature); return true; }
 function lockedCard(title, desc) {
   return `<div class="card" style="text-align:center;padding:40px 20px;max-width:560px;margin:30px auto">${I('lock')}<h2 style="margin:12px 0 6px">${title}</h2><p class="muted">${desc}</p><button class="btn primary" data-act="premium" style="max-width:320px;margin:16px auto 0">Conhecer o Premium</button></div>`;
 }
 function paywall(reason = '') {
   const paid = isPaid(), d = trialDaysLeft();
-  const perks = ['Gráficos completos: projeção, categorias e ranking', 'Relatórios em Excel, PDF e CSV', 'Controle de dívidas e simulador de empréstimos', 'Orientação do que pagar primeiro', 'Várias contas e cartões', 'Todos os temas e perfis de interface'];
+  const perks = ['Lançamentos ilimitados (no grátis: 10 receitas e 20 despesas por mês)', 'Gráficos completos: projeção, categorias e ranking', 'Relatórios em Excel, PDF e CSV', 'Controle de dívidas e simulador de empréstimos', 'Orientação do que pagar primeiro', 'Várias contas e cartões', 'Todos os temas e perfis de interface'];
   openModal(`<div class="pw">
     <div class="pw-h"><img src="icons/logo.png?v=4" alt=""><div><b>Hankx Premium</b><small>${paid ? premiumLabel() : d ? `Seu teste grátis termina em ${d} dia${d > 1 ? 's' : ''}` : 'Seu teste grátis terminou'}</small></div></div>
     ${reason ? `<p class="pw-r">${I('lock')} <span><b>${esc(reason)}</b> faz parte do Premium.</span></p>` : ''}
@@ -1446,7 +1459,10 @@ function txForm(t) {
     if (repOn && R.end === 'ate' && !R.until) { toast('Informe a data final'); return; }
     const o = f._orig;
     if (!o) {
-      S.transactions.push(...(repOn ? genSeries(base, R) : [{ ...base, id: uid() }]));
+      const news = repOn ? genSeries(base, R) : [{ ...base, id: uid() }];
+      const lim = overFreeLimit(news);
+      if (lim) { closeModal(); paywall(`Mais de ${FREE_LIM[lim.ty]} ${lim.ty === 'receita' ? 'receitas' : 'despesas'} por mês (${MES3[+lim.ym.slice(5) - 1]}/${lim.ym.slice(2, 4)})`); return; }
+      S.transactions.push(...news);
     } else if (!o.lote) {
       if (repOn) { S.transactions = S.transactions.filter(x => x.id !== o.id); S.transactions.push(...genSeries(base, R)); }
       else { Object.assign(o, base); syncDebtFromTx(o); }

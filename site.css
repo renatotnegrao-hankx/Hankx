@@ -246,3 +246,16 @@ footer .legal{width:100%;border-top:1px solid var(--line);padding-top:20px;margi
   .mcta b{display:block;font-size:15px}.mcta small{color:var(--tx3);font-size:12px}
   footer{padding-bottom:100px}
 }
+
+/* preços v5: listas alinhadas e sem espaços sobrando */
+.plan{gap:0}
+.plan .ph h3{margin:0}
+.plan .for{color:var(--tx3);font-size:14px;margin:4px 0 14px;min-height:21px}
+.plan .alt{min-height:44px;margin-top:2px}
+.plan .btn{width:100%;margin:6px 0 18px}
+.plan .lh{font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tx3);margin:0 0 10px;padding-top:16px;border-top:1px solid var(--line)}
+.plan ul{margin:0!important;align-content:start;gap:10px!important;flex:none!important}
+.plan li b{color:var(--tx)}
+.cmp-t{margin:64px 0 0;font-size:22px}
+.plans-cmp .cmp-row{grid-template-columns:1.8fr 1fr 1fr}
+@media (max-width:640px){ .plans-cmp .cmp-row{grid-template-columns:1.5fr 1fr 1fr} }
