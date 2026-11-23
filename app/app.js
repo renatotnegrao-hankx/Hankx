@@ -194,7 +194,7 @@ function accLogo(a, cls = 'banklogo') {
   return `<span class="${cls} ${a.logo ? 'haslogo' : ''}" style="background:${a.color};--bc:${a.color}">${esc(accIni(a.name))}${a.logo ? `<img src="${logoUrl(a.logo)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>`;
 }
 function accChips() {
-  const chips = S.accounts.map(a => `<button class="accchip ${V.acc === a.id ? 'on' : ''}" style="${V.acc === a.id ? `background:${a.color}` : ''}" data-act="acc" data-id="${a.id}">${a.logo ? `<img class="chiplogo" src="${logoUrl(a.logo)}" alt="" onerror="this.remove()">` : ''}${esc(a.name.length > 11 ? a.name.split(' ')[0] : a.name)}</button>`).join('');
+  const chips = S.accounts.map(a => `<button class="accchip ${V.acc === a.id ? 'on' : ''}" style="${V.acc === a.id ? `background:${a.color}` : ''}" data-act="acc" data-id="${a.id}" title="${esc(a.name)}" aria-label="${esc(a.name)}">${a.logo && !isDesk() ? `<img class="chiplogo only" src="${logoUrl(a.logo)}" alt="" onerror="this.outerHTML='${esc(a.name.length > 11 ? a.name.split(' ')[0] : a.name).replace(/'/g, '')}'">` : `${a.logo ? `<img class="chiplogo" src="${logoUrl(a.logo)}" alt="" onerror="this.remove()">` : ''}${esc(a.name.length > 11 ? a.name.split(' ')[0] : a.name)}`}</button>`).join('');
   return `<div class="accs"><button class="accchip ${V.acc === 'all' ? 'on' : ''}" style="${V.acc === 'all' ? 'background:var(--accent)' : ''}" data-act="acc" data-id="all">Todas</button>${chips}</div>`;
 }
 function seg(name, opts, cur, cls = '') {
