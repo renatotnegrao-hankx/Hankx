@@ -1501,13 +1501,13 @@ function accForm(id) {
   <div id="bkpanel" class="bkpanel" style="display:${a.logo || id ? 'none' : 'block'}"><div class="bkrow"><select class="in" id="bkc">${Object.entries(B).map(([k, v]) => `<option value="${k}" ${k === bc0 ? 'selected' : ''}>${v[0]}</option>`).join('')}<option value="ALL">🌎 Todos os países</option></select><input class="in" id="bkq" placeholder="Buscar banco..." autocomplete="off"></div>
   <div class="bklist" id="bkl"></div></div></div>
   <input type="hidden" name="logo" value="${esc(a.logo || '')}"><input type="hidden" name="bankName" value="${esc(a.bankName || '')}">
-  <label class="f"><span>Nome ${isCard ? 'do cartão' : 'do banco/conta'}</span><input class="in" name="name" value="${esc(a.name)}" required placeholder="${isCard ? 'Ex.: Nubank' : 'Ex.: Itaú'}"></label>
+  <label class="f" id="fname" style="${a.logo || (!id) ? 'display:none' : ''}"><span>Nome ${isCard ? 'do cartão' : 'da conta'}</span><input class="in" name="name" value="${esc(a.name)}" placeholder="${isCard ? 'Ex.: Cartão da loja' : 'Ex.: Carteira, Cofrinho'}"></label>
   ${isCard ? `<div class="row"><label class="f" style="flex:1"><span>Dia de vencimento</span><input class="in" name="dueDay" inputmode="numeric" value="${esc(a.dueDay || '')}"></label><label class="f" style="flex:1"><span>Limite</span><input class="in" name="limit" inputmode="decimal" value="${a.limit ? num2(a.limit) : ''}"></label></div>`
       : `<label class="f"><span>Tipo</span><select class="in" name="type">${['Conta corrente', 'Poupança', 'Carteira', 'Investimento', 'Conta salário'].map(x => `<option ${a.type === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
   <div class="row"><label class="f" style="flex:1"><span>Agência</span><input class="in" name="agency" inputmode="numeric" value="${esc(a.agency || '')}" placeholder="Opcional"></label><label class="f" style="flex:1.3"><span>Número da conta</span><input class="in" name="number" value="${esc(a.number || '')}" placeholder="Opcional"></label></div>
   <label class="f"><span>Saldo inicial</span><input class="in" name="initial" inputmode="decimal" value="${num2(a.initial || 0)}"></label>
   <p class="muted small" style="margin-top:-8px">O saldo da conta = saldo inicial + lançamentos pagos/recebidos + pendentes já vencidos.</p>`}
-  <div class="muted" style="margin-bottom:8px">Cor</div><div class="colors">${COLORS.map(c => `<button type="button" data-c="${c}" class="${a.color === c ? 'on' : ''}" style="background:${c}"></button>`).join('')}</div>
+  <div class="box between" style="margin-bottom:14px"><span><b>${isCard ? 'Cartão padrão' : 'Conta padrão'}</b><small class="muted" style="display:block;font-size:12px">Já vem escolhida ao lançar uma transação</small></span><label class="switch"><input type="checkbox" name="isDefault" ${a.isDefault || !S.accounts.length ? 'checked' : ''}><i></i></label></div>
   <input type="hidden" name="color" value="${a.color}"><button class="btn primary">Salvar</button></form>`);
   const f = $('#af');
   const listBanks = () => {
@@ -1527,8 +1527,9 @@ function accForm(id) {
     if (k) {
       const prevBank = f.bankName.value, n = k.dataset.n, d = k.dataset.bk;
       f.logo.value = d; f.bankName.value = n;
-      if (n && (!f.name.value.trim() || f.name.value.trim() === prevBank)) f.name.value = n;
-      if (k.dataset.col) { f.color.value = k.dataset.col; $$('.colors button', f).forEach(x => x.classList.toggle('on', x.dataset.c === k.dataset.col)); }
+      if (n) f.name.value = n; else if (f.name.value.trim() === prevBank) f.name.value = '';
+      $('#fname').style.display = d ? 'none' : '';
+      if (k.dataset.col) f.color.value = k.dataset.col;
       $('#bkprev').innerHTML = accLogo({ name: f.name.value || n || '?', logo: d, color: f.color.value }, 'banklogo');
       $('#bkname').textContent = n || 'Outro banco'; $('#bkpanel').style.display = 'none';
       if (!d) f.name.focus();
@@ -1536,9 +1537,13 @@ function accForm(id) {
   });
   f.addEventListener('submit', e => {
     e.preventDefault();
-    const o = { name: f.name.value.trim(), color: f.color.value, kind: a.kind || 'conta', logo: f.logo.value, bankName: f.bankName.value };
+    const name = (f.logo.value ? f.bankName.value : f.name.value.trim()) || f.name.value.trim();
+    if (!name) { toast('Escolha o banco ou digite um nome'); $('#bkpanel').style.display = 'block'; return; }
+    const o = { name, color: f.color.value, kind: a.kind || 'conta', logo: f.logo.value, bankName: f.bankName.value };
     if (isCard) { o.dueDay = f.dueDay.value; o.limit = parseMoney(f.limit.value); o.initial = 0; } else { o.type = f.type.value; o.initial = r2(parseMoney(f.initial.value)); o.agency = f.agency.value.trim(); o.number = f.number.value.trim(); }
-    if (id) Object.assign(a, o); else S.accounts.push({ id: 'acc_' + uid(), isDefault: false, ...o });
+    let target = a;
+    if (id) Object.assign(a, o); else { target = { id: 'acc_' + uid(), isDefault: false, ...o }; S.accounts.push(target); }
+    if (f.isDefault.checked) S.accounts.forEach(x => x.isDefault = x === target); else if (target.isDefault && S.accounts.length > 1) { target.isDefault = false; }
     if (!S.accounts.some(x => x.isDefault)) S.accounts[0].isDefault = true;
     save(); closeModal(); render();
   });
