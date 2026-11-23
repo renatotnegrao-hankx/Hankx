@@ -300,7 +300,7 @@ function scrCalendario() {
     const inc = sumType(L, 'receita'), out = sumType(L, 'despesa'); bal += inc - out;
     let lines = '';
     if (V.calView === 'saldo') {
-      if (key >= T0 || L.length) lines += `<div class="${bal >= 0 ? 'green' : 'red'}">${shortN(bal)}</div>`;
+      lines += `<div class="${bal >= 0 ? 'green' : 'red'}">${shortN(bal)}</div>`; // saldo em todos os dias
       if (L.length) lines += `<div class="x">${inc ? `<span class="blue">+${Math.round(inc).toLocaleString('pt-BR')}</span> ` : ''}${out ? `<span class="orange">-${Math.round(out).toLocaleString('pt-BR')}</span>` : ''}</div>`;
     } else if (L.length) {
       const net = inc - out; lines += `<div class="${net >= 0 ? 'green' : 'red'}">${shortN(net)}</div>`;
