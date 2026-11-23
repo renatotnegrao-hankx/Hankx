@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hankx</string>
+    <string name="asset_statements">[{\"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": {\"namespace\": \"web\", \"site\": \"https://hankx.com.br\"}}]</string>
+    <string-array name="payment_method_names">
+        <item>https://play.google.com/billing</item>
+    </string-array>
+</resources>

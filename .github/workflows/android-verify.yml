@@ -1,0 +1,15 @@
+name: Android (verificar assinatura do APK)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['app/download/*.apk']
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: apksigner verify
+        run: |
+          BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
+          for f in app/download/*.apk; do echo "== $f"; $BT/apksigner verify --verbose --print-certs "$f"; $BT/aapt dump badging "$f" | head -3; done

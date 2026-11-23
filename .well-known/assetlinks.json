@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "br.com.hankx.financas",
+    "sha256_cert_fingerprints": ["AD:C4:AE:DC:AE:45:19:33:05:E5:8D:29:11:60:EA:77:6F:E5:20:86:A3:AA:12:61:A5:9F:CF:AC:80:D2:26:DD"]
+  }
+}]
