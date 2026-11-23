@@ -273,3 +273,14 @@ footer .legal{width:100%;border-top:1px solid var(--line);padding-top:20px;margi
 .icard li b{color:var(--tx)}
 .kbd{display:inline-grid;place-items:center;width:24px;height:22px;border:1px solid var(--line);border-radius:6px;vertical-align:-5px;color:var(--pri);background:var(--bg2)}
 @media (max-width:980px){ .inst{grid-template-columns:1fr} }
+
+/* download do APK */
+.apkbox{max-width:760px;margin:36px auto 0;background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px 26px;display:grid;grid-template-columns:1fr auto;gap:18px 24px;align-items:center;text-align:left;box-shadow:var(--sh)}
+.apkinfo{display:flex;align-items:center;gap:14px}
+.apkinfo img{border-radius:14px}
+.apkinfo b{display:block;font-size:18px}
+.apkinfo small{color:var(--tx3);font-size:13px}
+.apksteps{grid-column:1/-1;margin:0;padding:14px 0 0 20px;border-top:1px solid var(--line);color:var(--tx2);font-size:14.5px;display:grid;gap:6px}
+.apksteps b{color:var(--tx)}
+a.gplay{text-decoration:none}
+@media (max-width:640px){ .apkbox{grid-template-columns:1fr} .apkbox .btn{width:100%} }

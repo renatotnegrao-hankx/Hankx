@@ -799,7 +799,9 @@ const CFG = window.HANKX_CONFIG || {};
 const CLOUD_ON = !!(CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase);
 const sb = CLOUD_ON ? window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }) : null;
 const CL = { session: null, profile: null, busy: false, err: '', timer: null, ready: false, last: 0, dirty: false, recovery: false };
-const IS_TWA = (() => { try { if (document.referrer.startsWith('android-app://')) sessionStorage.setItem('hankx-twa', '1'); return sessionStorage.getItem('hankx-twa') === '1'; } catch (e) { return false; } })();
+// origem do app Android: ?src=apk (baixado do site, paga pelo Mercado Pago) ou ?src=play (Google Play, paga pela Play)
+const APP_SRC = (() => { try { const m = location.search.match(/[?&]src=(apk|play)\b/); if (m) localStorage.setItem('hankx-src', m[1]); return localStorage.getItem('hankx-src') || ''; } catch (e) { return ''; } })();
+const IS_TWA = (() => { try { if (APP_SRC === 'apk') return false; if (document.referrer.startsWith('android-app://')) sessionStorage.setItem('hankx-twa', '1'); return sessionStorage.getItem('hankx-twa') === '1'; } catch (e) { return false; } })(); // só o app da Google Play usa a cobrança da Play
 const uidOf = () => CL.session?.user?.id;
 function isPremium() {
   if (!CLOUD_ON || isAdmin()) return true;
@@ -863,7 +865,7 @@ async function subscribe(plan) {
   if (!CLOUD_ON) return toast('A assinatura fica disponível depois que a nuvem for configurada.');
   const btn = $('#pwgo'); btn.disabled = true; btn.textContent = 'Abrindo pagamento…';
   try {
-    if ('getDigitalGoodsService' in window) return await playBuy(plan);
+    if (IS_TWA && 'getDigitalGoodsService' in window) return await playBuy(plan);
     if (IS_TWA) throw new Error('Atualize o app pela Play Store para assinar.');
     const { data, error } = await sb.functions.invoke('mp-subscribe', { body: { plan } });
     if (error || !data?.url) throw new Error(data?.error || 'Não foi possível abrir o pagamento agora. Tente de novo.');
