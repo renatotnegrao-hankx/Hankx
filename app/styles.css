@@ -1401,3 +1401,9 @@ body:not(.logged) .tabbar,body:not(.logged) .fab{display:none!important}
 .mb .bb i.r em{color:var(--green)}.mb .bb i.d em{color:var(--red)}
 
 .balpills .pills{margin:2px 0 6px;justify-content:flex-start}
+
+/* zona de perigo (excluir conta) — discreta e longe do botão Sair */
+.dzone{margin-top:36px;padding:16px;border:1px dashed color-mix(in srgb,var(--red) 45%,transparent);border-radius:var(--radius-s,14px)}
+.dzone b{color:var(--red);font-size:14px}
+.dzone p{margin:6px 0 10px}
+.lnk.red{color:var(--red);font-weight:600;padding:0;background:none;border:0;cursor:pointer;font-size:14px}

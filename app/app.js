@@ -632,7 +632,7 @@ function scrAjustes() {
   <div class="sect">DADOS</div>
   <div class="list"><button class="li" data-act="go" data-sub="sync">${I('ul')}<span class="tx2"><b>${CLOUD_ON ? 'Minha conta e nuvem' : 'Dados deste aparelho'}</b><small data-synclabel>${esc(syncLabel())}</small></span>${I('right')}</button>${li('backup', 'dl', 'Fazer backup', 'Gera arquivo .json para salvar no dispositivo', 'c-blue')}${li('restore', 'ul', 'Restaurar backup', 'Importar arquivo .json de backup', 'c-blue')}${li('clear', 'trash', 'Limpar dados', 'Apaga todos os lançamentos e reseta saldo', 'c-red')}</div>
   <div class="sect">CONTA</div>
-  <div class="list">${CLOUD_ON ? li('go', 'user', esc(CL.session?.user?.email || 'Minha conta'), 'Dados salvos na nuvem', '', 'data-sub="sync"') : ''}${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}${CLOUD_ON ? li('delete-account', 'trash', 'Excluir minha conta', 'Apaga a conta e todos os dados da nuvem', 'c-red') : ''}</div>
+  <div class="list">${CLOUD_ON ? li('go', 'user', esc(CL.session?.user?.email || 'Minha conta'), 'Dados salvos na nuvem', '', 'data-sub="sync"') : ''}${li('logout', 'lock', 'Sair', 'Pede login e senha de novo para abrir', 'c-red')}</div>
   </div></div>
   <p class="muted small" style="text-align:center;margin-top:24px">Hankx · ${CLOUD_ON ? 'dados salvos na nuvem com segurança' : 'dados salvos só neste aparelho'} · <a class="muted" href="../privacidade.html">Privacidade</a> · <a class="muted" href="../termos.html">Termos</a>.</p>`;
 }
@@ -937,14 +937,28 @@ async function cloudLogout() {
   CL.session = null; CL.profile = null; CL.admin = false; CL.ready = false; STORE = KEY; load(); V.tab = 'inicio'; V.sub = null; applyTheme(); showAuth('entrar');
 }
 async function deleteAccount() {
-  const r = await ask('Excluir sua conta?', 'Isso apaga sua conta e TODOS os seus dados da nuvem, para sempre.', [['y', 'Continuar', 'danger']]);
+  const r = await ask('Excluir sua conta?', 'Isso apaga sua conta e TODOS os seus dados da nuvem, para sempre. Se quiser guardar uma cópia, faça um backup antes (Ajustes → Fazer backup).', [['y', 'Quero continuar', 'danger']]);
   if (!r) return;
-  const r2 = await ask('Tem certeza?', 'Não é possível desfazer. Faça um backup antes se quiser guardar uma cópia.', [['y', 'Excluir definitivamente', 'danger']]);
-  if (!r2) return;
-  const { error } = await sb.rpc('delete_my_account');
-  if (error) return toast('Não foi possível excluir agora: ' + error.message);
-  try { localStorage.removeItem(STORE); } catch (e) { /* nada */ }
-  CL.dirty = false; await cloudLogout(); toast('Conta excluída.');
+  openModal(`<h3>Confirme a exclusão</h3>
+  <p class="muted">Para confirmar, digite <b>EXCLUIR</b> e a sua senha.</p>
+  <form id="delf"><label class="f"><span>Digite EXCLUIR</span><input class="in" name="word" autocomplete="off" autocapitalize="characters" required></label>
+  <label class="f"><span>Sua senha</span><input class="in" name="pass" type="password" autocomplete="current-password" required></label>
+  <p class="red small" id="delerr"></p>
+  <div class="acts"><button class="btn danger" type="submit" id="delgo" disabled>Excluir definitivamente</button><button class="btn" type="button" data-act="close-modal">Cancelar</button></div></form>`);
+  const f = $('#delf'), go = $('#delgo');
+  f.word.focus();
+  f.addEventListener('input', () => { go.disabled = f.word.value.trim().toUpperCase() !== 'EXCLUIR' || !f.pass.value; });
+  f.addEventListener('submit', async e => {
+    e.preventDefault(); go.disabled = true; $('#delerr').textContent = '';
+    const email = CL.session?.user?.email;
+    const chk = await sb.auth.signInWithPassword({ email, password: f.pass.value });
+    if (chk.error) { $('#delerr').textContent = 'Senha incorreta.'; go.disabled = false; return; }
+    const { error } = await sb.rpc('delete_my_account');
+    if (error) { $('#delerr').textContent = 'Não foi possível excluir agora: ' + error.message; go.disabled = false; return; }
+    closeModal();
+    try { localStorage.removeItem(STORE); } catch (e2) { /* nada */ }
+    CL.dirty = false; await cloudLogout(); toast('Conta excluída.');
+  });
 }
 function authErr(m) {
   m = String(m || '');
@@ -1005,7 +1019,9 @@ function scrConta() {
   <div class="between"><span class="muted">Nuvem</span><span class="small" data-synclabel>${esc(syncLabel())}</span></div></div>
   ${isAdmin() ? '' : `<button class="btn primary" data-act="premium">${isPaid() ? 'Ver meu plano' : 'Assinar Premium'}</button>`}
   <button class="btn" data-act="cloud-save" style="margin-top:10px">Salvar na nuvem agora</button>
-  <p class="muted small" style="margin-top:14px">Seus dados ficam guardados com segurança na nuvem e aparecem em qualquer aparelho (celular ou computador) em que você entrar com este e-mail.</p>`;
+  <p class="muted small" style="margin-top:14px">Seus dados ficam guardados com segurança na nuvem e aparecem em qualquer aparelho (celular ou computador) em que você entrar com este e-mail.</p>
+  <div class="dzone"><b>Zona de perigo</b><p class="muted small">Excluir a conta apaga para sempre todos os seus lançamentos, contas e configurações. Não dá para desfazer.</p>
+  <button class="lnk red" data-act="delete-account">Excluir minha conta…</button></div>`;
 }
 async function boot() {
   load(); applyTheme();
