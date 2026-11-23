@@ -616,7 +616,7 @@ function scrGraficosMob() {
 }
 
 /* ---------- Ajustes ---------- */
-const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['magico', '✨', 'Mágico', 'Azul royal, roxo e dourado'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['estiloso', '💜', 'Estiloso', 'Claro, roxo e cartões brancos'], ['ios', '📱', 'Elegante', 'Limpo e arredondado'], ['office', '📊', 'Executivo', 'Sóbrio, estilo planilha'], ['material', '🔵', 'Moderno', 'Cores suaves e formas amplas']];
+const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['magico', '✨', 'Mágico', 'Azul royal, roxo e dourado'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['estiloso', '💜', 'Estiloso', 'Claro, roxo e cartões brancos'], ['ios', '📱', 'Elegante', 'Limpo e arredondado'], ['office', '📊', 'Executivo', 'Sóbrio, estilo planilha'], ['material', '🔵', 'Moderno', 'Cores suaves e formas amplas']];
 function li(act, icon, title, sub, cls = '', extra = '') {
   return `<button class="li ${cls}" data-act="${act}" ${extra}>${I(icon)}<span class="tx2"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${cls ? '' : I('right')}</button>`;
 }
@@ -1311,6 +1311,7 @@ function applyTheme() {
   if (st.skin === 'dos') st.skin = 'padrao';
   if (['windows', 'encantado'].includes(st.skin)) st.skin = 'padrao'; // temas antigos removidos
   if (st.skin === 'moderno') st.skin = 'ios';
+  if (st.skin === 'masculino') { st.skin = 'padrao'; st0[kS] = 'padrao'; } // tema Masculino removido
   if (['bissexual', 'hetero', 'lesbica', 'diversidade', 'alegria'].includes(st.skin)) st.skin = 'magico';
   if (st.deskTheme === 'mobills') { st0.skinD = 'estiloso'; st0.deskTheme = 'app'; if (kS === 'skinD') st.skin = 'estiloso'; } // antigo "visual no notebook"
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
