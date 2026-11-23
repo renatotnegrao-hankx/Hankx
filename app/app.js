@@ -1083,7 +1083,7 @@ function deskTop() {
   const mnav = monthTabs && (k === 'calendario' || V.mode === 'mensal') ? `<div class="mpill"><button data-act="nav" data-d="-1" data-m="m">${I('left')}</button><b>${MESES[+V.ym.slice(5) - 1]} ${V.ym.slice(0, 4)}</b><button data-act="nav" data-d="1" data-m="m">${I('right')}</button></div>` : '<span></span>';
   return `<header class="dtop"><div class="dtop-l">${k === 'inicio' ? `<div class="dtitle">${hi}</div><div class="crumb">Veja como estão suas finanças</div>` : `<div class="dtitle">${esc(t)}</div><div class="crumb">${esc(k === 'inicio' ? '' : sub)}</div>`}</div>
   ${mnav}
-  <div class="dtop-r"><span class="chipinfo ${syncOn() ? (CL.err ? 'red' : 'green') : 'orange'}" data-act="go" data-sub="sync" title="Minha conta e nuvem">${I('ul')}<span data-synclabel>${esc(syncLabel())}</span></span>
+  <div class="dtop-r">
   <button class="dbtn primary topnew" data-act="new-tx">${I('plus')} Novo lançamento</button>
   <button class="duser" data-act="go" data-sub="perfil"><span class="avatar sm" style="${p.photo ? `background-image:url(${p.photo})` : ''}">${p.photo ? '' : esc((p.name || '?')[0].toUpperCase())}</span><span><b>${esc(p.name || 'Meu perfil')}</b><small>${esc(p.email || "")}</small></span></button></div></header>`;
 }
