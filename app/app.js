@@ -600,7 +600,7 @@ function scrGraficosMob() {
 }
 
 /* ---------- Ajustes ---------- */
-const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['alegria', '☀️', 'Alegria', 'Cores quentes e vibrantes'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['ios', '📱', 'iOS', 'Visual do iPhone'], ['office', '📊', 'Office', 'Estilo Excel / 365'], ['material', '🔵', 'Material', 'Material You (Android)']];
+const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['magico', '✨', 'Mágico', 'Azul royal, roxo e dourado'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['ios', '📱', 'iOS', 'Visual do iPhone'], ['office', '📊', 'Office', 'Estilo Excel / 365'], ['material', '🔵', 'Material', 'Material You (Android)']];
 function li(act, icon, title, sub, cls = '', extra = '') {
   return `<button class="li ${cls}" data-act="${act}" ${extra}>${I(icon)}<span class="tx2"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${cls ? '' : I('right')}</button>`;
 }
@@ -1278,7 +1278,7 @@ function applyTheme() {
   if (st.skin === 'dos') st.skin = 'padrao';
   if (['windows', 'encantado'].includes(st.skin)) st.skin = 'padrao'; // temas antigos removidos
   if (st.skin === 'moderno') st.skin = 'ios';
-  if (['bissexual', 'hetero', 'lesbica', 'diversidade'].includes(st.skin)) st.skin = 'alegria';
+  if (['bissexual', 'hetero', 'lesbica', 'diversidade', 'alegria'].includes(st.skin)) st.skin = 'magico';
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
   const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'app') === 'mobills';
   const skin0 = st.skin; if (!isPremium()) st.skin = 'padrao';

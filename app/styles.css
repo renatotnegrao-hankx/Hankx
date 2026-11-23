@@ -932,42 +932,44 @@ body.skin-office{--hbar:var(--bar);--hbar-sh:transparent}
   body.skin-office .mbar,body.skin-office .hello{border-radius:0!important}
 }
 
-/* ===== Tema Alegria — cores quentes e ensolaradas, com confetes ===== */
-body.skin-alegria{
+/* ===== Tema Mágico — céu noturno azul-royal, roxo e dourado, com brilhos ===== */
+body.skin-magico{
   --font:"Nunito","SF Pro Rounded",ui-rounded,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--radius:20px;--radius-s:14px;
-  --bg:#1b1512;--bg2:#15100d;--card:#271e19;--card2:#33281f;--line:rgba(255,220,180,.1);--text:#fff8f0;--muted:#cdb9a6;
-  --accent:#ff8a3d;--accent-soft:rgba(255,138,61,.16);
-  --green:#4ade80;--green-d:#22c55e;--green-soft:rgba(74,222,128,.14);--red:#ff6b6b;--red2:#ff6b6b;--red-soft:rgba(255,107,107,.13);--orange:#ffb703;--blue:#4facfe;
-  --blob1:#ffb703;--blob2:#fb8500;--blob3:#ff6b6b;
-  --rainbow:linear-gradient(100deg,#ffd166 0%,#ffa94d 50%,#ff6b6b 100%);
-  --confete:radial-gradient(circle at 8% 28%,rgba(255,255,255,.55) 0 2.5px,transparent 3.5px),radial-gradient(circle at 22% 78%,rgba(255,240,170,.7) 0 3px,transparent 4px),radial-gradient(circle at 38% 18%,rgba(255,255,255,.4) 0 2px,transparent 3px),radial-gradient(circle at 57% 70%,rgba(255,255,255,.45) 0 2.5px,transparent 3.5px),radial-gradient(circle at 71% 24%,rgba(255,240,170,.6) 0 3px,transparent 4px),radial-gradient(circle at 86% 64%,rgba(255,255,255,.5) 0 2px,transparent 3px),radial-gradient(circle at 95% 20%,rgba(255,255,255,.35) 0 3px,transparent 4px);
-  --hbtn:linear-gradient(115deg,#f9a826 0%,#f97316 52%,#ef5350 100%);--hbar:var(--confete),var(--hbtn);--hbar-sh:rgba(249,115,22,.38)}
-body.skin-alegria.light{--bg:#fffaf3;--bg2:#fff3e3;--card:#ffffff;--card2:#fff6ec;--line:rgba(180,90,20,.13);--text:#2b1d12;--muted:#8a6d55;
-  --accent:#ea6a12;--accent-soft:rgba(234,106,18,.1);--green:#15803d;--green-d:#15803d;--green-soft:rgba(21,128,61,.1);--red:#e11d48;--red2:#e11d48;--red-soft:rgba(225,29,72,.08);--orange:#d97706}
-body.skin-alegria .mbar,body.skin-alegria .hello{text-shadow:0 1px 3px rgba(0,0,0,.28)}
-body.skin-alegria .seg button.on,body.skin-alegria .dseg button.on,body.skin-alegria .pill.on,body.skin-alegria .pills.plain .pill.on,
-body.skin-alegria .chips button.on,body.skin-alegria .accchip.on,body.skin-alegria .btn.primary,body.skin-alegria .dbtn.primary,body.skin-alegria.desk .tabbar button.snew{
-  background:var(--hbtn)!important;color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 16px rgba(249,115,22,.3)!important}
-body.skin-alegria .seg.rd button.on.rec{background:linear-gradient(135deg,#3ddc97,#1fae6b)!important}
-body.skin-alegria .seg.rd button.on.desp{background:linear-gradient(135deg,#ff7a8f,#e8434f)!important}
-body.skin-alegria .fab{background:linear-gradient(135deg,#ffc145,#f97316 55%,#ef5350)!important;color:#fff;
-  border:2px solid rgba(255,255,255,.8);box-shadow:0 10px 26px rgba(249,115,22,.45)!important}
-body.skin-alegria .fab .ico{filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))}
-body.skin-alegria .big{background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent}
-body.skin-alegria .card,body.skin-alegria .mbox,body.skin-alegria .mcard{position:relative}
-body.skin-alegria .card::before,body.skin-alegria .mbox::before,body.skin-alegria .mcard::before{content:"";position:absolute;left:16px;right:16px;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--rainbow);opacity:.9}
-body.skin-alegria .cal .wd{background:var(--hbtn);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3)}
-body.skin-alegria .cal .d.today b{background:var(--hbtn);color:#fff}
-body.skin-alegria .switch input:checked+i{background:var(--rainbow)}
-body.skin-alegria .switch input:checked+i::after{background:#fff}
-body.skin-alegria .tabbar button.on{color:var(--accent)}
+  --bg:#0a1230;--bg2:#070d24;--card:#131d45;--card2:#1c2858;--line:rgba(200,210,255,.12);--text:#f4f6ff;--muted:#aab4dc;
+  --accent:#f5c542;--accent-soft:rgba(245,197,66,.15);
+  --green:#4ade80;--green-d:#22c55e;--green-soft:rgba(74,222,128,.14);--red:#ff6b8a;--red2:#ff6b8a;--red-soft:rgba(255,107,138,.13);--orange:#fbbf24;--blue:#60a5fa;
+  --blob1:#3b4fd8;--blob2:#7c3aed;--blob3:#f5c542;
+  --rainbow:linear-gradient(100deg,#f5c542 0%,#fde68a 45%,#f5c542 100%);
+  --brilho:radial-gradient(circle at 7% 30%,rgba(255,255,255,.9) 0 1.2px,transparent 2px),radial-gradient(circle at 18% 72%,rgba(253,230,138,.9) 0 1.6px,transparent 2.6px),radial-gradient(circle at 31% 22%,rgba(255,255,255,.7) 0 1px,transparent 1.8px),radial-gradient(circle at 46% 64%,rgba(255,255,255,.8) 0 1.4px,transparent 2.2px),radial-gradient(circle at 60% 18%,rgba(253,230,138,.95) 0 1.8px,transparent 2.8px),radial-gradient(circle at 74% 58%,rgba(255,255,255,.7) 0 1.1px,transparent 1.9px),radial-gradient(circle at 87% 26%,rgba(255,255,255,.9) 0 1.5px,transparent 2.4px),radial-gradient(circle at 95% 75%,rgba(253,230,138,.8) 0 1.2px,transparent 2px),radial-gradient(ellipse at 85% -20%,rgba(245,197,66,.35),transparent 55%);
+  --hbtn:linear-gradient(120deg,#1e3a8a 0%,#3b4fd8 50%,#6d28d9 100%);--hbar:var(--brilho),linear-gradient(120deg,#0b1f5c 0%,#1e3a8a 45%,#5b21b6 100%);--hbar-sh:rgba(59,79,216,.4)}
+body.skin-magico.light{--bg:#f6f4ff;--bg2:#eeeafd;--card:#ffffff;--card2:#f3f1fd;--line:rgba(30,58,138,.13);--text:#141a3d;--muted:#5f6690;
+  --accent:#3b4fd8;--accent-soft:rgba(59,79,216,.1);--green:#15803d;--green-d:#15803d;--green-soft:rgba(21,128,61,.1);--red:#e11d48;--red2:#e11d48;--red-soft:rgba(225,29,72,.08);--orange:#b7791f}
+body.skin-magico.light{--rainbow:linear-gradient(100deg,#3b4fd8,#6d28d9 60%,#b7791f)}
+body.skin-magico.light .card::before,body.skin-magico.light .mbox::before,body.skin-magico.light .mcard::before{background:linear-gradient(90deg,#3b4fd8,#6d28d9 60%,#f5c542)!important}
+body.skin-magico .mbar,body.skin-magico .hello{text-shadow:0 1px 3px rgba(0,0,0,.28)}
+body.skin-magico .seg button.on,body.skin-magico .dseg button.on,body.skin-magico .pill.on,body.skin-magico .pills.plain .pill.on,
+body.skin-magico .chips button.on,body.skin-magico .accchip.on,body.skin-magico .btn.primary,body.skin-magico .dbtn.primary,body.skin-magico.desk .tabbar button.snew{
+  background:var(--hbtn)!important;color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 16px rgba(59,79,216,.35)!important}
+body.skin-magico .seg.rd button.on.rec{background:linear-gradient(135deg,#3ddc97,#1fae6b)!important}
+body.skin-magico .seg.rd button.on.desp{background:linear-gradient(135deg,#ff7a8f,#e8434f)!important}
+body.skin-magico .fab{background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.35),transparent 40%),linear-gradient(135deg,#3b4fd8,#6d28d9)!important;color:#fff;
+  border:2px solid #f5c542;box-shadow:0 10px 26px rgba(109,40,217,.5),0 0 0 4px rgba(245,197,66,.18)!important}
+body.skin-magico .fab .ico{filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))}
+body.skin-magico .big{background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.skin-magico .card,body.skin-magico .mbox,body.skin-magico .mcard{position:relative}
+body.skin-magico .card::before,body.skin-magico .mbox::before,body.skin-magico .mcard::before{content:"";position:absolute;left:16px;right:16px;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--rainbow);opacity:.9}
+body.skin-magico .cal .wd{background:var(--hbtn);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+body.skin-magico .cal .d.today b{background:var(--hbtn);color:#fff}
+body.skin-magico .switch input:checked+i{background:var(--rainbow)}
+body.skin-magico .switch input:checked+i::after{background:#fff}
+body.skin-magico .tabbar button.on{color:var(--accent)}
 @media (max-width:899px){
-  body.skin-alegria .tabbar{position:fixed}
-  body.skin-alegria .tabbar::before{content:"";position:absolute;left:18px;right:18px;top:-1px;height:3px;border-radius:3px;background:var(--rainbow)}
+  body.skin-magico .tabbar{position:fixed}
+  body.skin-magico .tabbar::before{content:"";position:absolute;left:18px;right:18px;top:-1px;height:3px;border-radius:3px;background:var(--rainbow)}
 }
 @media (min-width:900px){
-  body.skin-alegria.desk .tabbar{box-shadow:inset -3px 0 0 transparent}
-  body.skin-alegria.desk .tabbar::after{content:"";position:absolute;top:0;bottom:0;right:0;width:3px;background:linear-gradient(180deg,#ffd166,#ffa94d,#ff6b6b)}
+  body.skin-magico.desk .tabbar{box-shadow:inset -3px 0 0 transparent}
+  body.skin-magico.desk .tabbar::after{content:"";position:absolute;top:0;bottom:0;right:0;width:3px;background:linear-gradient(180deg,#f5c542,#3b4fd8,#6d28d9)}
 }
 
 /* ===== Temas de bandeiras e União dos Povos ===== */
@@ -1292,7 +1294,7 @@ body .seg button{min-width:0;overflow:hidden;text-overflow:ellipsis}
   body.desk:not(.skin-mobills):not(.skin-office) .dtop .mpill b,body.desk:not(.skin-mobills):not(.skin-office) .dtop .mpill button,
   body.desk:not(.skin-mobills):not(.skin-office) .dtop .duser small{color:#fff!important}
   body.desk:not(.skin-mobills):not(.skin-office) .dtop .avatar{border-color:rgba(255,255,255,.7);color:#fff;background-color:rgba(255,255,255,.2)}
-  body.desk.skin-alegria .dtop{text-shadow:0 1px 3px rgba(0,0,0,.3)}
+  body.desk.skin-magico .dtop{text-shadow:0 1px 3px rgba(0,0,0,.3)}
   body.desk.skin-material .dtop::before{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--g4);z-index:2}
   body.desk.skin-material .dtop::after{display:none}
 }
