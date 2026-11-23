@@ -1407,3 +1407,19 @@ body:not(.logged) .tabbar,body:not(.logged) .fab{display:none!important}
 .dzone b{color:var(--red);font-size:14px}
 .dzone p{margin:6px 0 10px}
 .lnk.red{color:var(--red);font-weight:600;padding:0;background:none;border:0;cursor:pointer;font-size:14px}
+
+/* lançamento no computador: janela larga no centro, em 2 colunas, tudo visível */
+@media (min-width:900px){
+  body.desk #modal .bk{align-items:center!important;justify-content:center!important}
+  body.desk #modal .sheet.txsheet{max-width:900px!important;width:min(900px,94vw);max-height:94vh;border-radius:22px!important;padding:22px 26px 22px!important;animation:pop .18s ease-out}
+  body.desk #modal .txsheet h3{margin:0 0 14px}
+  body.desk #modal .txsheet .txcols{display:grid;grid-template-columns:1fr 1fr;gap:4px 26px;margin-top:12px}
+  body.desk #modal .txsheet .txc>*:first-child{margin-top:0}
+  body.desk #modal .txsheet .f{margin-bottom:10px}
+  body.desk #modal .txsheet textarea{min-height:84px}
+  body.desk #modal .txsheet .txacts{display:flex;justify-content:flex-end;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  body.desk #modal .txsheet .txacts .btn{width:auto;margin:0!important;padding-left:22px;padding-right:22px}
+  body.desk #modal .txsheet .txacts .btn.primary{min-width:200px}
+  body.desk #modal .txsheet .txacts .btn.danger{margin-right:auto!important}
+}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}

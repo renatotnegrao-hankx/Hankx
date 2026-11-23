@@ -154,7 +154,8 @@ function range(mode = V.mode) {
   return ['0000-01-01', '9999-12-31'];
 }
 const accOk = t => V.acc === 'all' || t.accountId === V.acc;
-const stOk = (t, st = V.status) => st === 'todos' || st === 'cancelados' || (st === 'pendentes' ? !t.paid : t.paid);
+const overdue = t => !t.paid && !t.canceled && t.date < T0; // pendente vencido
+const stOk = (t, st = V.status) => st === 'todos' || st === 'cancelados' || (st === 'pendentes' ? overdue(t) : t.paid);
 function txIn(a, b, o = {}) {
   const st = o.status ?? V.status, ty = o.type ?? 'todos';
   if (st === 'cancelados') return S.transactions.filter(t => t.canceled && accOk(t) && t.date >= a && t.date <= b && (ty === 'todos' || t.type === ty));
@@ -168,9 +169,15 @@ function balanceAt(date, paidOnly = false) {
   for (const t of LIVE()) if (accOk(t) && t.date <= date && (!paidOnly || t.paid)) s += sign(t);
   return r2(s);
 }
+// saldo atual = lançamentos realizados + pendentes já vencidos
+function saldoAtual() {
+  let s = initialSum();
+  for (const t of LIVE()) if (accOk(t) && (t.paid || t.date < T0)) s += sign(t);
+  return r2(s);
+}
 function accBalance(a) {
   let s = +a.initial || 0;
-  for (const t of LIVE()) if (t.accountId === a.id && t.paid) s += sign(t);
+  for (const t of LIVE()) if (t.accountId === a.id && (t.paid || t.date < T0)) s += sign(t);
   return r2(s);
 }
 const sumType = (list, ty) => r2(list.filter(t => t.type === ty).reduce((s, t) => s + +t.amount, 0));
@@ -233,7 +240,7 @@ function scrInicio() {
   const list = txIn(a, b);
   const rec = sumType(list, 'receita'), desp = sumType(list, 'despesa'), per = r2(rec - desp);
   const acum = balanceAt(b > T0 && V.mode === 'todos' ? '9999-12-31' : b, V.status === 'realizados');
-  const conta = balanceAt('9999-12-31', true), dia = balanceAt(T0);
+  const conta = saldoAtual(), dia = balanceAt(T0);
   const pct = rec > 0 ? Math.max(0, Math.min(1, per / rec)) : 0;
   const C = 2 * Math.PI * 50;
   const p = S.profile, nm = (p.name || 'você').toUpperCase();
@@ -1153,12 +1160,12 @@ function scrInicioDesk() {
   const [a, b] = range();
   const list = txIn(a, b);
   const rec = sumType(list, 'receita'), desp = sumType(list, 'despesa');
-  const acum = balanceAt(b, V.status === 'realizados'), conta = balanceAt('9999-12-31', true);
+  const acum = balanceAt(b, V.status === 'realizados'), conta = saldoAtual();
   const recP = sumType(list.filter(t => t.paid), 'receita'), despP = sumType(list.filter(t => t.paid), 'despesa');
   const cards = S.accounts.filter(x => x.kind === 'cartao');
   const cardOpen = r2(LIVE().filter(t => cards.some(c => c.id === t.accountId) && !t.paid && t.type === 'despesa').reduce((s2, t) => s2 + +t.amount, 0));
-  const soon = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= b && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
-  const soonR = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'receita' && t.date <= b && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
+  const soon = LIVE().filter(t => accOk(t) && overdue(t) && t.type === 'despesa' && t.date >= addDays(T0, -365)).sort((x, y) => x.date.localeCompare(y.date));
+  const soonR = LIVE().filter(t => accOk(t) && overdue(t) && t.type === 'receita' && t.date >= addDays(T0, -365)).sort((x, y) => x.date.localeCompare(y.date));
   const { arr, tot } = catAgg('despesa', V.mode);
   const D = monthsData(T0.slice(0, 7), V.balN);
   const debtOpen = r2(S.debts.reduce((s2, d) => s2 + debtStats(d).rem, 0));
@@ -1170,7 +1177,7 @@ function scrInicioDesk() {
   return `
   ${V.mode !== 'mensal' || V.acc !== 'all' || V.status !== 'todos' ? deskToolbar() : `<div class="mfilters">${deskToolbar()}</div>`}
   <div class="mcards">
-    ${mcard('Saldo atual', brl(conta), 'bank', 'blue', 'Lançamentos realizados')}
+    ${mcard('Saldo atual', brl(conta), 'bank', 'blue', 'Realizados + vencidos')}
     ${mcard('Receitas', brl(rec), 'up', 'green', `Recebido ${brl(recP)}`)}
     ${mcard('Despesas', brl(desp), 'down2', 'red', `Pago ${brl(despP)}`)}
     ${mcard('Saldo previsto', brl(acum), 'trend', acum >= 0 ? 'purple' : 'red', 'No fim de ' + (V.mode === 'mensal' ? MESES[+V.ym.slice(5) - 1].toLowerCase() : 'período'))}
@@ -1191,8 +1198,8 @@ function scrInicioDesk() {
       ${trialBanner()}
       ${CL.err ? `<div class="mbanner" data-act="go" data-sub="sync">${I('info')}<span><b>${esc(CL.err)}</b></span>${I('right')}</div>` : ''}
       <div class="mbox"><div class="mh"><b>Balanço mensal</b><button class="lnk" data-act="tab" data-v="graficos">Ver relatórios</button></div>${bal}</div>
-      <div class="mbox"><div class="mh"><b>Contas a pagar</b><span class="badge late">${soon.length}</span></div>${pend(soon, 'd')}</div>
-      <div class="mbox"><div class="mh"><b>Contas a receber</b><span class="badge ok">${soonR.length}</span></div>${pend(soonR, 'r')}</div>
+      <div class="mbox"><div class="mh"><b>Contas a pagar <small class="muted">vencidas</small></b><span class="badge late">${soon.length}</span></div>${pend(soon, 'd')}</div>
+      <div class="mbox"><div class="mh"><b>Contas a receber <small class="muted">vencidas</small></b><span class="badge ok">${soonR.length}</span></div>${pend(soonR, 'r')}</div>
     </div>
   </div>
   <div class="mbox"><div class="mh"><b>Lançamentos do mês <span class="muted">(${shown.length})</span></b>
@@ -1206,9 +1213,9 @@ function scrTransacoesDesk() {
   let list = txIn(a, b, { withCanceled: true });
   if (V.type !== 'todos') list = list.filter(t => t.type === V.type);
   if (V.q) { const q = V.q.toLowerCase(); list = list.filter(t => [t.desc, cat(t.categoryId)?.name, t.note, acc(t.accountId)?.name, t.lote].join(' ').toLowerCase().includes(q)); }
-  const pend = sumType(tot.filter(t => !t.paid), 'despesa');
+  const pend = sumType(tot.filter(t => overdue(t)), 'despesa');
   return `${deskToolbar({ search: true, type: true, modes: [['mensal', 'Mensal'], ['anual', 'Anual'], ['todos', 'Todos'], ['periodo', 'Período']], status: [['todos', 'Todos'], ['pendentes', 'Pendentes'], ['realizados', 'Realizados'], ['cancelados', 'Cancelados']] })}
-  <div class="kpis k4">${kpi('Receitas', brl(rec), 'pos', '', 'cash')}${kpi('Despesas', brl(desp), 'neg', '', 'card')}${kpi('Resultado', brl(r2(rec - desp)), rec - desp >= 0 ? 'accent' : 'neg', '', 'chart')}${kpi('A pagar (pendente)', brl(pend), 'warn', '', 'bell')}</div>
+  <div class="kpis k4">${kpi('Receitas', brl(rec), 'pos', '', 'cash')}${kpi('Despesas', brl(desp), 'neg', '', 'card')}${kpi('Resultado', brl(r2(rec - desp)), rec - desp >= 0 ? 'accent' : 'neg', '', 'chart')}${kpi('A pagar (vencido)', brl(pend), 'warn', '', 'bell')}</div>
   <div class="card dcard"><div class="dch"><b>${list.length} lançamentos</b><span class="muted small">Clique numa linha para editar · clique em Data ou Valor para ordenar</span></div>${txTable(sortTx(list))}</div>`;
 }
 
@@ -1327,8 +1334,8 @@ function render(keepScroll = true) {
 
 /* ======================= Modal / toast ======================= */
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2400); }
-function openModal(html) {
-  $('#modal').innerHTML = `<div class="bk" data-act="close-bk"><div class="sheet"><div class="grab"></div><button type="button" class="xclose" data-act="close-modal" aria-label="Fechar">${I('x')}</button>${html}</div></div>`;
+function openModal(html, cls = '') {
+  $('#modal').innerHTML = `<div class="bk" data-act="close-bk"><div class="sheet ${cls}"><div class="grab"></div><button type="button" class="xclose" data-act="close-modal" aria-label="Fechar">${I('x')}</button>${html}</div></div>`;
   document.body.style.overflow = 'hidden';
 }
 function closeModal() { $('#modal').innerHTML = ''; document.body.style.overflow = ''; }
@@ -1378,12 +1385,14 @@ function txForm(t) {
   <form id="txf" data-id="${isNew ? '' : t.id}">
   <div class="seg rd" id="ftype"><button type="button" class="${type === 'despesa' ? 'on desp' : 'desp'}" data-ft="despesa">Despesa</button><button type="button" class="${type === 'receita' ? 'on rec' : 'rec'}" data-ft="receita">Receita</button></div>
   <input type="hidden" name="type" value="${type}">
+  <div class="txcols"><div class="txc">
   <label class="f"><span>Valor</span><input class="in amount" name="amount" inputmode="decimal" placeholder="0,00" value="${t.amount !== '' ? num2(t.amount) : ''}" required></label>
   <label class="f"><span>Data</span><input class="in" type="date" name="date" value="${t.date}" required></label>
   <label class="f"><span>Descrição</span><input class="in" name="desc" value="${esc(t.desc)}" placeholder="Ex.: Conta de luz"></label>
   <label class="f"><span>Categoria</span><select class="in" name="categoryId" id="fcat"></select></label>
   <label class="f"><span>Conta</span><select class="in" name="accountId">${accOpts}</select></label>
   <div class="box between"><b>${type === 'receita' ? 'Recebido' : 'Pago'}</b><label class="switch"><input type="checkbox" name="paid" ${t.paid ? 'checked' : ''}><i></i></label></div>
+  </div><div class="txc">
   <div class="box"><div class="between"><b style="font-size:16px">Repetir</b><label class="switch"><input type="checkbox" name="rep" id="frep" ${rep ? 'checked' : ''}><i></i></label></div>
    <div id="repbox" style="${rep ? '' : 'display:none'}"><div class="muted" style="margin:14px 0 8px">Frequência</div>
    <div class="chips" data-grp="freq">${[['diaria', 'Diária'], ['semanal', 'Semanal'], ['quinzenal', 'Quinzenal'], ['mensal', 'Mensal'], ['anual', 'Anual']].map(([v, l]) => `<button type="button" data-v="${v}" class="${r.freq === v ? 'on' : ''}">${l}</button>`).join('')}</div>
@@ -1395,10 +1404,11 @@ function txForm(t) {
    </div></div>
   ${t.lote ? `<div class="code">Código do lote: <b>${esc(t.lote)}</b>${t.total > 1 ? ` · parcela ${t.idx}/${t.total}` : ''}</div>` : ''}
   <label class="f"><span>Nota</span><textarea class="in" name="note" placeholder="Adicionar observação...">${esc(t.note || '')}</textarea></label>
-  ${isNew ? '' : `<button type="button" class="btn" data-act="${t.canceled ? 'uncancel-tx' : 'cancel-tx'}" data-id="${t.id}" style="margin-bottom:10px">${I(t.canceled ? 'repeat' : 'x')} ${t.canceled ? 'Reativar lançamento' : 'Cancelar lançamento'}</button>
+  </div></div>
+  <div class="txacts">${isNew ? '' : `<button type="button" class="btn" data-act="${t.canceled ? 'uncancel-tx' : 'cancel-tx'}" data-id="${t.id}" style="margin-bottom:10px">${I(t.canceled ? 'repeat' : 'x')} ${t.canceled ? 'Reativar lançamento' : 'Cancelar lançamento'}</button>
   <button type="button" class="btn danger" data-act="del-tx" data-id="${t.id}" style="margin-bottom:12px">${I('trash')} Excluir transação</button>`}
-  <button class="btn primary" type="submit">${isNew ? 'Adicionar' : 'Salvar alterações'}</button>
-  </form>`);
+  <button class="btn primary" type="submit">${isNew ? 'Adicionar' : 'Salvar alterações'}</button></div>
+  </form>`, 'txsheet');
   const f = $('#txf'); f._r = { ...r }; f._orig = isNew ? null : t;
   const fillCats = (ty, sel) => {
     $('#fcat').innerHTML = '<option value="">Sem categoria</option>' + S.categories.filter(c => c.type === ty).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')).map(c => `<option value="${c.id}" ${c.id === sel ? 'selected' : ''}>${c.icon} ${esc(c.name)}</option>`).join('');
@@ -1478,7 +1488,7 @@ function accForm(id) {
   ${isCard ? `<div class="row"><label class="f" style="flex:1"><span>Dia de vencimento</span><input class="in" name="dueDay" inputmode="numeric" value="${esc(a.dueDay || '')}"></label><label class="f" style="flex:1"><span>Limite</span><input class="in" name="limit" inputmode="decimal" value="${a.limit ? num2(a.limit) : ''}"></label></div>`
       : `<label class="f"><span>Tipo</span><select class="in" name="type">${['Conta corrente', 'Poupança', 'Carteira', 'Investimento', 'Conta salário'].map(x => `<option ${a.type === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
   <label class="f"><span>Saldo inicial</span><input class="in" name="initial" inputmode="decimal" value="${num2(a.initial || 0)}"></label>
-  <p class="muted small" style="margin-top:-8px">O saldo da conta = saldo inicial + lançamentos marcados como pagos/recebidos.</p>`}
+  <p class="muted small" style="margin-top:-8px">O saldo da conta = saldo inicial + lançamentos pagos/recebidos + pendentes já vencidos.</p>`}
   <div class="muted" style="margin-bottom:8px">Cor</div><div class="colors">${COLORS.map(c => `<button type="button" data-c="${c}" class="${a.color === c ? 'on' : ''}" style="background:${c}"></button>`).join('')}</div>
   <input type="hidden" name="color" value="${a.color}"><button class="btn primary">Salvar</button></form>`);
   const f = $('#af');
