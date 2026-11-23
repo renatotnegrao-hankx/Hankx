@@ -259,3 +259,17 @@ footer .legal{width:100%;border-top:1px solid var(--line);padding-top:20px;margi
 .cmp-t{margin:64px 0 0;font-size:22px}
 .plans-cmp .cmp-row{grid-template-columns:1.8fr 1fr 1fr}
 @media (max-width:640px){ .plans-cmp .cmp-row{grid-template-columns:1.5fr 1fr 1fr} }
+
+/* instalar em tela cheia */
+.inst{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:40px;text-align:left}
+.icard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px 26px}
+.ihead{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;margin-bottom:14px}
+.ihead .ilogo{grid-row:span 2;width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
+.ilogo.and{background:#e8f7ee;color:#2f9e5b}.ilogo.ios{background:#eef0f4;color:#111}
+.ihead b{font-size:18px}.ihead small{color:var(--tx3);font-size:13px}
+.icard ol{margin:0;padding:0;list-style:none;counter-reset:i;display:grid;gap:12px}
+.icard li{counter-increment:i;position:relative;padding-left:38px;color:var(--tx2);font-size:15px;line-height:1.55;min-height:26px}
+.icard li::before{content:counter(i);flex:none;width:26px;height:26px;border-radius:8px;background:var(--pri-soft);color:var(--pri);font-weight:800;font-size:13px;display:grid;place-items:center;position:absolute;left:0;top:-1px}
+.icard li b{color:var(--tx)}
+.kbd{display:inline-grid;place-items:center;width:24px;height:22px;border:1px solid var(--line);border-radius:6px;vertical-align:-5px;color:var(--pri);background:var(--bg2)}
+@media (max-width:980px){ .inst{grid-template-columns:1fr} }
