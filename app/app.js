@@ -142,7 +142,7 @@ const T0 = today();
 const V = {
   tab: 'inicio', sub: null, acc: 'all', mode: 'mensal', ym: T0.slice(0, 7), year: +T0.slice(0, 4),
   from: T0.slice(0, 8) + '01', to: T0, status: 'todos', type: 'todos', sort: 'data', q: '', searching: false,
-  calView: 'saldo', calDay: null, chart: 'resumo', projN: 6, projSel: null, tblMode: 'mes',
+  calView: 'saldo', calDay: null, chart: 'resumo', projN: 6, projSel: null, balN: 6, balsel: null, tblMode: 'mes',
   catType: 'despesa', catMode: 'mensal', rankMode: 'mes', open: {}, catTab: 'despesa', accTab: 'conta',
   loanTab: 'prazo', loan: { pv: '', pmt: '', i: '', n: '' }, homeType: 'todos'
 };
@@ -338,12 +338,13 @@ function monthsData(startYm, n) {
   for (let i = 0; i < n; i++) {
     const [y, m] = ym.split('-').map(Number), end = `${ym}-${pad(dim(y, m - 1))}`;
     const L = txIn(`${ym}-01`, end, { status: 'todos' });
-    out.push({ ym, label: `${m}/${String(y).slice(2)}`, rec: sumType(L, 'receita'), desp: sumType(L, 'despesa'), saldo: balanceAt(end) });
+    out.push({ ym, label: `${MES3[m - 1]}/${String(y).slice(2)}`, rec: sumType(L, 'receita'), desp: sumType(L, 'despesa'), saldo: balanceAt(end) });
     ym = ymAdd(ym, 1);
   }
   return out;
 }
-function projChart(D, W = 360, H = 270) {
+function projChart(D, W = 360, H = 270, selKey = 'projSel') {
+  const SEL = V[selKey];
   const L = 34, R = 8, Tp = 14, B = 26;
   const maxV = Math.max(1, ...D.flatMap(d => [d.rec, d.desp, d.saldo]));
   const minV = Math.min(0, ...D.map(d => d.saldo));
@@ -358,17 +359,17 @@ function projChart(D, W = 360, H = 270) {
     const bar = (x, v, col) => { const y = yv(v); const h = Math.max(1, z - y); return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" fill="${col}"/>` + (v > 0 && (D.length <= 12 || i % 2 === 0) ? `<text transform="translate(${x + bw / 2 + 3.2},${y - 4}) rotate(-90)" font-size="${D.length > 12 ? 8 : 9.5}" font-weight="700" fill="${col}">${kfmt(v)}</text>` : ''); };
     g += bar(x1, d.rec, '#34d399') + bar(x2, d.desp, '#f87171');
     if (D.length <= 12 || i % Math.ceil(D.length / 8) === 0) g += `<text x="${cx}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--muted)">${d.label}</text>`;
-    g += `<rect x="${L + gw * i}" y="0" width="${gw}" height="${H - B}" fill="transparent" data-act="projsel" data-i="${i}"/>`;
+    g += `<rect x="${L + gw * i}" y="0" width="${gw}" height="${H - B}" fill="transparent" data-act="projsel" data-key="${selKey}" data-i="${i}"/>`;
   });
   const pts = D.map((d, i) => `${L + gw * i + gw / 2},${yv(d.saldo)}`).join(' ');
-  if (V.projSel != null && D[V.projSel]) { const cx = L + gw * V.projSel + gw / 2; g += `<line x1="${cx}" x2="${cx}" y1="${Tp}" y2="${H - B}" stroke="var(--text)" stroke-width="1"/>`; }
+  if (SEL != null && D[SEL]) { const cx = L + gw * SEL + gw / 2; g += `<line x1="${cx}" x2="${cx}" y1="${Tp}" y2="${H - B}" stroke="var(--text)" stroke-width="1"/>`; }
   g += `<polyline points="${pts}" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linejoin="round"/>`;
   D.forEach((d, i) => { if (D.length > 12 && i % 2) return; g += `<circle cx="${L + gw * i + gw / 2}" cy="${yv(d.saldo)}" r="2.6" fill="#38bdf8"/><text x="${L + gw * i + gw / 2}" y="${yv(d.saldo) - 8}" text-anchor="middle" font-size="${D.length > 12 ? 8.5 : 10}" font-weight="700" fill="#38bdf8" stroke="var(--card)" stroke-width="3" paint-order="stroke">${kfmt(d.saldo)}</text>`; });
-  if (V.projSel != null && D[V.projSel]) { const d = D[V.projSel]; g += `<circle cx="${L + gw * V.projSel + gw / 2}" cy="${yv(d.saldo)}" r="5" fill="#fff" stroke="#38bdf8" stroke-width="3"/>`; }
-  const sel = V.projSel != null && D[V.projSel] ? D[V.projSel] : null;
-  return `<div class="chartwrap">${sel ? `<div class="tooltip" style="left:${V.projSel < D.length / 2 ? '45%' : '8%'};top:40px"><b>${sel.label}</b><div class="green">Receita: ${brl(sel.rec)}</div><div class="red">Despesa: ${brl(sel.desp)}</div><div style="color:#38bdf8">Saldo: ${brl(sel.saldo)}</div></div>` : ''}
+  if (SEL != null && D[SEL]) { const d = D[SEL]; g += `<circle cx="${L + gw * SEL + gw / 2}" cy="${yv(d.saldo)}" r="5" fill="#fff" stroke="#38bdf8" stroke-width="3"/>`; }
+  const sel = SEL != null && D[SEL] ? D[SEL] : null;
+  return `<div class="chartwrap">${sel ? `<div class="tooltip" style="left:${SEL < D.length / 2 ? '45%' : '8%'};top:40px"><b>${sel.label}</b><div class="green">Receita: ${brl(sel.rec)}</div><div class="red">Despesa: ${brl(sel.desp)}</div><div style="color:#38bdf8">Saldo: ${brl(sel.saldo)}</div></div>` : ''}
   <svg viewBox="0 0 ${W} ${H}" width="100%">${g}</svg></div>
-  <div class="legend"><span><i style="background:#34d399"></i>Receita</span><span><i style="background:#f87171"></i>Despesa</span><span><i style="background:#38bdf8;border-radius:2px;height:4px"></i>Saldo</span></div>`;
+  <div class="legend"><span><i style="background:#34d399"></i>Receita</span><span><i style="background:#f87171"></i>Despesa</span><span><i style="background:#38bdf8;border-radius:2px;height:4px"></i>Saldo acumulado</span></div>`;
 }
 function niceStep(x) { if (x <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(x))); const f = x / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
 function flowTable() {
@@ -1143,15 +1144,13 @@ function scrInicioDesk() {
   const soon = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'despesa' && t.date <= b && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
   const soonR = LIVE().filter(t => accOk(t) && !t.paid && t.type === 'receita' && t.date <= b && t.date >= addDays(T0, -60)).sort((x, y) => x.date.localeCompare(y.date));
   const { arr, tot } = catAgg('despesa', V.mode);
-  const D = monthsData(ymAdd(T0.slice(0, 7), -2), 6);
+  const D = monthsData(T0.slice(0, 7), V.balN);
   const debtOpen = r2(S.debts.reduce((s2, d) => s2 + debtStats(d).rem, 0));
   const shown = sortTx(list.filter(t => V.homeType === 'todos' || t.type === V.homeType));
   const contas = S.accounts.filter(x => x.kind !== 'cartao');
   const pend = (L, cls) => L.length ? L.slice(0, 6).map(t => `<div class="mrow" data-act="edit-tx" data-id="${t.id}"><span class="mico ${cls}">${cat(t.categoryId)?.icon || I('card')}</span><span class="grow"><b>${esc(t.desc || cat(t.categoryId)?.name || '')}</b><small class="${t.date < T0 ? 'red' : 'muted'}">${t.date < T0 ? 'Atrasada · ' : 'Vence '}${fmtD(t.date)}</small></span><b class="${cls === 'r' ? 'green' : 'red'}">${brl(t.amount)}</b><button class="ib" data-act="toggle-paid" data-id="${t.id}" title="Marcar como ${cls === 'r' ? 'recebido' : 'pago'}">${I('circle')}</button></div>`).join('') : `<div class="mempty">${I('check')}<span>Tudo em dia por aqui</span></div>`;
-  // balanço mensal (barras simples)
-  const mx = Math.max(1, ...D.flatMap(d => [d.rec, d.desp]));
-  const bal = `<div class="mbars">${D.map(d => `<div class="mb ${d.ym === T0.slice(0, 7) ? 'cur' : ''}"><div class="bb"><i class="r" style="height:${d.rec / mx * 100}%" title="Receitas ${brl(d.rec)}">${d.rec ? `<em>${kfmt(d.rec)}</em>` : ''}</i><i class="d" style="height:${d.desp / mx * 100}%" title="Despesas ${brl(d.desp)}">${d.desp ? `<em>${kfmt(d.desp)}</em>` : ''}</i></div><small>${MES3[+d.ym.slice(5) - 1]}</small><b class="${d.rec - d.desp >= 0 ? 'green' : 'red'}">${kfmt(d.rec - d.desp)}</b></div>`).join('')}</div>
-    <div class="legend"><span><i style="background:var(--green)"></i>Receitas</span><span><i style="background:var(--red)"></i>Despesas</span><span class="muted">número = saldo do mês</span></div>`;
+  // balanço mensal: mês atual + próximos meses, com a linha do saldo acumulado
+  const bal = `<div class="balpills">${pills('balN', [[6, '6 meses'], [12, '12 meses']], V.balN)}</div>${projChart(D, V.balN > 6 ? 640 : 520, 250, 'balsel')}`;
   return `
   ${V.mode !== 'mensal' || V.acc !== 'all' || V.status !== 'todos' ? deskToolbar() : `<div class="mfilters">${deskToolbar()}</div>`}
   <div class="mcards">
@@ -1707,7 +1706,7 @@ document.addEventListener('click', async e => {
     case 'delete-account': deleteAccount(); break;
     case 'back': V.sub = null; render(false); break;
     case 'acc': V.acc = id; render(); break;
-    case 'set': { const k = el.dataset.k; let v = el.dataset.v; if (k === 'chart' && v !== 'resumo' && needPremium('Gráficos completos')) break; if (k === 'projN') v = +v; V[k] = v; if (k === 'projN') V.projSel = null; if (k === 'mode' && v === 'periodo') { const [a, b] = range('mensal'); V.from = a; V.to = b; } render(); break; }
+    case 'set': { const k = el.dataset.k; let v = el.dataset.v; if (k === 'chart' && v !== 'resumo' && needPremium('Gráficos completos')) break; if (k === 'projN' || k === 'balN') v = +v; if (k === 'balN') V.balsel = null; V[k] = v; if (k === 'projN') V.projSel = null; if (k === 'mode' && v === 'periodo') { const [a, b] = range('mensal'); V.from = a; V.to = b; } render(); break; }
     case 'nav': { const d = +el.dataset.d; if (el.dataset.m === 'm') V.ym = ymAdd(V.ym, d); else V.year += d; V.calDay = null; render(); break; }
     case 'nav-today': V.ym = T0.slice(0, 7); V.year = +T0.slice(0, 4); V.calDay = null; render(); break;
     case 'new-tx': txForm(); break;
@@ -1719,7 +1718,7 @@ document.addEventListener('click', async e => {
     case 'cycle-home': V.homeType = { todos: 'despesa', despesa: 'receita', receita: 'todos' }[V.homeType]; render(); break;
     case 'search': V.searching = !V.searching; if (!V.searching) V.q = ''; V.focusQ = true; render(); break;
     case 'calday': V.calDay = V.calDay === el.dataset.d ? null : el.dataset.d; render(); break;
-    case 'projsel': { const i = +el.dataset.i; V.projSel = V.projSel === i ? null : i; render(); break; }
+    case 'projsel': { const i = +el.dataset.i, k = el.dataset.key || 'projSel'; V[k] = V[k] === i ? null : i; render(); break; }
     case 'toggle-open': V.open[el.dataset.k] = !V.open[el.dataset.k]; render(); break;
     case 'theme': S.settings.theme = el.dataset.v; save(); applyTheme(); render(); break;
     case 'desktheme': S.settings.deskTheme = el.dataset.v; save(); applyTheme(); render(); break;

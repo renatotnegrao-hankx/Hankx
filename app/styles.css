@@ -1399,3 +1399,5 @@ body:not(.logged) .tabbar,body:not(.logged) .fab{display:none!important}
 .mb .bb i{position:relative}
 .mb .bb i em{position:absolute;bottom:calc(100% + 4px);left:50%;font-style:normal;font-size:10.5px;font-weight:700;white-space:nowrap;writing-mode:vertical-rl;transform:translateX(-50%) rotate(180deg)}
 .mb .bb i.r em{color:var(--green)}.mb .bb i.d em{color:var(--red)}
+
+.balpills .pills{margin:2px 0 6px;justify-content:flex-start}
