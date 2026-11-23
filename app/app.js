@@ -347,7 +347,7 @@ function projChart(D, W = 360, H = 270) {
   const L = 34, R = 8, Tp = 14, B = 26;
   const maxV = Math.max(1, ...D.flatMap(d => [d.rec, d.desp, d.saldo]));
   const minV = Math.min(0, ...D.map(d => d.saldo));
-  const step = niceStep((maxV - minV) / 4), top = Math.ceil(maxV / step) * step, bot = Math.floor(minV / step) * step;
+  const step = niceStep((maxV * 1.22 - minV) / 4), top = Math.ceil(maxV * 1.22 / step) * step, bot = Math.floor(minV / step) * step;
   const yv = v => Tp + (top - v) / (top - bot) * (H - Tp - B);
   const gw = (W - L - R) / D.length, bw = Math.min(26, gw * 0.32);
   let g = '';
@@ -355,7 +355,7 @@ function projChart(D, W = 360, H = 270) {
   const z = yv(0);
   D.forEach((d, i) => {
     const cx = L + gw * i + gw / 2, x1 = cx - bw - 2, x2 = cx + 2;
-    const bar = (x, v, col) => { const y = yv(v); const h = Math.max(1, z - y); return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" fill="${col}"/>` + (D.length <= 12 && h > 34 ? `<text transform="translate(${x + bw / 2 + 4},${y + 6}) rotate(90)" font-size="10" font-weight="700" fill="#0b0f16">${Math.round(v).toLocaleString('pt-BR')}</text>` : ''); };
+    const bar = (x, v, col) => { const y = yv(v); const h = Math.max(1, z - y); return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" fill="${col}"/>` + (v > 0 && (D.length <= 12 || i % 2 === 0) ? `<text transform="translate(${x + bw / 2 + 3.2},${y - 4}) rotate(-90)" font-size="${D.length > 12 ? 8 : 9.5}" font-weight="700" fill="${col}">${kfmt(v)}</text>` : ''); };
     g += bar(x1, d.rec, '#34d399') + bar(x2, d.desp, '#f87171');
     if (D.length <= 12 || i % Math.ceil(D.length / 8) === 0) g += `<text x="${cx}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--muted)">${d.label}</text>`;
     g += `<rect x="${L + gw * i}" y="0" width="${gw}" height="${H - B}" fill="transparent" data-act="projsel" data-i="${i}"/>`;
@@ -363,7 +363,7 @@ function projChart(D, W = 360, H = 270) {
   const pts = D.map((d, i) => `${L + gw * i + gw / 2},${yv(d.saldo)}`).join(' ');
   if (V.projSel != null && D[V.projSel]) { const cx = L + gw * V.projSel + gw / 2; g += `<line x1="${cx}" x2="${cx}" y1="${Tp}" y2="${H - B}" stroke="var(--text)" stroke-width="1"/>`; }
   g += `<polyline points="${pts}" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linejoin="round"/>`;
-  D.forEach((d, i) => { g += `<text x="${L + gw * i + gw / 2}" y="${yv(d.saldo) - 6}" text-anchor="middle" font-size="10" fill="#38bdf8">${D.length <= 12 ? Math.round(d.saldo).toLocaleString('pt-BR') : ''}</text>`; });
+  D.forEach((d, i) => { if (D.length > 12 && i % 2) return; g += `<circle cx="${L + gw * i + gw / 2}" cy="${yv(d.saldo)}" r="2.6" fill="#38bdf8"/><text x="${L + gw * i + gw / 2}" y="${yv(d.saldo) - 8}" text-anchor="middle" font-size="${D.length > 12 ? 8.5 : 10}" font-weight="700" fill="#38bdf8" stroke="var(--card)" stroke-width="3" paint-order="stroke">${kfmt(d.saldo)}</text>`; });
   if (V.projSel != null && D[V.projSel]) { const d = D[V.projSel]; g += `<circle cx="${L + gw * V.projSel + gw / 2}" cy="${yv(d.saldo)}" r="5" fill="#fff" stroke="#38bdf8" stroke-width="3"/>`; }
   const sel = V.projSel != null && D[V.projSel] ? D[V.projSel] : null;
   return `<div class="chartwrap">${sel ? `<div class="tooltip" style="left:${V.projSel < D.length / 2 ? '45%' : '8%'};top:40px"><b>${sel.label}</b><div class="green">Receita: ${brl(sel.rec)}</div><div class="red">Despesa: ${brl(sel.desp)}</div><div style="color:#38bdf8">Saldo: ${brl(sel.saldo)}</div></div>` : ''}
@@ -398,16 +398,18 @@ function catAgg(type, mode) {
   return { arr, tot };
 }
 function donut(arr, tot) {
-  const C = 2 * Math.PI * 70; let off = 0, g = '';
+  const C = 2 * Math.PI * 70; let off = 0, g = '', sm = 0;
   arr.forEach((x, i) => {
     const f = tot ? x.total / tot : 0, len = C * f;
     g += `<circle cx="100" cy="100" r="70" fill="none" stroke="${PALETTE[i % PALETTE.length]}" stroke-width="38" stroke-dasharray="${Math.max(0, len - 1.5)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"/>`;
     const mid = (off + len / 2) / C * 2 * Math.PI - Math.PI / 2;
-    if (f >= 0.06) g += `<text x="${100 + 70 * Math.cos(mid)}" y="${100 + 70 * Math.sin(mid) + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${Math.round(f * 100)}%</text>`;
+    const pl = f < 0.1 ? (f * 100).toFixed(1).replace('.', ',').replace(',0', '') : Math.round(f * 100);
+    if (f >= 0.06) g += `<text x="${100 + 70 * Math.cos(mid)}" y="${100 + 70 * Math.sin(mid) + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${pl}%</text>`;
+    else if (f > 0) { const rr = sm++ % 2 ? 116 : 100; g += `<text x="${100 + rr * Math.cos(mid)}" y="${100 + rr * Math.sin(mid) + 4}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text)">${pl}%</text>`; }
     off += len;
   });
   if (!arr.length) g = `<circle cx="100" cy="100" r="70" fill="none" stroke="var(--card2)" stroke-width="38"/>`;
-  return `<svg viewBox="0 0 200 200" width="62%" style="display:block;margin:6px auto 14px">${g}</svg>`;
+  return `<svg viewBox="-36 -36 272 272" width="70%" style="display:block;margin:6px auto 14px;overflow:visible">${g}</svg>`;
 }
 function scrGraficos() {
   if (!isDesk()) return scrGraficosMob();
@@ -489,6 +491,7 @@ function resumoMob() {
   const lx = xx(n - 1), ly = yy(acc), lab = brl0(acc), tw = lab.length * 6.4 + 12;
   g += `<circle cx="${lx}" cy="${ly}" r="4.5" fill="var(--card)" stroke="var(--red)" stroke-width="2.5"/><rect x="${lx - tw}" y="${ly + 7}" width="${tw}" height="17" rx="8.5" fill="var(--red)"/><text x="${lx - tw / 2}" y="${ly + 19}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">${lab}</text>`;
   [1, 8, 15, 22, n].forEach(d => { g += `<text x="${xx(d - 1)}" y="${H - 7}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${d}</text>`; });
+  [8, 15, 22].forEach(d => { const v = cum[d - 1]; if (!v || (isCur && d > td)) return; g += `<circle cx="${xx(d - 1)}" cy="${yy(v)}" r="3.5" fill="var(--card)" stroke="var(--red)" stroke-width="2"/><text x="${xx(d - 1)}" y="${yy(v) - 8}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--red)" stroke="var(--card)" stroke-width="3" paint-order="stroke">${kfmt(v)}</text>`; });
   // mês anterior por categoria
   const pym = ymAdd(V.ym, -1), [py, pm] = pym.split('-').map(Number);
   const P = txIn(`${pym}-01`, `${pym}-${pad(dim(py, pm - 1))}`, { status: 'todos', type: 'despesa' });
@@ -524,7 +527,7 @@ function saldoLine(D) {
   const vals = D.map(d => d.saldo), mx = Math.max(...vals, 0), mn = Math.min(...vals, 0);
   const span = (mx - mn) || 1, y = v => T + (mx - v) / span * (H - T - B);
   const step = (W - L - R) / Math.max(1, D.length - 1), x = i => L + i * step;
-  const every = D.length > 12 ? 4 : D.length > 6 ? 2 : 1;
+  const every = D.length > 12 ? 4 : D.length > 6 ? 2 : 1, lev = D.length > 12 ? 2 : 1;
   const pts = D.map((d, i) => `${x(i)},${y(d.saldo)}`).join(' ');
   let g = `<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".35"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>`;
   if (mn < 0 && mx > 0) g += `<line x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}" stroke="var(--muted)" stroke-dasharray="4 4" stroke-width="1"/><text x="${W - R}" y="${y(0) - 4}" text-anchor="end" font-size="10" fill="var(--muted)">R$ 0</text>`;
@@ -538,10 +541,13 @@ function saldoLine(D) {
   D.forEach((d, i) => {
     const show = i % every === 0 || i === D.length - 1;
     const neg = d.saldo < 0, cx = x(i), cy = y(d.saldo);
-    if (show) {
-      const lab = kfmt(d.saldo), tw = lab.length * 6.6 + 10, ty = Math.max(14, cy - 12);
+    if (i % lev === 0 || i === D.length - 1) {
+      const lab = kfmt(d.saldo), tw = lab.length * 6.6 + 10, down = (i / lev) % 2 === 1 && i !== D.length - 1;
+      const ty = down ? Math.min(H - B - 4, cy + 22) : Math.max(14, cy - 12);
       const ax = Math.min(W - tw / 2 - 2, Math.max(tw / 2 + 2, cx));
       g += `<rect x="${ax - tw / 2}" y="${ty - 11}" width="${tw}" height="17" rx="8.5" fill="${neg ? 'var(--red)' : 'var(--accent)'}"/><text x="${ax}" y="${ty + 1.5}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">${lab}</text>`;
+    }
+    if (show) {
       g += `<text x="${cx}" y="${H - 9}" text-anchor="middle" font-size="11" fill="var(--muted)" font-weight="${d.ym === T0.slice(0, 7) ? 700 : 500}">${MES3[+d.ym.slice(5) - 1]}${d.ym.slice(5) === '01' || i === 0 ? '/' + d.ym.slice(2, 4) : ''}</text>`;
     }
   });
@@ -594,7 +600,7 @@ function scrGraficosMob() {
 }
 
 /* ---------- Ajustes ---------- */
-const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['diversidade', '🌈', 'Diversidade', 'Cores do arco-íris'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['ios', '📱', 'iOS', 'Visual do iPhone'], ['office', '📊', 'Office', 'Estilo Excel / 365'], ['material', '🔵', 'Material', 'Material You (Android)']];
+const SKINS = [['padrao', '⚙️', 'Padrão', 'Tema padrão'], ['feminino', '🌸', 'Feminino', 'Tons de rosa'], ['masculino', '🌊', 'Masculino', 'Tons de azul'], ['minimal', '⬜', 'Minimal', 'Clean & moderno'], ['alegria', '☀️', 'Alegria', 'Cores quentes e vibrantes'], ['uniao', '🌍', 'União dos Povos', 'Planeta Terra'], ['ios', '📱', 'iOS', 'Visual do iPhone'], ['office', '📊', 'Office', 'Estilo Excel / 365'], ['material', '🔵', 'Material', 'Material You (Android)']];
 function li(act, icon, title, sub, cls = '', extra = '') {
   return `<button class="li ${cls}" data-act="${act}" ${extra}>${I(icon)}<span class="tx2"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${cls ? '' : I('right')}</button>`;
 }
@@ -1144,7 +1150,7 @@ function scrInicioDesk() {
   const pend = (L, cls) => L.length ? L.slice(0, 6).map(t => `<div class="mrow" data-act="edit-tx" data-id="${t.id}"><span class="mico ${cls}">${cat(t.categoryId)?.icon || I('card')}</span><span class="grow"><b>${esc(t.desc || cat(t.categoryId)?.name || '')}</b><small class="${t.date < T0 ? 'red' : 'muted'}">${t.date < T0 ? 'Atrasada · ' : 'Vence '}${fmtD(t.date)}</small></span><b class="${cls === 'r' ? 'green' : 'red'}">${brl(t.amount)}</b><button class="ib" data-act="toggle-paid" data-id="${t.id}" title="Marcar como ${cls === 'r' ? 'recebido' : 'pago'}">${I('circle')}</button></div>`).join('') : `<div class="mempty">${I('check')}<span>Tudo em dia por aqui</span></div>`;
   // balanço mensal (barras simples)
   const mx = Math.max(1, ...D.flatMap(d => [d.rec, d.desp]));
-  const bal = `<div class="mbars">${D.map(d => `<div class="mb ${d.ym === T0.slice(0, 7) ? 'cur' : ''}"><div class="bb"><i class="r" style="height:${d.rec / mx * 100}%" title="Receitas ${brl(d.rec)}"></i><i class="d" style="height:${d.desp / mx * 100}%" title="Despesas ${brl(d.desp)}"></i></div><small>${MES3[+d.ym.slice(5) - 1]}</small><b class="${d.rec - d.desp >= 0 ? 'green' : 'red'}">${kfmt(d.rec - d.desp)}</b></div>`).join('')}</div>
+  const bal = `<div class="mbars">${D.map(d => `<div class="mb ${d.ym === T0.slice(0, 7) ? 'cur' : ''}"><div class="bb"><i class="r" style="height:${d.rec / mx * 100}%" title="Receitas ${brl(d.rec)}">${d.rec ? `<em>${kfmt(d.rec)}</em>` : ''}</i><i class="d" style="height:${d.desp / mx * 100}%" title="Despesas ${brl(d.desp)}">${d.desp ? `<em>${kfmt(d.desp)}</em>` : ''}</i></div><small>${MES3[+d.ym.slice(5) - 1]}</small><b class="${d.rec - d.desp >= 0 ? 'green' : 'red'}">${kfmt(d.rec - d.desp)}</b></div>`).join('')}</div>
     <div class="legend"><span><i style="background:var(--green)"></i>Receitas</span><span><i style="background:var(--red)"></i>Despesas</span><span class="muted">número = saldo do mês</span></div>`;
   return `
   ${V.mode !== 'mensal' || V.acc !== 'all' || V.status !== 'todos' ? deskToolbar() : `<div class="mfilters">${deskToolbar()}</div>`}
@@ -1272,7 +1278,7 @@ function applyTheme() {
   if (st.skin === 'dos') st.skin = 'padrao';
   if (['windows', 'encantado'].includes(st.skin)) st.skin = 'padrao'; // temas antigos removidos
   if (st.skin === 'moderno') st.skin = 'ios';
-  if (['bissexual', 'hetero', 'lesbica'].includes(st.skin)) st.skin = 'diversidade';
+  if (['bissexual', 'hetero', 'lesbica', 'diversidade'].includes(st.skin)) st.skin = 'alegria';
   const dark = st.theme === 'auto' ? matchMedia('(prefers-color-scheme: dark)').matches : st.theme === 'dark';
   const mob = typeof isDesk === 'function' && isDesk() && (st.deskTheme || 'app') === 'mobills';
   const skin0 = st.skin; if (!isPremium()) st.skin = 'padrao';
