@@ -12,4 +12,4 @@ jobs:
       - name: apksigner verify
         run: |
           BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
-          for f in app/download/*.apk; do echo "== $f"; $BT/apksigner verify --verbose --print-certs "$f"; $BT/aapt dump badging "$f" | head -3; done
+          for f in app/download/*.apk; do echo "== $f"; $BT/apksigner verify --verbose --print-certs "$f"; $BT/aapt dump badging "$f" | head -3; $BT/zipalign -c -v 4 "$f" | tail -1; done
