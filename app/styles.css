@@ -1467,3 +1467,8 @@ body.skin-mobills{--bg:#f4f5fa;--bg2:#f4f5fa;--card:#ffffff;--card2:#f5f6fb;--li
 .demobar b{color:#3d2700}
 .demobar button{flex:none;border:0;border-radius:10px;padding:8px 12px;background:#1a1a1a;color:#fff;font-weight:700;font-size:12.5px;cursor:pointer}
 .demo-btn{margin-top:14px;background:var(--card);border:1px dashed var(--accent);color:var(--accent);font-weight:700}
+
+/* ===== Topo congelado no celular: só o conteúdo abaixo rola ===== */
+@media (max-width:899px){
+  .mbar,body .hello{position:sticky!important;top:0;z-index:40}
+}
